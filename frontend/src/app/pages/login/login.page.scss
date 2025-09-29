@@ -1,0 +1,200 @@
+.login-content {
+  --background: #f8f9fa;
+  
+  .login-container {
+    padding: 0;
+    padding-top: 0;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+  }
+
+  // Header Section (igual que registro)
+  .header-section {
+    position: relative;
+    height: 200px;
+    margin-bottom: 50px;
+    overflow: visible;
+
+    .background-image {
+      position: absolute;
+      top: 0;                     /* Alineada arriba */
+      left: 50%;                  /* Centrada horizontalmente */
+      transform: translateX(-50%);
+      width: 100vw;               /* Ocupa todo el ancho visible de la ventana */
+      height: auto;               /* La altura se ajusta automáticamente para no deformar la imagen */
+      z-index: 1;
+
+      .superior-gris {
+        width: 100%;
+        height: auto;             /* Mantiene la proporción original */
+        object-fit: contain;      /* Muestra toda la imagen sin recortes */
+      }
+    }
+
+
+    .back-button {
+      position: absolute;
+      left: 20px;
+      top: 20px;
+      color: #666;
+      --color: #666;
+      z-index: 3;
+      background: rgba(255, 255, 255, 0.8);
+      --background: rgba(255, 255, 255, 0.8);
+      border-radius: 50%;
+      width: 40px;
+      height: 40px;
+    }
+
+    .mapache-container {
+      position: absolute;
+      bottom: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 2;
+
+      .mapache-image {
+        width: 120px;
+        height: 120px;
+        object-fit: contain;
+        filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.2));
+      }
+    }
+  }
+
+  // Form Container (similar a registro)
+  .form-container {
+    flex: 1;
+    max-width: 400px;
+    width: 100%;
+    margin: 0 auto;
+    padding: 0 20px;
+
+    .form-field {
+      margin-bottom: 20px;
+
+      .field-label {
+        display: block;
+        font-size: 14px;
+        font-weight: 600;
+        color: #000 !important;
+        margin-bottom: 8px;
+      }
+
+      .custom-input {
+        --background: #fff;
+        --border-radius: 12px;
+        --box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        --padding: 16px;
+        border: 1px solid #e0e0e0;
+        border-radius: 12px;
+
+        &.error {
+          border-color: #ff4444;
+        }
+
+        ion-input {
+          --padding-start: 0;
+          --padding-end: 0;
+          font-size: 16px;
+          --color: #333 !important;
+
+          &.error {
+            --color: #ff4444;
+          }
+        }
+
+        .input-icon {
+          color: #666;
+          margin-right: 12px;
+          font-size: 20px;
+        }
+
+        .password-toggle {
+          color: #666;
+          cursor: pointer;
+          font-size: 20px;
+          
+          &:hover {
+            color: #333;
+          }
+        }
+      }
+
+      .error-message {
+        font-size: 12px;
+        color: #ff4444;
+        margin-top: 4px;
+        margin-left: 4px;
+      }
+    }
+  }
+
+  // Botón de login
+  .login-btn {
+    --background: #4a90e2;
+    --background-activated: #357abd;
+    --border-radius: 12px;
+    --box-shadow: 0 4px 12px rgba(74, 144, 226, 0.3);
+    height: 50px;
+    font-weight: 600;
+    font-size: 16px;
+    margin: 24px 0 16px 0;
+    text-transform: none;
+
+    &:disabled {
+      --background: #cccccc;
+      --box-shadow: none;
+    }
+
+    ion-spinner {
+      margin-right: 8px;
+    }
+  }
+
+  // Link de registro
+  .register-link {
+    text-align: center;
+    font-size: 14px;
+    color: #666;
+    margin: 16px 0;
+
+    .link-text {
+      color: #4a90e2;
+      font-weight: 600;
+      text-decoration: none;
+      cursor: pointer;
+
+      &:hover {
+        text-decoration: underline;
+      }
+    }
+  }
+}
+
+// Responsive design
+@media (max-width: 480px) {
+  .login-content {
+    .login-container {
+      padding: 0;
+    }
+
+    .form-container {
+      padding: 0 16px;
+
+      .form-field {
+        margin-bottom: 16px;
+
+        .custom-input {
+          --padding: 14px;
+        }
+      }
+    }
+
+    .login-btn {
+      height: 48px;
+      font-size: 15px;
+    }
+  }
+}

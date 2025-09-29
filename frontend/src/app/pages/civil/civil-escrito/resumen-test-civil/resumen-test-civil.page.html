@@ -1,0 +1,101 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-title>Resultados Civil Escrito</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="results-content">
+  <!-- Header personalizado igual que otras páginas -->
+  <div class="custom-header-section">
+    <div class="orange-background">
+      <div class="derecho-civil-container-full">
+        <img src="assets/image/civil/logo_civil.png" alt="Derecho Civil" class="derecho-civil-image-responsive">
+      </div>
+    </div>
+  </div>
+
+  <!-- Contenido principal -->
+  <div class="content-area">
+    
+    <!-- Card principal de resultados -->
+    <div class="results-main-card">
+      
+      <!-- Sección de medalla y nivel -->
+      <div class="medal-section">
+        <div class="medal-container">
+          <div class="medal-ribbon">
+            <ion-icon name="ribbon-outline" class="ribbon-icon"></ion-icon>
+          </div>
+          <div class="medal-circle">
+            <span class="medal-number">3</span>
+          </div>
+        </div>
+        <div class="mapache-celebration">
+          <img src="assets/image/mok.png" alt="Mapache celebrando" class="mapache-result">
+        </div>
+      </div>
+
+      <!-- Título del nivel -->
+      <h2 class="level-title">NIVEL INTERMEDIO</h2>
+      <p class="level-subtitle">¡Excelente progreso!</p>
+
+      <!-- Porcentaje principal -->
+      <div class="score-main">
+        <div class="percentage-display">{{percentage}}%</div>
+        <p class="score-label">Puntuación del test</p>
+      </div>
+
+    </div>
+
+    <!-- Resumen de respuestas -->
+    <div class="summary-section">
+      <h3 class="summary-title">
+        <ion-icon name="bar-chart-outline"></ion-icon>
+        Resumen de Respuestas
+      </h3>
+      
+      <div class="summary-stats">
+        <div class="stat-correct">
+          <div class="stat-number">{{correctAnswers}}</div>
+          <div class="stat-label">CORRECTAS</div>
+        </div>
+        <div class="stat-incorrect">
+          <div class="stat-number">{{incorrectAnswers}}</div>
+          <div class="stat-label">INCORRECTAS</div>
+        </div>
+      </div>
+
+      <!-- Círculos numerados de preguntas -->
+      <div class="questions-grid">
+        <div class="question-circle" *ngFor="let question of questionsStatus; let i = index"
+             [class.correct]="question.isCorrect"
+             [class.incorrect]="!question.isCorrect">
+          <span>{{i + 1}}</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Botones de acción -->
+    <div class="action-buttons">
+      <ion-button expand="block" color="primary" class="action-btn" (click)="reviewIncorrect()">
+        <ion-icon name="eye-outline" slot="start"></ion-icon>
+        Ver Respuestas Incorrectas
+      </ion-button>
+      
+      <ion-button expand="block" fill="outline" color="primary" class="action-btn secondary" (click)="takeNewTest()">
+        <ion-icon name="refresh-outline" slot="start"></ion-icon>
+        Hacer Nuevo Test
+      </ion-button>
+      
+      <ion-button expand="block" fill="clear" color="medium" class="action-btn tertiary" (click)="goBack()">
+        <ion-icon name="home-outline" slot="start"></ion-icon>
+        Volver al Inicio
+      </ion-button>
+    </div>
+
+  </div>
+
+  <!-- Bottom Navigation Component -->
+  <app-bottom-nav></app-bottom-nav>
+
+</ion-content>

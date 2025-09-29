@@ -1,0 +1,92 @@
+<ion-content class="test-content">
+  <!-- Header personalizado -->
+  <div class="custom-header-section">
+    <div class="orange-background">
+      <!-- Imagen de extremo a extremo -->
+      <div class="derecho-civil-container-full">
+        <img src="assets/image/civil/logo_derecho_civil_escrito.png" alt="Derecho Civil Escrito" class="derecho-civil-image-responsive">
+      </div>
+    </div>
+  </div>
+
+  <!-- Contenido principal -->
+  <div class="content-area" *ngIf="getCurrentQuestion()">
+    
+    <!-- Progreso y número de pregunta -->
+    <div class="progress-section">
+      <div class="progress-text">Pregunta {{ currentQuestionNumber }} de {{ totalQuestions }}</div>
+      <div class="progress-bar">
+        <div class="progress-fill" [style.width.%]="getProgress()"></div>
+      </div>
+    </div>
+
+    <!-- Chip de categoría -->
+    <div class="category-chip" [style.background-color]="getCategoryColor()">
+      <ion-icon name="document-text"></ion-icon>
+      <span>Pregunta {{ currentQuestionNumber }} de {{ totalQuestions }} • {{ getCurrentQuestionCategory() }}</span>
+    </div>
+
+    <!-- Chip verde de categoría -->
+    <div class="category-badge">
+      <span>{{ getCurrentQuestionCategory() }}</span>
+    </div>
+
+    <!-- Número de pregunta -->
+    <div class="question-number">
+      <h2>Pregunta {{ currentQuestionNumber }}</h2>
+    </div>
+
+    <!-- Texto de la pregunta -->
+    <div class="question-text">
+      <p>{{ getCurrentQuestionText() }}</p>
+    </div>
+
+    <!-- Opciones de respuesta con feedback visual -->
+    <div class="options-container">
+      <div 
+        *ngFor="let option of getCurrentQuestionOptions()"
+        class="option-card"
+        [class.selected]="isOptionSelected(option.id) && !hasAnsweredCurrentQuestion()"
+        [class.correct]="getOptionState(option.id) === 'correct'"
+        [class.incorrect]="getOptionState(option.id) === 'incorrect'"
+        [class.disabled]="!canSelectOption()"
+        (click)="selectAnswer(option.id)">
+        
+        <div class="option-letter">{{ option.id }}</div>
+        <div class="option-text">{{ option.text }}</div>
+        
+        <!-- Ícono de feedback (checkmark o cruz) -->
+        <div class="option-feedback" *ngIf="shouldShowOptionIcon(option.id)">
+          <ion-icon 
+            [name]="getOptionIcon(option.id)"
+            [style.color]="getOptionIconColor(option.id)">
+          </ion-icon>
+        </div>
+      </div>
+    </div>
+
+    <!-- Explicación de la respuesta (mostrar después de responder) -->
+    <div class="explanation-container" *ngIf="hasAnsweredCurrentQuestion() && getCurrentQuestion()?.explanation">
+      <div class="explanation-header">
+        <ion-icon name="bulb" color="warning"></ion-icon>
+        <span>Explicación</span>
+      </div>
+      <div class="explanation-text">
+        {{ getCurrentQuestion()?.explanation }}
+      </div>
+    </div>
+
+    <!-- Botón justo después de la explicación -->
+    <div class="static-next-container" *ngIf="hasSelectedAnswer()">
+      <ion-button 
+        expand="block" 
+        shape="round" 
+        class="next-button-static"
+        (click)="nextQuestion()">
+        <ion-icon name="checkmark" slot="start"></ion-icon>
+        {{ currentQuestionIndex < questions.length - 1 ? 'Siguiente Pregunta' : 'Finalizar Test' }}
+      </ion-button>
+    </div>
+
+  </div>
+</ion-content>

@@ -1,0 +1,87 @@
+<ion-content [fullscreen]="true" class="login-content">
+  <div class="login-container">
+    
+    <!-- Header con imagen de fondo y mapache -->
+    <div class="header-section">
+      <!-- Imagen de fondo gris -->
+      <div class="background-image">
+        <img src="assets/image/superior_gris.png" alt="Background" class="superior-gris">
+      </div>
+      
+      <!-- Botón de volver -->
+      <ion-button 
+        fill="clear" 
+        size="small" 
+        class="back-button"
+        (click)="goBack()">
+        <ion-icon name="chevron-back" slot="icon-only"></ion-icon>
+      </ion-button>
+      
+      <!-- Mapache sobre la imagen gris -->
+      <div class="mapache-container">
+        <img src="assets/image/msombra.png" alt="Mapache" class="mapache-image">
+      </div>
+    </div>
+
+    <!-- Formulario de login -->
+    <div class="form-container">
+      
+      <!-- Campo Correo Electrónico -->
+      <div class="form-field">
+        <label class="field-label">Correo Electrónico</label>
+        <ion-item lines="none" class="custom-input">
+          <ion-icon name="mail-outline" slot="start" class="input-icon"></ion-icon>
+          <ion-input 
+            [(ngModel)]="correoElectronico"
+            placeholder="ejemplo@correo.com"
+            type="email"
+            [class.error]="correoElectronico.length > 0 && !isEmailValid()">
+          </ion-input>
+        </ion-item>
+        <div class="error-message" *ngIf="correoElectronico.length > 0 && !isEmailValid()">
+          Ingresa un correo electrónico válido
+        </div>
+      </div>
+
+      <!-- Campo Contraseña -->
+      <div class="form-field">
+        <label class="field-label">Contraseña</label>
+        <ion-item lines="none" class="custom-input">
+          <ion-icon name="lock-closed-outline" slot="start" class="input-icon"></ion-icon>
+          <ion-input 
+            [(ngModel)]="contrasena"
+            placeholder="Ingresa tu contraseña"
+            [type]="showPassword ? 'text' : 'password'"
+            [class.error]="contrasena.length > 0 && !isPasswordValid()">
+          </ion-input>
+          <ion-icon 
+            [name]="showPassword ? 'eye-off-outline' : 'eye-outline'" 
+            slot="end" 
+            class="password-toggle"
+            (click)="togglePasswordVisibility()">
+          </ion-icon>
+        </ion-item>
+        <div class="error-message" *ngIf="contrasena.length > 0 && !isPasswordValid()">
+          La contraseña debe tener al menos 6 caracteres
+        </div>
+      </div>
+
+      <!-- Botón de login -->
+      <ion-button 
+        expand="block" 
+        class="login-btn"
+        [disabled]="!isFormValid() || isLoading"
+        (click)="iniciarSesion()">
+        <ion-spinner *ngIf="isLoading" name="circles"></ion-spinner>
+        <span *ngIf="!isLoading">Iniciar Sesión</span>
+      </ion-button>
+
+      <!-- Link para registro -->
+      <div class="register-link">
+        <span>¿No tienes cuenta? </span>
+        <a (click)="irARegistro()" class="link-text">Regístrate</a>
+      </div>
+
+    </div>
+  </div>
+</ion-content>

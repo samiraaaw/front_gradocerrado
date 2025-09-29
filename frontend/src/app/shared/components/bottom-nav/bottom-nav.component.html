@@ -1,0 +1,21 @@
+<div class="bottom-nav">
+  <div class="nav-item" (click)="goToHome()" [class.active]="isActive('/home')">
+    <ion-icon name="home"></ion-icon>
+  </div>
+  
+  <div class="nav-item" (click)="goToStats()" [class.active]="isActive('/stats')">
+    <ion-icon name="bar-chart"></ion-icon>
+  </div>
+  
+  <div class="nav-item" (click)="goToRacha()" [class.active]="isActive('/racha')">
+    <img src="assets/image/menu/hoja.png" alt="Racha" class="hoja-icon">
+  </div>
+  
+  <div class="nav-item" (click)="goToNotifications()" [class.active]="isActive('/notifications')">
+    <ion-icon name="notifications"></ion-icon>
+  </div>
+  
+  <div class="nav-item" (click)="goToProfile()" [class.active]="isActive('/profile')">
+    <img src="assets/image/msombra.png" alt="Perfil" class="profile-icon">
+  </div>
+</div>

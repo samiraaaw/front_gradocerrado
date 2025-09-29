@@ -1,0 +1,262 @@
+/*
+ * App Global CSS
+ * ----------------------------------------------------------------------------
+ * Put style rules here that you want to apply globally. These styles are for
+ * the entire app and not just one component. Additionally, this file can be
+ * used as an entry point to import other CSS/Sass files to be included in the
+ * output CSS.
+ * For more information on global stylesheets, visit the documentation:
+ * https://ionicframework.com/docs/layout/global-stylesheets
+ */
+
+/* Core CSS required for Ionic components to work properly */
+@import "@ionic/angular/css/core.css";
+
+/* Basic CSS for apps built with Ionic */
+@import "@ionic/angular/css/normalize.css";
+@import "@ionic/angular/css/structure.css";
+@import "@ionic/angular/css/typography.css";
+@import "@ionic/angular/css/display.css";
+
+/* Optional CSS utils that can be commented out */
+@import "@ionic/angular/css/padding.css";
+@import "@ionic/angular/css/float-elements.css";
+@import "@ionic/angular/css/text-alignment.css";
+@import "@ionic/angular/css/text-transformation.css";
+@import "@ionic/angular/css/flex-utils.css";
+
+/**
+ * Ionic Dark Mode
+ * -----------------------------------------------------
+ * For more info, please see:
+ * https://ionicframework.com/docs/theming/dark-mode
+ */
+
+/* @import "@ionic/angular/css/palettes/dark.always.css"; */
+/* @import "@ionic/angular/css/palettes/dark.class.css"; */
+@import "@ionic/angular/css/palettes/dark.system.css";
+
+// ✅ ESTILOS PARA POPUP DE RESULTADOS
+
+.results-popup {
+  .alert-wrapper {
+    border-radius: 20px;
+    max-width: 340px;
+    
+    .alert-head {
+      background: linear-gradient(135deg, #FF8F00 0%, #FF6F00 100%);
+      color: white;
+      text-align: center;
+      font-weight: 700;
+      font-size: 1.2rem;
+      padding: 20px;
+      border-radius: 20px 20px 0 0;
+    }
+    
+    .alert-message {
+      padding: 0;
+      
+      .results-content {
+        padding: 20px;
+        
+        .score-section {
+          display: flex;
+          justify-content: space-around;
+          margin-bottom: 20px;
+          
+          .score-item {
+            text-align: center;
+            padding: 15px;
+            border-radius: 12px;
+            min-width: 80px;
+            
+            &.correct {
+              background: rgba(76, 175, 80, 0.1);
+              border: 2px solid #4CAF50;
+            }
+            
+            &.incorrect {
+              background: rgba(244, 67, 54, 0.1);
+              border: 2px solid #F44336;
+            }
+            
+            .score-number {
+              display: block;
+              font-size: 1.8rem;
+              font-weight: 700;
+              margin-bottom: 5px;
+              
+              .correct & {
+                color: #4CAF50;
+              }
+              
+              .incorrect & {
+                color: #F44336;
+              }
+            }
+            
+            .score-label {
+              font-size: 0.9rem;
+              color: #666;
+              font-weight: 600;
+            }
+          }
+        }
+        
+        .percentage-section {
+          text-align: center;
+          margin-bottom: 20px;
+          
+          .percentage-circle {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #4CAF50 0%, #66BB6A 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto;
+            box-shadow: 0 4px 15px rgba(76, 175, 80, 0.3);
+            
+            .percentage-text {
+              color: white;
+              font-size: 1.5rem;
+              font-weight: 700;
+            }
+          }
+        }
+        
+        .level-section {
+          text-align: center;
+          margin-bottom: 15px;
+          
+          .level-recommendation {
+            .level-label {
+              display: block;
+              font-size: 0.9rem;
+              color: #666;
+              margin-bottom: 5px;
+            }
+            
+            .level-value {
+              font-size: 1.2rem;
+              font-weight: 700;
+              padding: 8px 16px;
+              border-radius: 20px;
+              display: inline-block;
+              
+              &.experto {
+                background: linear-gradient(135deg, #9C27B0 0%, #BA68C8 100%);
+                color: white;
+              }
+              
+              &.avanzado {
+                background: linear-gradient(135deg, #2196F3 0%, #64B5F6 100%);
+                color: white;
+              }
+              
+              &.intermedio {
+                background: linear-gradient(135deg, #FF9800 0%, #FFB74D 100%);
+                color: white;
+              }
+              
+              &.básico {
+                background: linear-gradient(135deg, #FF5722 0%, #FF8A65 100%);
+                color: white;
+              }
+              
+              &.principiante {
+                background: linear-gradient(135deg, #795548 0%, #A1887F 100%);
+                color: white;
+              }
+            }
+          }
+        }
+        
+        .time-section {
+          text-align: center;
+          
+          .time-text {
+            color: #666;
+            font-size: 0.9rem;
+          }
+        }
+      }
+    }
+    
+    .alert-button-group {
+      flex-direction: column;
+      
+      .alert-button {
+        margin: 5px 10px;
+        border-radius: 25px;
+        font-weight: 600;
+        
+        &.details-button {
+          background: rgba(255, 111, 0, 0.1);
+          color: #FF6F00;
+          border: 2px solid #FF6F00;
+        }
+        
+        &.continue-button {
+          background: linear-gradient(135deg, #4CAF50 0%, #66BB6A 100%);
+          color: white;
+          border: none;
+        }
+      }
+    }
+  }
+  
+  // Ajustes específicos para móvil
+  @media (max-width: 480px) {
+    .alert-wrapper {
+      max-width: 320px;
+      margin: 20px;
+      
+      .alert-message .results-content {
+        padding: 16px;
+        
+        .score-section {
+          margin-bottom: 16px;
+          
+          .score-item {
+            padding: 12px;
+            min-width: 70px;
+            
+            .score-number {
+              font-size: 1.6rem;
+            }
+            
+            .score-label {
+              font-size: 0.8rem;
+            }
+          }
+        }
+        
+        .percentage-section {
+          margin-bottom: 16px;
+          
+          .percentage-circle {
+            width: 70px;
+            height: 70px;
+            
+            .percentage-text {
+              font-size: 1.3rem;
+            }
+          }
+        }
+        
+        .level-section {
+          margin-bottom: 12px;
+          
+          .level-recommendation {
+            .level-value {
+              font-size: 1.1rem;
+              padding: 6px 14px;
+            }
+          }
+        }
+      }
+    }
+  }
+}

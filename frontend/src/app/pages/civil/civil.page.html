@@ -1,0 +1,67 @@
+<ion-content class="civil-content">
+  <!-- Header personalizado -->
+  <div class="custom-header-section">
+    <div class="orange-background">
+      <!-- Imagen de extremo a extremo -->
+      <div class="derecho-civil-container-full">
+        <img src="assets/image/civil/logo_civil.png" alt="Derecho Civil" class="derecho-civil-image-responsive">
+      </div>
+    </div>
+</div>
+
+  <!-- Resto del contenido -->
+  <div class="content-area">
+    
+
+    <!-- Progreso Civil -->
+    <div class="progreso-card">
+      <div class="progreso-content">
+        <div class="progreso-icon">
+          <ion-icon name="trophy-outline"></ion-icon>
+        </div>
+        <div class="progreso-info">
+          <h4>Progreso Civil</h4>
+          <p>2/10 Item 1</p>
+          <div class="progress-bar">
+            <div class="progress-fill" style="width: 75%"></div>
+          </div>
+          <span class="progress-text">75% completado</span>
+        </div>
+      </div>
+      <div class="mapache-container">
+        <img src="assets/image/mok.png" alt="Mapache" class="mapache-image">
+      </div>
+    </div>
+
+    <!-- Botones de Material -->
+    <div class="material-buttons">
+      <img src="assets/image/botones/Material_Estudio.png" alt="Material de Estudio" class="material-image-button" (click)="goToMaterialEstudio()">
+      <img src="assets/image/botones/Plan_Estudio.png" alt="Plan de Estudio" class="material-image-button" (click)="goToPlanEstudio()">
+    </div>
+
+    <!-- Botones de Práctica -->
+    <div class="practice-buttons">
+      <img src="assets/image/botones/escrito.png" alt="Escrito" class="practice-image-button" (click)="goToEscrito()">
+      
+      <img src="assets/image/botones/concersacion.png" alt="Conversación" class="practice-image-button" (click)="goToConversacion()">
+      
+      <img src="assets/image/botones/reforzar.png" alt="Test" class="practice-image-button" (click)="goToTest()">
+    </div>
+
+    <!-- Tus Estadísticas -->
+    <div class="stats-section">
+      <h4>Tus Estadísticas</h4>
+      <div class="stats-content">
+        <!-- Aquí irá el contenido de estadísticas -->
+        <div class="mapache-bottom">
+          <img src="assets/image/mcara.png" alt="Mapache" class="mapache-stats">
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Bottom Navigation Component -->
+<app-bottom-nav></app-bottom-nav>
+
+</ion-content>

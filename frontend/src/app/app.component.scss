@@ -1,0 +1,49 @@
+.custom-tab-bar {
+  position: relative;
+  height: 80px;
+  --background: transparent;
+  
+  .tab-background {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1;
+    
+    img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+  }
+  
+  .custom-tab-button {
+    position: relative;
+    z-index: 2;
+    --background: transparent;
+    --color: #95a5a6;
+    --color-selected: #E67E22;
+    
+    .tab-icon {
+      width: 24px;
+      height: 24px;
+      object-fit: contain;
+    }
+    
+    &.add-button {
+      .add-icon-container {
+        background: #FFD102;
+        border-radius: 50%;
+        padding: 15px;
+        margin-top: -15px;
+        
+        .tab-icon-add {
+          width: 20px;
+          height: 20px;
+          filter: brightness(0) invert(1);
+        }
+      }
+    }
+  }
+}

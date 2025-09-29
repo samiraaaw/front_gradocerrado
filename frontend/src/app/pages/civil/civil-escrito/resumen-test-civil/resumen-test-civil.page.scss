@@ -1,0 +1,324 @@
+// ========================================
+// CONFIGURACIÓN BÁSICA - IGUAL QUE OTRAS PÁGINAS
+// ========================================
+.results-content {
+  --background: transparent;
+  background-image: url('/assets/image/fondo_blanco_app.png');
+  background-repeat: no-repeat;
+  background-position: center top;
+  background-size: cover;
+  background-attachment: fixed;
+  min-height: 100vh;
+}
+
+ion-content.results-content {
+  --overflow: auto;
+  height: 100%;
+}
+
+// ========================================
+// HEADER FIJO - EXACTO COMO OTRAS PÁGINAS
+// ========================================
+.custom-header-section {
+  position: fixed;  
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 1000;   
+  background: transparent;
+  
+  .orange-background {
+    background: transparent;
+    padding: 0;
+    border-radius: 0;
+    position: relative;
+    overflow: hidden;
+    width: 100vw;
+
+    .derecho-civil-container-full {
+      display: block;
+      width: 100%;
+      height: auto;
+      position: relative;
+      z-index: 3;
+
+      .derecho-civil-image-responsive {
+        display: block;
+        width: 100vw;
+        height: auto;
+        min-height: 120px;
+        max-height: 200px;
+        object-fit: cover;
+        object-position: center;
+        filter: drop-shadow(0 6px 16px rgba(0,0,0,0.18));
+      }
+    }
+  }
+}
+
+// ========================================
+// CONTENIDO PRINCIPAL
+// ========================================
+.content-area {
+  margin-top: 140px;
+  padding: 20px 16px 100px 16px;
+  position: relative;
+  z-index: 2;
+  background: transparent; 
+  border-radius: 30px 30px 0 0;
+  min-height: calc(100vh - 100px);
+}
+
+// ========================================
+// CARD PRINCIPAL DE RESULTADOS
+// ========================================
+.results-main-card {
+  background: linear-gradient(135deg, #C8E6C9 0%, #A5D6A7 100%);
+  border-radius: 20px;
+  padding: 30px 20px;
+  margin-bottom: 24px;
+  text-align: center;
+  box-shadow: 0 8px 24px rgba(76, 175, 80, 0.2);
+  border: 1px solid rgba(76, 175, 80, 0.1);
+}
+
+// ========================================
+// SECCIÓN DE MEDALLA
+// ========================================
+.medal-section {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 20px;
+  position: relative;
+  
+  .medal-container {
+    position: relative;
+    z-index: 2;
+    
+    .medal-ribbon {
+      display: flex;
+      justify-content: center;
+      margin-bottom: -10px;
+      
+      .ribbon-icon {
+        font-size: 2rem;
+        color: #FFD700;
+        filter: drop-shadow(0 2px 4px rgba(0,0,0,0.2));
+      }
+    }
+    
+    .medal-circle {
+      width: 60px;
+      height: 60px;
+      background: linear-gradient(135deg, #FFD700 0%, #FFC107 100%);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 4px 12px rgba(255, 193, 7, 0.4);
+      border: 3px solid #FFF;
+      
+      .medal-number {
+        font-size: 1.8rem;
+        font-weight: 800;
+        color: #8D6E63;
+      }
+    }
+  }
+  
+  .mapache-celebration {
+    position: absolute;
+    right: 10px;
+    top: -10px;
+    z-index: 1;
+    
+    .mapache-result {
+      width: 50px;
+      height: 50px;
+      object-fit: contain;
+      filter: drop-shadow(0 2px 8px rgba(0,0,0,0.15));
+    }
+  }
+}
+
+// ========================================
+// TEXTOS DE NIVEL
+// ========================================
+.level-title {
+  font-size: 1.6rem;
+  font-weight: 800;
+  color: #2E7D32;
+  margin: 0 0 8px 0;
+  letter-spacing: 1px;
+  text-shadow: 0 1px 2px rgba(0,0,0,0.1);
+}
+
+.level-subtitle {
+  font-size: 1.1rem;
+  color: #388E3C;
+  margin: 0 0 24px 0;
+  font-weight: 600;
+}
+
+// ========================================
+// PUNTUACIÓN PRINCIPAL
+// ========================================
+.score-main {
+  background: rgba(255, 255, 255, 0.9);
+  border-radius: 16px;
+  padding: 20px;
+  margin-top: 20px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  
+  .percentage-display {
+    font-size: 3.5rem;
+    font-weight: 900;
+    color: #4CAF50;
+    margin: 0;
+    line-height: 1;
+    text-shadow: 0 2px 4px rgba(76, 175, 80, 0.3);
+  }
+  
+  .score-label {
+    font-size: 1rem;
+    color: #666;
+    margin: 8px 0 0 0;
+    font-weight: 500;
+  }
+}
+
+// ========================================
+// SECCIÓN DE RESUMEN
+// ========================================
+.summary-section {
+  background: rgba(255, 255, 255, 0.95);
+  border-radius: 16px;
+  padding: 20px;
+  margin-bottom: 24px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+  
+  .summary-title {
+    display: flex;
+    align-items: center;
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: #333;
+    margin: 0 0 20px 0;
+    
+    ion-icon {
+      font-size: 1.4rem;
+      color: #4CAF50;
+      margin-right: 8px;
+    }
+  }
+}
+
+// ========================================
+// ESTADÍSTICAS DE RESUMEN
+// ========================================
+.summary-stats {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  margin-bottom: 24px;
+  
+  .stat-correct,
+  .stat-incorrect {
+    text-align: center;
+    padding: 16px;
+    border-radius: 12px;
+    
+    .stat-number {
+      font-size: 2rem;
+      font-weight: 800;
+      margin-bottom: 4px;
+    }
+    
+    .stat-label {
+      font-size: 0.85rem;
+      font-weight: 600;
+      letter-spacing: 0.5px;
+    }
+  }
+  
+  .stat-correct {
+    background: linear-gradient(135deg, #C8E6C9 0%, #A5D6A7 100%);
+    border: 1px solid rgba(76, 175, 80, 0.2);
+    
+    .stat-number {
+      color: #2E7D32;
+    }
+    
+    .stat-label {
+      color: #388E3C;
+    }
+  }
+  
+  .stat-incorrect {
+    background: linear-gradient(135deg, #FFCDD2 0%, #EF9A9A 100%);
+    border: 1px solid rgba(244, 67, 54, 0.2);
+    
+    .stat-number {
+      color: #C62828;
+    }
+    
+    .stat-label {
+      color: #D32F2F;
+    }
+  }
+}
+
+// ========================================
+// GRID DE PREGUNTAS
+// ========================================
+.questions-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 12px;
+  
+  .question-circle {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 0.9rem;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+    border: 2px solid;
+    
+    &.correct {
+      background: linear-gradient(135deg, #66BB6A 0%, #4CAF50 100%);
+      color: white;
+      border-color: #2E7D32;
+    }
+    
+    &.incorrect {
+      background: linear-gradient(135deg, #EF5350 0%, #F44336 100%);
+      color: white;
+      border-color: #C62828;
+    }
+  }
+}
+
+// ========================================
+// BOTONES DE ACCIÓN
+// ========================================
+.action-buttons {
+  .action-btn {
+    margin-bottom: 12px;
+    height: 48px;
+    font-weight: 600;
+    
+    &.secondary {
+      --color: #4CAF50;
+      --border-color: #4CAF50;
+    }
+    
+    &.tertiary {
+      --color: #666;
+    }
+  }
+}

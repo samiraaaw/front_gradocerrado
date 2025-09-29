@@ -1,0 +1,298 @@
+// ========================================
+// CONFIGURACIÓN BÁSICA
+// ========================================
+.registro-content {
+  --ion-background-color: #f8f9fa;
+  background-image: url('/assets/image/fondo_blanco_app.png');
+  background-repeat: no-repeat;
+  background-position: center top;
+  background-size: cover;
+  background-attachment: fixed;
+  min-height: 100vh;
+}
+
+/* Asegurar que ion-content sea scrollable */
+ion-content.registro-content {
+  --overflow: auto;
+  height: 100%;
+}
+
+// ========================================
+// HEADER FIJO CON IMAGEN RESPONSIVA (ORIGINAL)
+// ========================================
+  // Header Section (igual que registro)
+  .header-section {
+    position: relative;
+    height: 200px;
+    margin-bottom: 50px;
+    overflow: visible;
+
+    .background-image {
+      position: absolute;
+      top: 0;                     /* Alineada arriba */
+      left: 50%;                  /* Centrada horizontalmente */
+      transform: translateX(-50%);
+      width: 100vw;               /* Ocupa todo el ancho visible de la ventana */
+      height: auto;               /* La altura se ajusta automáticamente para no deformar la imagen */
+      z-index: 1;
+
+      .superior-gris {
+        width: 100%;
+        height: auto;             /* Mantiene la proporción original */
+        object-fit: contain;      /* Muestra toda la imagen sin recortes */
+      }
+    }
+
+
+    .back-button {
+      position: absolute;
+      left: 20px;
+      top: 20px;
+      color: #666;
+      --color: #666;
+      z-index: 3;
+      background: rgba(255, 255, 255, 0.8);
+      --background: rgba(255, 255, 255, 0.8);
+      border-radius: 50%;
+      width: 40px;
+      height: 40px;
+    }
+
+    .mapache-container {
+      position: absolute;
+      bottom: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 2;
+
+      .mapache-image {
+        width: 120px;
+        height: 120px;
+        object-fit: contain;
+        filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.2));
+      }
+    }
+  }
+
+// ========================================
+// CONTENIDO PRINCIPAL
+// ========================================
+.content-area {
+  margin-top: 100px;
+  padding: 8px 16px 100px 16px; // Reducido padding superior
+  position: relative;
+  z-index: 2;
+  background: transparent; 
+  border-radius: 30px 30px 0 0;
+  min-height: calc(100vh - 100px);
+}
+
+// ========================================
+// CONTENEDOR DEL MAPACHE
+// ========================================
+.mapache-container {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 16px; // Reducido margen inferior
+
+  .mapache-image {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    background: white;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    object-fit: contain;
+  }
+}
+
+// ========================================
+// FORMULARIO DE REGISTRO
+// ========================================
+.form-container {
+  padding: 0 20px;
+  margin-bottom: 20px;
+
+  // Grid para campos horizontales
+  .name-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-bottom: 12px;
+  }
+
+  // Campos de ancho medio
+  .half-width {
+    margin-bottom: 0 !important;
+  }
+
+  // Campos del formulario
+  .form-field {
+    margin-bottom: 16px;
+
+    // Labels en gris claro
+    .field-label {
+      display: block;
+      font-size: 12px;
+      font-weight: 500;
+      color: #aaa; // Gris más claro
+      margin-bottom: 6px;
+      margin-left: 4px;
+    }
+
+    // Input principal
+    .custom-input {
+      --background: #ffffff;
+      --border-radius: 12px;
+      --border-width: 1px;
+      --border-color: #e0e0e0;
+      --color: #333 !important;
+      --placeholder-color: #999 !important;
+      --padding-start: 16px !important; // Más padding
+      --padding-end: 16px !important;
+      --padding-top: 14px !important;
+      --padding-bottom: 14px !important;
+      height: 48px;
+      font-size: 15px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+      transition: all 0.3s ease;
+
+      &:focus-within {
+        --border-color: #4a90e2;
+        box-shadow: 0 2px 12px rgba(74, 144, 226, 0.15);
+      }
+
+      // Input compacto para nombres/apellidos
+      &.compact {
+        --padding-start: 14px !important;
+        --padding-end: 14px !important;
+        --padding-top: 12px !important;
+        --padding-bottom: 12px !important;
+        font-size: 14px;
+        height: 42px;
+      }
+
+      // Botón de mostrar contraseña
+      ion-button {
+        --color: #999;
+        margin: 0;
+        
+        &:hover {
+          --color: #666;
+        }
+      }
+    }
+
+    .error-message {
+      font-size: 12px;
+      color: #ff4444;
+      margin-top: 4px;
+      margin-left: 4px;
+    }
+  }
+}
+
+// ========================================
+// BOTÓN DE REGISTRO VERDE (CENTRADO)
+// ========================================
+.registro-btn-green {
+  --background: #4CAF50;
+  --background-activated: #45A049;
+  --border-radius: 25px;
+  --box-shadow: 0 4px 12px rgba(76, 175, 80, 0.3);
+  height: 48px;
+  font-weight: 600;
+  font-size: 16px;
+  margin: 24px auto 16px auto;
+  text-transform: none;
+  width: auto;
+  min-width: 200px;
+  max-width: 300px;
+  display: block;
+
+  &:disabled {
+    --background: #cccccc;
+    --box-shadow: none;
+  }
+
+  ion-spinner {
+    margin-right: 8px;
+  }
+}
+
+// ========================================
+// LINK DE INICIO DE SESIÓN
+// ========================================
+.login-link {
+  text-align: center;
+  font-size: 14px;
+  color: #666;
+  margin: 16px 0;
+
+  .link-text {
+    color: #4a90e2;
+    font-weight: 600;
+    text-decoration: none;
+    cursor: pointer;
+
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+}
+
+// ========================================
+// ASEGURAR COLOR DEL TEXTO EN INPUTS
+// ========================================
+ion-input {
+  --color: #333 !important;
+}
+
+// ========================================
+// RESPONSIVE DESIGN
+// ========================================
+@media (max-width: 480px) {
+  .registro-content {
+    .content-area {
+      padding: 8px 12px 80px 12px;
+    }
+
+    .form-container {
+      padding: 0 16px;
+
+      .form-field {
+        margin-bottom: 14px;
+
+        .custom-input {
+          --padding-start: 14px !important;
+          --padding-end: 14px !important;
+        }
+      }
+    }
+
+    .registro-btn-green {
+      height: 48px;
+      font-size: 15px;
+    }
+  }
+}
+
+@media (min-width: 768px) {
+  .custom-header-section .orange-background {
+    .derecho-civil-container-full {
+      .derecho-civil-image-responsive {
+        min-height: 100px;
+        max-height: 150px;
+      }
+    }
+  }
+  
+  .content-area {
+    margin-top: 120px;
+    padding: 16px 32px 100px 32px;
+  }
+  
+  .form-container {
+    padding: 0 24px;
+  }
+}

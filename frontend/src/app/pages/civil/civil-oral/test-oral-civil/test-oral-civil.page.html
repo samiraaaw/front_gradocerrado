@@ -1,0 +1,130 @@
+<ion-content class="test-content">
+  <!-- Header personalizado -->
+  <div class="custom-header-section">
+    <div class="orange-background">
+      <!-- Imagen de extremo a extremo con estado de conversación -->
+      <div class="derecho-civil-container-full">
+        <img src="assets/image/civil/logo_civil.png" alt="Derecho Civil" class="derecho-civil-image-responsive">
+        
+        <!-- Indicador de modo conversación -->
+        <div class="conversation-indicator">
+          <div class="conversation-badge">
+            <span>CONVERSACIÓN</span>
+            <ion-icon name="volume-high" class="audio-icon"></ion-icon>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Contenido principal -->
+  <div class="content-area" *ngIf="getCurrentQuestion()">
+    
+    <!-- Progreso y número de pregunta -->
+    <div class="progress-section">
+      <div class="progress-text">Pregunta {{ currentQuestionNumber }} de {{ totalQuestions }}</div>
+      <div class="progress-bar">
+        <div class="progress-fill" [style.width.%]="getProgress()"></div>
+      </div>
+    </div>
+
+    <!-- Número de pregunta -->
+    <div class="question-number">
+      <h2>Pregunta {{ currentQuestionNumber }}</h2>
+    </div>
+
+    <!-- Texto de la pregunta -->
+    <div class="question-text">
+      <p>{{ getCurrentQuestionText() }}</p>
+    </div>
+
+    <!-- Control de audio para escuchar la pregunta -->
+    <div class="audio-control-section">
+      <div class="audio-player" [class.playing]="isPlaying" [class.completed]="audioCompleted">
+        <div class="audio-icon-container" (click)="toggleAudio()">
+          <ion-icon [name]="getAudioIcon()" class="audio-play-icon"></ion-icon>
+        </div>
+        <div class="audio-text">
+          <span class="audio-status">{{ getAudioStatus() }}</span>
+          <span class="audio-duration">{{ audioProgress }}</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Sección de grabación de respuesta -->
+    <div class="recording-section">
+      <div class="recording-controls">
+        
+        <!-- Botón de grabación principal -->
+        <div class="recording-button-container">
+          <div 
+            class="recording-button" 
+            [class.recording]="isRecording"
+            [class.has-recording]="hasRecording"
+            (click)="toggleRecording()">
+            
+            <div class="recording-circle">
+              <ion-icon [name]="getRecordingIcon()" class="recording-icon"></ion-icon>
+            </div>
+            
+            <!-- Indicador de grabación activa -->
+            <div class="recording-pulse" *ngIf="isRecording"></div>
+          </div>
+          
+          <div class="recording-text">
+            <span class="recording-status">{{ getRecordingStatus() }}</span>
+            <span class="recording-timer" *ngIf="isRecording || hasRecording">{{ recordingTime }}</span>
+          </div>
+        </div>
+
+        <!-- Controles adicionales -->
+        <div class="recording-actions" *ngIf="hasRecording">
+          <button class="action-button replay" (click)="replayRecording()">
+            <ion-icon name="play"></ion-icon>
+            <span>Pausar</span>
+          </button>
+          
+          <button class="action-button restart" (click)="restartRecording()">
+            <ion-icon name="refresh"></ion-icon>
+            <span>Reiniciar</span>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Botón para enviar respuesta -->
+    <div class="submit-section" *ngIf="hasRecording">
+      <button class="submit-voice-button" (click)="submitVoiceAnswer()">
+        <ion-icon name="send"></ion-icon>
+        <span>Enviar Respuesta de Voz</span>
+      </button>
+    </div>
+
+    <!-- Botones de navegación -->
+    <div class="navigation-buttons">
+      <button 
+        class="nav-button secondary" 
+        [disabled]="currentQuestionNumber === 1"
+        (click)="previousQuestion()">
+        <ion-icon name="chevron-back"></ion-icon>
+        <span>Anterior</span>
+      </button>
+      
+      <button 
+        class="nav-button primary" 
+        [disabled]="!canGoToNext()"
+        (click)="nextQuestion()">
+        <span>{{ isLastQuestion() ? 'Finalizar' : 'Siguiente' }}</span>
+        <ion-icon name="chevron-forward"></ion-icon>
+      </button>
+    </div>
+
+  </div>
+
+  <!-- Loading state -->
+  <div class="loading-container" *ngIf="!getCurrentQuestion()">
+    <ion-spinner name="crescent"></ion-spinner>
+    <p>Cargando preguntas...</p>
+  </div>
+
+</ion-content>

@@ -1,0 +1,73 @@
+.welcome-content {
+  --background: #FFD102; // Color amarillo exacto de tu mockup
+}
+
+.welcome-container {
+  height: 100vh;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+  background-color: #FFD102;
+}
+
+.logo-container {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 60px 20px 20px 20px;
+}
+
+.main-logo {
+  max-width: 80% !important;  // Cambiar de 200% a 80%
+  max-height: 250px !important;  // Aumentar de 200px a 250px
+  width: auto !important;  // Cambiar de 100px a auto
+  height: auto;
+  object-fit: contain;
+}
+
+// Mapache de extremo a extremo
+  .mascot-container {
+    position: absolute;
+    bottom: 0px;
+    left: 0;
+    right: 0;
+    width: 100vw;
+    z-index: 0;
+    display: flex;
+    justify-content: center;
+  
+  .mascot-image {
+    width: 100vw !important;
+    height: 300px !important;
+    object-fit: cover;
+    object-position: center bottom;
+  }
+}
+
+// Responsive
+@media (max-width: 480px) {
+  .logo-container .main-logo {
+    width: auto !important;  // Cambiar de 280px a auto
+    max-width: 85% !important;  // Agregar max-width
+    max-height: 200px !important;  // Agregar max-height
+  }
+  
+  .buttons-container {
+    bottom: 180px;
+  }
+  
+  .action-btn {
+    width: 250px;
+    padding: 16px 20px;
+    font-size: 16px;
+  }
+  
+  .mascot-container .mascot-image {
+    width: 100vw !important;
+    height: 350px !important;
+  }
+}

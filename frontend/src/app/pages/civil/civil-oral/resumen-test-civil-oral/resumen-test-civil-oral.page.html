@@ -1,0 +1,95 @@
+<ion-content class="civil-content">
+  <!-- Header personalizado EXACTO como civil.page.html -->
+  <div class="custom-header-section">
+    <div class="orange-background">
+      <!-- Imagen de extremo a extremo -->
+      <div class="derecho-civil-container-full">
+        <img src="assets/image/civil/logo_civil.png" alt="Derecho Civil" class="derecho-civil-image-responsive">
+      </div>
+    </div>
+  </div>
+  <!-- Resto del contenido igual -->
+  <div class="content-area">
+    
+    <!-- Resultado principal -->
+    <div class="result-card">
+      <div class="result-icon">
+        <ion-icon name="checkmark-circle" class="success-icon"></ion-icon>
+      </div>
+      <h2 class="result-title">¡Test Oral Completado!</h2>
+      <div class="percentage-display">
+        <span class="percentage-number">85%</span>
+        <span class="percentage-label">de respuestas correctas</span>
+      </div>
+    </div>
+
+    <!-- Estadísticas del test -->
+    <div class="stats-section">
+      <h3>Resumen de tu sesión</h3>
+      
+      <div class="stats-grid">
+        <div class="stat-item">
+          <div class="stat-number correct">4</div>
+          <div class="stat-label">Correctas</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-number incorrect">1</div>
+          <div class="stat-label">Incorrectas</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-number total">5</div>
+          <div class="stat-label">Total</div>
+        </div>
+      </div>
+      
+      <div class="time-used">
+        <ion-icon name="time-outline"></ion-icon>
+        <span>Tiempo utilizado: 8:45 min</span>
+      </div>
+    </div>
+
+    <!-- Indicadores de preguntas -->
+    <div class="questions-status">
+      <h4>Estado de tus respuestas</h4>
+      <div class="questions-circles">
+        <div class="question-circle correct">1</div>
+        <div class="question-circle correct">2</div>
+        <div class="question-circle correct">3</div>
+        <div class="question-circle incorrect">4</div>
+        <div class="question-circle correct">5</div>
+      </div>
+    </div>
+
+    <!-- Botones de acción -->
+    <div class="action-buttons">
+      <ion-button expand="block" fill="outline" class="review-btn" (click)="reviewIncorrect()">
+        <ion-icon name="eye-outline" slot="start"></ion-icon>
+        Revisar Respuestas Incorrectas
+      </ion-button>
+      
+      <ion-button expand="block" class="new-test-btn" (click)="takeNewTest()">
+        <ion-icon name="refresh-outline" slot="start"></ion-icon>
+        Hacer Nuevo Test Oral
+      </ion-button>
+      
+      <ion-button expand="block" fill="clear" class="back-btn" (click)="goBack()">
+        <ion-icon name="arrow-back-outline" slot="start"></ion-icon>
+        Volver al Inicio
+      </ion-button>
+    </div>
+
+    <!-- Mapache de felicitación -->
+    <div class="mapache-section">
+      <div class="mapache-container">
+        <img src="assets/image/mcantante.png" alt="Mapache feliz" class="mapache-celebration">
+        <div class="celebration-message">
+          ¡Excelente trabajo en el modo oral!
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Bottom Navigation Component -->
+  <app-bottom-nav></app-bottom-nav>
+</ion-content>

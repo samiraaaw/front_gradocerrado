@@ -1,0 +1,47 @@
+<ion-content [fullscreen]="true" class="felicidades-content">
+  <div class="felicidades-container">
+    
+    <!-- Confeti animado -->
+    <div class="confetti">
+      <div class="confetti-piece" *ngFor="let piece of confettiPieces"></div>
+    </div>
+
+    <!-- Header con botón de atrás (opcional) -->
+    <div class="header-section">
+      <ion-button 
+        fill="clear" 
+        size="small" 
+        class="back-button"
+        (click)="goBack()">
+        <ion-icon name="chevron-back" slot="icon-only"></ion-icon>
+      </ion-button>
+    </div>
+
+    <!-- Contenido principal -->
+    <div class="main-content">
+      
+      <!-- Ícono de éxito -->
+      <div class="success-icon">
+        <ion-icon name="checkmark" class="check-icon"></ion-icon>
+      </div>
+
+      <!-- Mapache celebrando -->
+      <div class="mascot-container">
+        <img src="assets/image/mcelebrando.png" alt="Mapache celebrando" class="mascot-image">
+      </div>
+
+      <!-- Texto de felicitación -->
+      <h1 class="success-title">¡Felicidades!</h1>
+      <p class="success-message">Ya estás un paso más adelante para aprobar</p>
+
+      <!-- Botón para ir al inicio -->
+      <ion-button 
+        expand="block" 
+        class="home-button"
+        (click)="goToHome()">
+        Ir al Inicio
+      </ion-button>
+      
+    </div>
+  </div>
+</ion-content>
