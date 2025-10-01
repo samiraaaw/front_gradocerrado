@@ -1,0 +1,98 @@
+/* ===== FONDO BLANCO (sin dark) ===== */
+:host,
+ion-content.civil-content {
+  --ion-background-color: #ffffff !important;
+  --background: #ffffff !important;
+  background: #ffffff !important;
+  color-scheme: light;
+}
+.civil-content { background-image: none !important; }
+
+/* ===== HEADER IGUAL QUE EN MATERIAL/CIVIL ===== */
+.custom-header-section { position: fixed; top: 0; left: 0; right: 0; z-index: 1000; }
+
+.gc-back-btn {
+  position: absolute;
+  top: calc(env(safe-area-inset-top, 0px) + 12px);
+  left: 12px;
+  width: 42px; height: 42px; border-radius: 999px;
+  background: #ffffff;
+  box-shadow: 0 4px 14px rgba(0,0,0,0.15);
+  z-index: 1100;
+  --min-width: 42px; --padding-start: 0; --padding-end: 0;
+  &::part(icon) { font-size: 22px; color: #222; }
+}
+
+.orange-background { background: transparent; }
+.derecho-civil-container-full { width: 100%; }
+.derecho-civil-image-responsive {
+  display: block; width: 100vw; height: auto;
+  min-height: 120px; max-height: 200px;
+  object-fit: cover; object-position: center;
+}
+
+/* ===== CONTENIDO ===== */
+.content-area {
+  margin-top: 140px;
+  padding: 16px 16px 100px;
+  background: #ffffff;
+}
+
+/* ===== HERO GUÍA (libro/calendario) ===== */
+.guide-hero {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  gap: 12px;
+  padding: 14px;
+  border-radius: 16px;
+  background: linear-gradient(135deg, #f6f9ff, #eef6ff);
+  box-shadow: 0 6px 18px rgba(0,0,0,0.06);
+  margin-bottom: 12px;
+
+  .guide-icon ion-icon { font-size: 32px; color: #0ea5e9; }
+  .guide-info h2 { margin: 0; font-size: 1.1rem; color: #111; }
+  .guide-info p  { margin: 2px 0 0 0; font-size: .85rem; color: #475569; }
+}
+
+/* ===== PLANES ===== */
+.plans { display: grid; gap: 10px; }
+
+.plan-card {
+  border-radius: 16px;
+  background: #fff;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.08);
+  overflow: hidden;
+  cursor: pointer;
+  transition: transform .12s ease;
+}
+.plan-card:active { transform: scale(.99); }
+
+.plan-header {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 14px;
+}
+.plan-title { display: flex; align-items: center; gap: 10px; }
+.plan-title ion-icon { font-size: 22px; color: #0ea5e9; }
+.plan-title h3 { margin: 0; font-weight: 700; color: #111; }
+.plan-title small { color: #64748b; }
+.chev { color: #94a3b8; font-size: 18px; }
+
+.plan-body {
+  padding: 0 14px 14px 14px;
+}
+.plan-body .resumen { color: #374151; margin: 0 0 10px 0; }
+.section { margin-top: 8px; }
+.section h4 { margin: 0 0 6px 0; font-size: .95rem; color: #111; }
+.section ul { margin: 0; padding-left: 18px; color: #374151; }
+.section li { margin: 4px 0; }
+
+/* ===== RESPONSIVE ===== */
+@media (min-width: 768px) {
+  .derecho-civil-image-responsive { min-height: 150px; max-height: 250px; }
+  .content-area { margin-top: 180px; padding: 24px 32px 100px; }
+}
+@media (max-width: 480px) {
+  .derecho-civil-image-responsive { min-height: 100px; max-height: 160px; }
+  .content-area { margin-top: 120px; padding: 16px 12px 80px; }
+}

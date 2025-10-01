@@ -1,0 +1,83 @@
+<ion-content class="notifications-content">
+  
+  <!-- Header con fondo gris -->
+  <div class="header-section">
+    <div class="background-image">
+      <img src="assets/image/superior_gris.png" alt="Background" class="superior-gris">
+    </div>
+    
+    <div class="header-content">
+      <ion-button fill="clear" (click)="goBack()" class="back-button">
+        <ion-icon name="chevron-back"></ion-icon>
+      </ion-button>
+      
+      <h1>Notificaciones</h1>
+      
+      <div class="header-right">
+        <ion-button fill="clear" (click)="goToSettings()" class="config-btn">
+          <ion-icon name="settings-outline"></ion-icon>
+        </ion-button>
+        <div class="bell-container">
+          <ion-icon name="notifications" class="bell-icon"></ion-icon>
+          <div class="notification-badge" *ngIf="unreadCount > 0">{{ unreadCount }}</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Contenido scrollable -->
+  <div class="scrollable-content">
+
+    <!-- Lista de Notificaciones -->
+    <div class="notifications-list">
+      
+      <div class="list-header" *ngIf="notifications.length > 0">
+        <button class="action-btn" (click)="markAllAsRead()">
+          <ion-icon name="checkmark-done"></ion-icon>
+          Marcar todas como leídas
+        </button>
+        <button class="action-btn danger" (click)="clearAll()">
+          <ion-icon name="trash"></ion-icon>
+          Limpiar todo
+        </button>
+      </div>
+
+      <div class="notifications-container">
+        <div 
+          *ngFor="let notification of notifications" 
+          class="notification-card"
+          [class.unread]="!notification.read"
+          (click)="markAsRead(notification)">
+          
+          <div class="notification-icon" [style.background-color]="notification.iconColor + '20'">
+            <ion-icon [name]="notification.icon" [style.color]="notification.iconColor"></ion-icon>
+          </div>
+          
+          <div class="notification-content">
+            <h3>{{ notification.title }}</h3>
+            <p>{{ notification.message }}</p>
+            <span class="notification-time">{{ notification.time }}</span>
+          </div>
+          
+          <button class="delete-btn" (click)="deleteNotification(notification, $event)">
+            <ion-icon name="close"></ion-icon>
+          </button>
+        </div>
+
+        <div *ngIf="notifications.length === 0" class="empty-state">
+          <ion-icon name="notifications-off"></ion-icon>
+          <h3>No tienes notificaciones</h3>
+          <p>Cuando tengas nuevas notificaciones aparecerán aquí</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Espaciado para navegación inferior -->
+    <div class="bottom-spacer"></div>
+
+  </div>
+
+  <!-- Navegación inferior -->
+  <app-bottom-nav></app-bottom-nav>
+
+</ion-content>

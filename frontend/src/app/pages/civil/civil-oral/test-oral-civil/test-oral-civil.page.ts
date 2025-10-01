@@ -1,16 +1,22 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, ChangeDetectorRef } from '@angular/core';
 import { Router } from '@angular/router';
-import { AlertController } from '@ionic/angular';
+import { AlertController, LoadingController } from '@ionic/angular';
+import { Subscription } from 'rxjs';
+import { AudioService, AudioRecordingState } from 'src/app/services/audio';
+import { ApiService } from '../../../../services/api.service';
 
 interface Question {
   id: string;
   text: string;
-  correctAnswerId: string;
-  options: Array<{
-    id: string;
-    text: string;
-  }>;
+  questionText: string;
+  type: number;
   category: string;
+  legalArea: string;
+  difficulty: number;
+  correctAnswer: string;
+  explanation: string;
+  userAnswer?: string;
+  [key: string]: any;
 }
 
 @Component({
@@ -31,102 +37,187 @@ export class TestOralCivilPage implements OnInit, OnDestroy {
   isPlaying: boolean = false;
   audioCompleted: boolean = false;
   audioProgress: string = '00:02';
+  currentAudio: HTMLAudioElement | null = null;
   
   // Variables de grabación
   isRecording: boolean = false;
   hasRecording: boolean = false;
   recordingTime: string = '00:00';
-  recordingTimer: any;
-  recordingStartTime: number = 0;
+  recordingDuration: number = 0;
+  audioBlob: Blob | null = null;
+  audioUrl: string | null = null;
+  isPlayingRecording: boolean = false;
+  recordingAudio: HTMLAudioElement | null = null;
   
-  // Simulación de preguntas para demo
-  private mockQuestions: Question[] = [
-    {
-      id: '1',
-      text: '¿Cuál es la diferencia fundamental entre un contrato bilateral y un contrato unilateral según el Código Civil chileno?',
-      correctAnswerId: 'A',
-      options: [
-        { id: 'A', text: 'Un contrato bilateral es aquel donde ambas partes se obligan recíprocamente, como la compraventa. El unilateral es donde sólo una parte se obliga, como el comodato.' },
-        { id: 'B', text: 'No hay diferencia, ambos términos se refieren al mismo tipo de contrato.' },
-        { id: 'C', text: 'Un contrato bilateral requiere firma de ambas partes, el unilateral sólo una firma.' },
-        { id: 'D', text: 'Un contrato bilateral es válido, el unilateral no tiene valor legal.' }
-      ],
-      category: 'Derecho Civil'
-    },
-    {
-      id: '2', 
-      text: '¿Qué establece el artículo 1445 del Código Civil respecto a los requisitos para que una persona se obligue a otra por un acto o declaración de voluntad?',
-      correctAnswerId: 'B',
-      options: [
-        { id: 'A', text: 'Sólo se requiere la manifestación de voluntad.' },
-        { id: 'B', text: 'Se requiere: 1) ser legalmente capaz, 2) consentimiento libre y espontáneo, 3) objeto lícito, 4) causa lícita.' },
-        { id: 'C', text: 'Únicamente se necesita que el objeto sea lícito.' },
-        { id: 'D', text: 'Basta con la capacidad legal y el consentimiento.' }
-      ],
-      category: 'Derecho Civil'
-    },
-    {
-      id: '3',
-      text: '¿Cuáles son los elementos de la existencia del contrato según el Código Civil chileno?',
-      correctAnswerId: 'C',
-      options: [
-        { id: 'A', text: 'Solo el consentimiento y el objeto.' },
-        { id: 'B', text: 'Consentimiento, objeto y causa.' },
-        { id: 'C', text: 'Consentimiento, objeto, causa y solemnidades cuando la ley las exige.' },
-        { id: 'D', text: 'Únicamente las solemnidades legales.' }
-      ],
-      category: 'Derecho Civil'
-    },
-    {
-      id: '4',
-      text: '¿Qué diferencia existe entre nulidad absoluta y nulidad relativa en el derecho civil chileno?',
-      correctAnswerId: 'A',
-      options: [
-        { id: 'A', text: 'La nulidad absoluta protege el interés general y puede alegarla cualquier persona. La relativa protege intereses particulares y solo pueden alegarla los interesados.' },
-        { id: 'B', text: 'No existe diferencia, ambas son iguales.' },
-        { id: 'C', text: 'La nulidad absoluta es definitiva, la relativa es temporal.' },
-        { id: 'D', text: 'La nulidad relativa es más grave que la absoluta.' }
-      ],
-      category: 'Derecho Civil'
-    },
-    {
-      id: '5',
-      text: '¿Cuáles son los modos de adquirir el dominio reconocidos en el Código Civil chileno?',
-      correctAnswerId: 'B',
-      options: [
-        { id: 'A', text: 'Solo la compraventa y la herencia.' },
-        { id: 'B', text: 'Ocupación, accesión, tradición, sucesión por causa de muerte y prescripción.' },
-        { id: 'C', text: 'Únicamente la tradición y la prescripción.' },
-        { id: 'D', text: 'Solo los que establezca un contrato.' }
-      ],
-      category: 'Derecho Civil'
-    }
-  ];
+  // Subscription al estado de grabación
+  private recordingStateSubscription: Subscription | null = null;
+  
+  // Variables del backend
+  private sessionId: string = '';
+  private currentSession: any = null;
+  isLoading: boolean = true;
+  loadingError: boolean = false;
 
   constructor(
     private router: Router,
-    private alertController: AlertController
+    private alertController: AlertController,
+    private loadingController: LoadingController,
+    private audioService: AudioService,
+    private apiService: ApiService,
+    private cdr: ChangeDetectorRef
   ) { }
 
-  ngOnInit() {
-    this.loadQuestions();
+  async ngOnInit() {
+    this.sessionId = 'session_' + Date.now();
+    
+    // Cargar preguntas desde el backend
+    await this.loadQuestionsFromBackend();
+    
+    if (!this.audioService.isRecordingSupported()) {
+      await this.showUnsupportedAlert();
+      return;
+    }
+    
+    const initialized = await this.audioService.initializeRecording();
+    if (!initialized) {
+      await this.showMicrophoneErrorAlert();
+      return;
+    }
+    
+    this.recordingStateSubscription = this.audioService.recordingState$.subscribe(
+      (state: AudioRecordingState) => {
+        this.isRecording = state.isRecording;
+        this.recordingDuration = state.recordingDuration;
+        this.audioBlob = state.audioBlob;
+        this.audioUrl = state.audioUrl;
+        this.hasRecording = state.audioBlob !== null && state.audioBlob.size > 0;
+        
+        if (this.isRecording || this.hasRecording) {
+          this.recordingTime = this.audioService.formatDuration(state.recordingDuration);
+        }
+        
+        console.log('Estado de grabacion actualizado:', {
+          isRecording: this.isRecording,
+          hasRecording: this.hasRecording,
+          duration: this.recordingTime,
+          audioBlobSize: this.audioBlob?.size,
+          audioUrl: this.audioUrl
+        });
+        
+        this.cdr.detectChanges();
+      }
+    );
+  }
+
+  // CARGAR PREGUNTAS DESDE EL BACKEND (igual que civil-escrito)
+  async loadQuestionsFromBackend() {
+    try {
+      console.log('Cargando preguntas desde el backend...');
+      this.isLoading = true;
+      
+      setTimeout(() => {
+        this.currentSession = this.apiService.getCurrentSession();
+        console.log('Sesión obtenida del ApiService:', this.currentSession);
+        
+        if (!this.currentSession) {
+          console.error('No hay sesión activa');
+          this.loadingError = true;
+          this.isLoading = false;
+          return;
+        }
+
+        try {
+          this.sessionId = this.currentSession?.session?.id || 'sin-id';
+          this.totalQuestions = this.currentSession?.totalQuestions || 5;
+          
+          const backendQuestions = this.currentSession?.questions || [];
+          this.questions = this.convertBackendQuestions(backendQuestions);
+          console.log('Preguntas convertidas exitosamente:', this.questions.length);
+          
+          if (this.questions.length === 0) {
+            console.error('No se cargaron preguntas');
+            this.loadingError = true;
+            this.isLoading = false;
+            return;
+          }
+          
+          this.isLoading = false;
+          console.log('Carga de sesión completada exitosamente');
+          
+        } catch (conversionError) {
+          console.error('Error en conversión de preguntas:', conversionError);
+          this.loadingError = true;
+          this.isLoading = false;
+        }
+      }, 100);
+      
+    } catch (error) {
+      console.error('Error en loadQuestionsFromBackend:', error);
+      this.loadingError = true;
+      this.isLoading = false;
+    }
+  }
+
+  // CONVERTIR PREGUNTAS (igual que civil-escrito)
+  convertBackendQuestions(backendQuestions: any[]): Question[] {
+    console.log('Convirtiendo preguntas del backend, cantidad:', backendQuestions?.length || 0);
+    
+    if (!Array.isArray(backendQuestions)) {
+      console.error('backendQuestions no es un array:', backendQuestions);
+      return [];
+    }
+    
+    return backendQuestions.map((q: any, index: number) => {
+      console.log(`Procesando pregunta ${index + 1}:`, q);
+      
+      const convertedQuestion: Question = {
+        id: q.id || `temp-${index}`,
+        text: q.questionText || q.text || q.enunciado || 'Texto no disponible',
+        questionText: q.questionText || q.text || q.enunciado || 'Texto no disponible',
+        type: q.type || 1,
+        category: q.category || q.legalArea || 'Sin categoría',
+        legalArea: q.legalArea || q.category || 'General',
+        difficulty: q.difficulty || 3,
+        correctAnswer: q.correctAnswer || 'A',
+        explanation: q.explanation || 'Explicación no disponible'
+      };
+
+      try {
+        Object.keys(q || {}).forEach(key => {
+          if (!(key in convertedQuestion)) {
+            (convertedQuestion as any)[key] = q[key];
+          }
+        });
+      } catch (error) {
+        console.warn('Error copiando propiedades adicionales:', error);
+      }
+
+      return convertedQuestion;
+    });
   }
 
   ngOnDestroy() {
-    this.stopRecordingTimer();
+    if (this.recordingStateSubscription) {
+      this.recordingStateSubscription.unsubscribe();
+    }
+    
+    if (this.currentAudio) {
+      this.currentAudio.pause();
+      this.currentAudio = null;
+    }
+    
+    if (this.recordingAudio) {
+      this.recordingAudio.pause();
+      this.recordingAudio = null;
+    }
+    
+    this.audioService.stopMediaStreams();
   }
 
   // ========================================
   // GESTIÓN DE PREGUNTAS
   // ========================================
   
-  loadQuestions() {
-    // Por ahora usamos preguntas mock, más adelante se conectará con el backend
-    this.questions = this.mockQuestions;
-    this.totalQuestions = this.questions.length;
-    console.log('Preguntas cargadas:', this.questions);
-  }
-
   getCurrentQuestion(): Question | null {
     return this.questions[this.currentQuestionNumber - 1] || null;
   }
@@ -141,7 +232,7 @@ export class TestOralCivilPage implements OnInit, OnDestroy {
   }
 
   // ========================================
-  // CONTROL DE AUDIO
+  // CONTROL DE AUDIO - REPRODUCCIÓN DE PREGUNTA
   // ========================================
   
   toggleAudio() {
@@ -153,21 +244,49 @@ export class TestOralCivilPage implements OnInit, OnDestroy {
   }
 
   playAudio() {
-    console.log('Reproduciendo pregunta:', this.getCurrentQuestionText());
+    const questionText = this.getCurrentQuestionText();
+    console.log('Reproduciendo pregunta:', questionText);
+    
     this.isPlaying = true;
     
-    // Simular reproducción de audio
-    // En una implementación real, aquí se reproduciría el audio de la pregunta
-    setTimeout(() => {
-      this.isPlaying = false;
-      this.audioCompleted = true;
-      this.audioProgress = 'Completado';
-    }, 3000);
+    if ('speechSynthesis' in window) {
+      const utterance = new SpeechSynthesisUtterance(questionText);
+      utterance.lang = 'es-ES';
+      utterance.rate = 0.9;
+      
+      utterance.onend = () => {
+        this.isPlaying = false;
+        this.audioCompleted = true;
+        this.audioProgress = 'Completado';
+        this.cdr.detectChanges();
+      };
+      
+      utterance.onerror = () => {
+        this.isPlaying = false;
+        console.error('Error al reproducir audio');
+        this.cdr.detectChanges();
+      };
+      
+      window.speechSynthesis.speak(utterance);
+    } else {
+      setTimeout(() => {
+        this.isPlaying = false;
+        this.audioCompleted = true;
+        this.audioProgress = 'Completado';
+        this.cdr.detectChanges();
+      }, 3000);
+    }
   }
 
   pauseAudio() {
     console.log('Pausando audio');
+    
+    if ('speechSynthesis' in window) {
+      window.speechSynthesis.cancel();
+    }
+    
     this.isPlaying = false;
+    this.cdr.detectChanges();
   }
 
   getAudioIcon(): string {
@@ -177,9 +296,9 @@ export class TestOralCivilPage implements OnInit, OnDestroy {
   }
 
   getAudioStatus(): string {
-    if (this.isPlaying) return 'Reproduciendo...';
-    if (this.audioCompleted) return 'Grabación completada';
-    return 'Ir a Pregunta de Voz';
+    if (this.isPlaying) return 'Reproduciendo pregunta...';
+    if (this.audioCompleted) return 'Audio completado';
+    return 'Escuchar pregunta';
   }
 
   // ========================================
@@ -195,52 +314,69 @@ export class TestOralCivilPage implements OnInit, OnDestroy {
   }
 
   startRecording() {
-    console.log('Iniciando grabación de respuesta');
-    this.isRecording = true;
-    this.hasRecording = false;
-    this.recordingStartTime = Date.now();
-    this.startRecordingTimer();
-    
-    // En una implementación real, aquí se iniciaría la grabación de audio
+    console.log('Iniciando grabacion de respuesta');
+    this.audioService.startRecording();
   }
 
   stopRecording() {
-    console.log('Deteniendo grabación');
-    this.isRecording = false;
-    this.hasRecording = true;
-    this.stopRecordingTimer();
-    
-    // En una implementación real, aquí se detendría la grabación de audio
+    console.log('Deteniendo grabacion');
+    this.audioService.stopRecording();
   }
 
   restartRecording() {
-    console.log('Reiniciando grabación');
-    this.hasRecording = false;
+    console.log('Reiniciando grabacion');
+    this.audioService.clearRecording();
     this.recordingTime = '00:00';
-    this.startRecording();
+    this.hasRecording = false;
+    
+    setTimeout(() => {
+      this.startRecording();
+    }, 300);
   }
 
   replayRecording() {
-    console.log('Reproduciendo grabación');
-    // En una implementación real, aquí se reproduciría la grabación realizada
-  }
-
-  startRecordingTimer() {
-    this.recordingTimer = setInterval(() => {
-      const elapsed = Date.now() - this.recordingStartTime;
-      const seconds = Math.floor(elapsed / 1000);
-      const minutes = Math.floor(seconds / 60);
-      const remainingSeconds = seconds % 60;
-      
-      this.recordingTime = `${minutes.toString().padStart(2, '0')}:${remainingSeconds.toString().padStart(2, '0')}`;
-    }, 1000);
-  }
-
-  stopRecordingTimer() {
-    if (this.recordingTimer) {
-      clearInterval(this.recordingTimer);
-      this.recordingTimer = null;
+    if (!this.audioUrl) {
+      console.warn('No hay audio para reproducir');
+      return;
     }
+    
+    console.log('Reproduciendo grabacion');
+    
+    if (this.isPlayingRecording && this.recordingAudio) {
+      this.recordingAudio.pause();
+      this.isPlayingRecording = false;
+      console.log('Grabacion pausada');
+      this.cdr.detectChanges();
+      return;
+    }
+    
+    if (!this.recordingAudio || this.recordingAudio.src !== this.audioUrl) {
+      this.recordingAudio = new Audio(this.audioUrl);
+      
+      this.recordingAudio.onended = () => {
+        this.isPlayingRecording = false;
+        console.log('Reproduccion completada');
+        this.cdr.detectChanges();
+      };
+      
+      this.recordingAudio.onerror = (error) => {
+        this.isPlayingRecording = false;
+        console.error('Error al reproducir:', error);
+        this.cdr.detectChanges();
+      };
+    }
+    
+    this.recordingAudio.play()
+      .then(() => {
+        this.isPlayingRecording = true;
+        console.log('Reproduciendo grabacion...');
+        this.cdr.detectChanges();
+      })
+      .catch(error => {
+        console.error('Error al reproducir audio:', error);
+        this.isPlayingRecording = false;
+        this.cdr.detectChanges();
+      });
   }
 
   getRecordingIcon(): string {
@@ -251,34 +387,103 @@ export class TestOralCivilPage implements OnInit, OnDestroy {
 
   getRecordingStatus(): string {
     if (this.isRecording) return 'Grabando... Habla ahora';
-    if (this.hasRecording) return 'Grabación completada';
-    return 'Grabando... Habla ahora';
+    if (this.hasRecording) return 'Grabacion completada';
+    return 'Toca para grabar tu respuesta';
+  }
+  
+  getReplayButtonText(): string {
+    return this.isPlayingRecording ? 'Pausar' : 'Reproducir';
   }
 
   // ========================================
   // ENVÍO DE RESPUESTA
   // ========================================
   
-  submitVoiceAnswer() {
-    if (!this.hasRecording) return;
-    
-    console.log('Enviando respuesta de voz para pregunta:', this.currentQuestionNumber);
-    
-    // Simular procesamiento de la respuesta de voz
-    // En una implementación real, aquí se enviaría el audio al backend para procesamiento
-    const questionId = this.getCurrentQuestion()?.id;
-    if (questionId) {
-      this.userAnswers[questionId] = 'voice_response_' + this.currentQuestionNumber;
+  async submitVoiceAnswer() {
+    if (!this.hasRecording || !this.audioBlob) {
+      console.warn('No hay grabacion para enviar');
+      
+      const alert = await this.alertController.create({
+        header: 'Sin grabacion',
+        message: 'Por favor, graba tu respuesta antes de enviar.',
+        buttons: ['OK']
+      });
+      await alert.present();
+      return;
     }
     
-    // Resetear estado de grabación
-    this.hasRecording = false;
-    this.recordingTime = '00:00';
+    const question = this.getCurrentQuestion();
+    if (!question) return;
     
-    // Avanzar a la siguiente pregunta automáticamente
-    setTimeout(() => {
-      this.nextQuestion();
-    }, 500);
+    console.log('Enviando respuesta de voz para pregunta:', this.currentQuestionNumber);
+    console.log('Tamaño del audio:', this.audioBlob.size, 'bytes');
+    console.log('Tipo de audio:', this.audioBlob.type);
+    
+    try {
+      const loading = await this.loadingController.create({
+        message: 'Procesando tu respuesta...',
+        spinner: 'crescent'
+      });
+      await loading.present();
+      
+      const response = await this.audioService.uploadAudio(
+        this.audioBlob,
+        question.id,
+        this.sessionId
+      );
+      
+      await loading.dismiss();
+      
+      console.log('Respuesta del backend:', response);
+      
+      this.userAnswers[question.id] = JSON.stringify({
+        type: 'voice',
+        transcription: response.text || response.transcription || 'Texto no disponible',
+        audioId: response.audioId || 'voice_' + this.currentQuestionNumber,
+        timestamp: new Date().toISOString(),
+        duration: this.recordingDuration,
+        size: this.audioBlob.size,
+        confidence: response.confidence || null
+      });
+      
+      this.audioService.clearRecording();
+      
+      if (this.recordingAudio) {
+        this.recordingAudio.pause();
+        this.recordingAudio = null;
+        this.isPlayingRecording = false;
+      }
+      
+      const transcription = response.text || response.transcription || 'No se pudo transcribir el audio';
+      
+      const alert = await this.alertController.create({
+        header: 'Respuesta procesada',
+        message: `Tu respuesta: "${transcription}"`,
+        buttons: ['OK']
+      });
+      await alert.present();
+      
+      setTimeout(() => {
+        this.nextQuestion();
+      }, 1500);
+      
+    } catch (error: any) {
+      console.error('Error al enviar respuesta:', error);
+      
+      const loading = await this.loadingController.getTop();
+      if (loading) {
+        await loading.dismiss();
+      }
+      
+      const errorMessage = error.message || 'Hubo un problema al procesar tu respuesta. Por favor, intenta nuevamente.';
+      
+      const alert = await this.alertController.create({
+        header: 'Error',
+        message: errorMessage,
+        buttons: ['OK']
+      });
+      await alert.present();
+    }
   }
 
   // ========================================
@@ -317,14 +522,27 @@ export class TestOralCivilPage implements OnInit, OnDestroy {
   }
 
   resetQuestionState() {
-    // Resetear estados de audio y grabación
     this.isPlaying = false;
     this.audioCompleted = false;
     this.audioProgress = '00:02';
-    this.isRecording = false;
-    this.hasRecording = false;
-    this.recordingTime = '00:00';
-    this.stopRecordingTimer();
+    
+    if (this.currentAudio) {
+      this.currentAudio.pause();
+      this.currentAudio = null;
+    }
+    
+    if ('speechSynthesis' in window) {
+      window.speechSynthesis.cancel();
+    }
+    
+    if (this.recordingAudio) {
+      this.recordingAudio.pause();
+      this.recordingAudio = null;
+      this.isPlayingRecording = false;
+    }
+    
+    this.audioService.clearRecording();
+    this.cdr.detectChanges();
   }
 
   // ========================================
@@ -334,10 +552,9 @@ export class TestOralCivilPage implements OnInit, OnDestroy {
   async completeTest() {
     console.log('Completando test oral con respuestas:', this.userAnswers);
     
-    // Mostrar confirmación
     const alert = await this.alertController.create({
       header: 'Test Completado',
-      message: '¡Has completado todas las preguntas del modo oral!',
+      message: 'Has completado todas las preguntas del modo oral.',
       buttons: [
         {
           text: 'Ver Resultados',
@@ -352,23 +569,16 @@ export class TestOralCivilPage implements OnInit, OnDestroy {
   }
 
   saveResultsAndNavigateToSummary() {
-    // Calcular resultados
     const results = this.calculateResults();
-    
-    // Guardar en localStorage para la página de resultados
     localStorage.setItem('current_oral_test_results', JSON.stringify(results));
-    
-    // Navegar a página de resultados
+    this.apiService.clearCurrentSession();
     this.router.navigate(['/civil/civil-oral/resumen-test-civil-oral']);
   }
 
   calculateResults() {
     const totalQuestions = this.questions.length;
     const answeredQuestions = Object.keys(this.userAnswers).length;
-    
-    // Para el modo oral, consideramos todas las respuestas grabadas como válidas
-    // En una implementación real, aquí se procesarían las respuestas de voz
-    const correctAnswers = answeredQuestions; // Simulamos que todas son correctas por ahora
+    const correctAnswers = answeredQuestions;
     const percentage = Math.round((correctAnswers / totalQuestions) * 100);
     
     const questionDetails = this.questions.map((question, index) => {
@@ -377,9 +587,9 @@ export class TestOralCivilPage implements OnInit, OnDestroy {
         questionNumber: index + 1,
         question: question.text,
         answered: answered,
-        correct: answered, // Simulamos que las respuestas grabadas son correctas
+        correct: answered,
         userAnswer: answered ? 'Respuesta de voz' : 'Sin respuesta',
-        correctAnswer: question.options.find(opt => opt.id === question.correctAnswerId)?.text || ''
+        correctAnswer: question.correctAnswer || 'N/A'
       };
     });
 
@@ -394,4 +604,48 @@ export class TestOralCivilPage implements OnInit, OnDestroy {
     };
   }
 
+  // ========================================
+  // ALERTAS DE ERROR
+  // ========================================
+  
+  async showUnsupportedAlert() {
+    const alert = await this.alertController.create({
+      header: 'Funcion no disponible',
+      message: 'Tu navegador no soporta la grabacion de audio. Por favor, usa un navegador compatible como Chrome, Firefox o Safari.',
+      buttons: [
+        {
+          text: 'Volver',
+          handler: () => {
+            this.router.navigate(['/civil/civil-oral']);
+          }
+        }
+      ]
+    });
+    await alert.present();
+  }
+
+  async showMicrophoneErrorAlert() {
+    const alert = await this.alertController.create({
+      header: 'Error de microfono',
+      message: 'No se pudo acceder al microfono. Por favor, verifica los permisos y que el microfono este conectado.',
+      buttons: [
+        {
+          text: 'Reintentar',
+          handler: async () => {
+            const initialized = await this.audioService.initializeRecording();
+            if (!initialized) {
+              this.showMicrophoneErrorAlert();
+            }
+          }
+        },
+        {
+          text: 'Volver',
+          handler: () => {
+            this.router.navigate(['/civil/civil-oral']);
+          }
+        }
+      ]
+    });
+    await alert.present();
+  }
 }

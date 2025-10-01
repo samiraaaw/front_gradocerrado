@@ -1,13 +1,139 @@
-<ion-header [translucent]="true">
-  <ion-toolbar>
-    <ion-title>racha</ion-title>
-  </ion-toolbar>
-</ion-header>
+<ion-content class="racha-content">
+  
+  <!-- Header con botón de regreso -->
+ <!-- Header con imagen personalizada -->
+  <div class="racha-header-custom">
+    <div class="racha-background-container">
+      <img src="assets/image/racha.png" alt="Racha" class="racha-header-image">
+    </div>
+    
+    <ion-button fill="clear" (click)="goBack()" class="back-button">
+      <ion-icon name="chevron-back"></ion-icon>
+    </ion-button>
+  </div>
+  
 
-<ion-content [fullscreen]="true">
-  <ion-header collapse="condense">
-    <ion-toolbar>
-      <ion-title size="large">racha</ion-title>
-    </ion-toolbar>
-  </ion-header>
+  <!-- Contenido principal -->
+  <div class="racha-main">
+
+    <!-- Sección principal: Mapache con racha -->
+    <div class="hero-section">
+      <div class="streak-flame">
+        <div class="flame-animation">
+          <img src="assets/image/menu/hoja.png" alt="Racha" class="flame-icon">
+        </div>
+      </div>
+      
+      <div class="mapache-celebration">
+        <img src="assets/image/mcara.png" alt="Mapache" class="mapache-image">
+      </div>
+      
+      <div class="streak-counter">
+        <h2>{{ currentStreak }}</h2>
+        <p>días de racha</p>
+      </div>
+      
+      <div class="motivational-message">
+        <p>{{ getMotivationalMessage() }}</p>
+      </div>
+    </div>
+
+    <!-- Estadísticas rápidas -->
+    <div class="stats-quick">
+      <div class="stat-item">
+        <ion-icon name="trophy"></ion-icon>
+        <div class="stat-info">
+          <span class="stat-value">{{ longestStreak }}</span>
+          <span class="stat-label">Mejor racha</span>
+        </div>
+      </div>
+      
+      <div class="stat-item">
+        <ion-icon name="calendar"></ion-icon>
+        <div class="stat-info">
+          <span class="stat-value">{{ totalDays }}</span>
+          <span class="stat-label">Días totales</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Progreso hacia siguiente meta -->
+    <div class="milestone-section">
+      <h3>Próxima meta: {{ nextMilestone }} días</h3>
+      <div class="milestone-progress">
+        <div class="progress-track">
+          <div class="progress-fill" [style.width.%]="getProgressToNextMilestone()"></div>
+        </div>
+        <div class="progress-labels">
+          <span>{{ currentStreak }} días</span>
+          <span>{{ nextMilestone }} días</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Calendario de racha -->
+    <div class="calendar-section">
+      <h3>Tu historial</h3>
+      <div class="calendar-grid">
+        <div 
+          *ngFor="let day of streakCalendar" 
+          class="calendar-day"
+          [class.completed]="day.completed"
+          [class.today]="day.isToday">
+          <span class="day-name">{{ day.dayName }}</span>
+          <div class="day-circle">
+            <ion-icon *ngIf="day.completed" name="checkmark"></ion-icon>
+            <span *ngIf="!day.completed && !day.isToday" class="day-number">{{ day.day }}</span>
+            <img *ngIf="day.isToday" src="assets/image/menu/hoja.png" alt="Hoy" class="today-icon">
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Logros -->
+    <div class="achievements-section">
+      <h3>Logros</h3>
+      <div class="achievements-grid">
+        <div 
+          *ngFor="let achievement of achievements" 
+          class="achievement-card"
+          [class.unlocked]="achievement.unlocked">
+          <div class="achievement-icon">{{ achievement.name.split(' ')[0] }}</div>
+          <div class="achievement-info">
+            <h4>{{ achievement.name.split(' ').slice(1).join(' ') }}</h4>
+            <p>{{ achievement.description }}</p>
+          </div>
+          <div class="achievement-status">
+            <ion-icon 
+              *ngIf="achievement.unlocked" 
+              name="checkmark-circle" 
+              class="unlocked-icon">
+            </ion-icon>
+            <ion-icon 
+              *ngIf="!achievement.unlocked" 
+              name="lock-closed" 
+              class="locked-icon">
+            </ion-icon>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Botón de acción -->
+    <div class="action-section">
+      <button class="study-now-btn" (click)="goToStudy()">
+        <ion-icon name="book"></ion-icon>
+        <span>Estudiar ahora</span>
+      </button>
+      <p class="action-hint">¡Mantén tu racha viva estudiando hoy!</p>
+    </div>
+
+    <!-- Espaciado para navegación inferior -->
+    <div class="bottom-spacer"></div>
+
+  </div>
+
+  <!-- Navegación inferior -->
+  <app-bottom-nav></app-bottom-nav>
+
 </ion-content>

@@ -1,0 +1,327 @@
+// ========================================
+// CONFIGURACIÓN BÁSICA
+// ========================================
+.settings-content {
+  --background: #f8f9fa;
+}
+
+// ========================================
+// HEADER FIJO
+// ========================================
+.header-section {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 1000;
+  height: 160px;
+  
+  .background-image {
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 100vw;
+    height: auto;
+    z-index: 1;
+
+    .superior-gris {
+      width: 100%;
+      height: auto;
+      object-fit: contain;
+    }
+  }
+  
+  .header-content {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    align-items: center;
+    padding: 35px 20px 20px 20px;
+    
+    .back-button {
+      --color: #333;
+      --padding-start: 0;
+      --padding-end: 0;
+      margin: 0;
+      position: absolute;
+      left: 20px;
+    }
+    
+    h1 {
+      flex: 1;
+      margin: 0;
+      font-size: 24px;
+      font-weight: 800;
+      color: #222;
+      text-align: center;
+    }
+  }
+}
+
+// ========================================
+// CONTENIDO SCROLLABLE
+// ========================================
+.scrollable-content {
+  margin-top: 160px;
+  padding: 20px;
+  background: white;
+  border-radius: 25px 25px 0 0;
+  min-height: calc(100vh - 160px);
+}
+
+// ========================================
+// INTERRUPTOR MAESTRO
+// ========================================
+.master-switch-card {
+  background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+  border-radius: 16px;
+  padding: 20px;
+  margin-bottom: 30px;
+  box-shadow: 0 8px 24px rgba(59, 130, 246, 0.25);
+  
+  .master-switch-content {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    
+    .master-icon {
+      width: 56px;
+      height: 56px;
+      background: rgba(255, 255, 255, 0.2);
+      border-radius: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      
+      ion-icon {
+        font-size: 32px;
+        color: white;
+      }
+    }
+    
+    .master-text {
+      flex: 1;
+      
+      h3 {
+        margin: 0 0 4px 0;
+        font-size: 18px;
+        font-weight: 700;
+        color: white;
+      }
+      
+      p {
+        margin: 0;
+        font-size: 13px;
+        color: rgba(255, 255, 255, 0.9);
+        line-height: 1.3;
+      }
+    }
+    
+    .master-toggle {
+      --background: rgba(255, 255, 255, 0.3);
+      --background-checked: white;
+      --handle-background: white;
+      --handle-background-checked: #3b82f6;
+    }
+  }
+}
+
+// ========================================
+// SECCIONES DE CONFIGURACIÓN
+// ========================================
+.settings-section {
+  margin-bottom: 30px;
+  
+  h3 {
+    margin: 0 0 15px 0;
+    font-size: 16px;
+    font-weight: 700;
+    color: #1e293b;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+  
+  .setting-item {
+    background: white;
+    border-radius: 12px;
+    padding: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 10px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+    border: 1px solid #f1f5f9;
+    transition: all 0.3s ease;
+    
+    &:hover {
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    }
+    
+    .setting-info {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      flex: 1;
+      
+      ion-icon {
+        font-size: 24px;
+        flex-shrink: 0;
+      }
+      
+      .setting-text {
+        h4 {
+          margin: 0 0 4px 0;
+          font-size: 15px;
+          font-weight: 600;
+          color: #1e293b;
+        }
+        
+        p {
+          margin: 0;
+          font-size: 12px;
+          color: #64748b;
+          line-height: 1.3;
+        }
+      }
+    }
+    
+    ion-toggle {
+      --background: #e5e7eb;
+      --background-checked: #3b82f6;
+      --handle-background: white;
+      --handle-background-checked: white;
+    }
+    
+    &.time-picker {
+      .time-input {
+        padding: 8px 14px;
+        border: 2px solid #e5e7eb;
+        border-radius: 8px;
+        font-size: 14px;
+        font-weight: 600;
+        color: #1e293b;
+        background: #f8fafc;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        
+        &:focus {
+          outline: none;
+          border-color: #3b82f6;
+          background: white;
+        }
+      }
+    }
+  }
+}
+
+// ========================================
+// INFORMACIÓN DE GUARDADO
+// ========================================
+.save-info {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 16px;
+  background: #f0fdf4;
+  border-radius: 12px;
+  margin-top: 20px;
+  
+  ion-icon {
+    font-size: 20px;
+    color: #10b981;
+  }
+  
+  p {
+    margin: 0;
+    font-size: 13px;
+    color: #059669;
+    font-weight: 500;
+  }
+}
+
+// ========================================
+// ESPACIADO INFERIOR
+// ========================================
+.bottom-spacer {
+  height: 100px;
+}
+
+// ========================================
+// RESPONSIVE
+// ========================================
+@media (max-width: 768px) {
+  .header-section {
+    height: 140px;
+    
+    .header-content {
+      padding: 30px 15px 15px 15px;
+      
+      h1 {
+        font-size: 20px;
+      }
+    }
+  }
+  
+  .scrollable-content {
+    margin-top: 140px;
+    padding: 15px;
+  }
+  
+  .master-switch-card {
+    padding: 16px;
+    
+    .master-switch-content {
+      gap: 12px;
+      
+      .master-icon {
+        width: 48px;
+        height: 48px;
+        
+        ion-icon {
+          font-size: 28px;
+        }
+      }
+      
+      .master-text {
+        h3 {
+          font-size: 16px;
+        }
+        
+        p {
+          font-size: 12px;
+        }
+      }
+    }
+  }
+  
+  .settings-section {
+    h3 {
+      font-size: 14px;
+    }
+    
+    .setting-item {
+      padding: 14px;
+      
+      .setting-info {
+        gap: 12px;
+        
+        ion-icon {
+          font-size: 22px;
+        }
+        
+        .setting-text {
+          h4 {
+            font-size: 14px;
+          }
+          
+          p {
+            font-size: 11px;
+          }
+        }
+      }
+    }
+  }
+}

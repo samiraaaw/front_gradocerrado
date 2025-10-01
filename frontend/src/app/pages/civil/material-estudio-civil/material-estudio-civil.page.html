@@ -1,0 +1,69 @@
+<ion-content class="civil-content">
+  <!-- Header igual al de Civil -->
+  <div class="custom-header-section">
+    <!-- 🔙 Flecha atrás estándar (igual al resto) -->
+    <ion-back-button class="gc-back-btn" text="" defaultHref="/civil"></ion-back-button>
+
+    <div class="orange-background">
+      <div class="derecho-civil-container-full">
+        <img src="assets/image/civil/logo_civil.png"
+             alt="Derecho Civil"
+             class="derecho-civil-image-responsive" />
+      </div>
+    </div>
+  </div>
+
+  <!-- Contenido -->
+  <div class="content-area">
+    <!-- Controles -->
+    <div class="toolbar-material">
+      <ion-searchbar
+        placeholder="Buscar material..."
+        [(ngModel)]="query"
+        show-clear-button="focus">
+      </ion-searchbar>
+
+      <div class="chips-filtros">
+        <ion-chip (click)="setFiltro('todos')" [outline]="filtro!=='todos'"><ion-label>Todos</ion-label></ion-chip>
+        <ion-chip (click)="setFiltro('pdf')" [outline]="filtro!=='pdf'"><ion-icon name="document-text-outline"></ion-icon><ion-label>PDF</ion-label></ion-chip>
+        <ion-chip (click)="setFiltro('apunte')" [outline]="filtro!=='apunte'"><ion-icon name="create-outline"></ion-icon><ion-label>Apuntes</ion-label></ion-chip>
+        <ion-chip (click)="setFiltro('video')" [outline]="filtro!=='video'"><ion-icon name="play-circle-outline"></ion-icon><ion-label>Videos</ion-label></ion-chip>
+        <ion-chip (click)="setFiltro('enlace')" [outline]="filtro!=='enlace'"><ion-icon name="link-outline"></ion-icon><ion-label>Enlaces</ion-label></ion-chip>
+      </div>
+    </div>
+
+    <!-- Lista / Grid -->
+    <ion-grid class="grid-material">
+      <ion-row>
+        <ion-col size="12" sizeMd="6" sizeLg="4" *ngFor="let it of filtrados">
+          <ion-card class="card-item" (click)="abrir(it)">
+            <ion-card-header>
+              <div class="icono-tipo">
+                <ion-icon *ngIf="it.tipo==='pdf'" name="document-text-outline"></ion-icon>
+                <ion-icon *ngIf="it.tipo==='apunte'" name="create-outline"></ion-icon>
+                <ion-icon *ngIf="it.tipo==='video'" name="play-circle-outline"></ion-icon>
+                <ion-icon *ngIf="it.tipo==='enlace'" name="link-outline"></ion-icon>
+              </div>
+              <ion-card-title>{{ it.titulo }}</ion-card-title>
+            </ion-card-header>
+            <ion-card-content>
+              <p *ngIf="it.detalle">{{ it.detalle }}</p>
+              <div class="abrir">
+                <ion-icon name="open-outline"></ion-icon>
+                <span>Abrir</span>
+              </div>
+            </ion-card-content>
+          </ion-card>
+        </ion-col>
+      </ion-row>
+
+      <div class="estado-vacio" *ngIf="filtrados.length===0">
+        <ion-icon name="search-outline"></ion-icon>
+        <p>No hay resultados para tu búsqueda/filtro.</p>
+      </div>
+    </ion-grid>
+  </div>
+
+  <!-- Bottom Navigation -->
+  <app-bottom-nav></app-bottom-nav>
+</ion-content>

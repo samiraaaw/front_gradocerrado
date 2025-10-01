@@ -1,5 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
+import { LoadingController } from '@ionic/angular';
+import { ApiService } from '../../../services/api.service';
 
 @Component({
   selector: 'app-civil-oral',
@@ -9,12 +11,10 @@ import { Router } from '@angular/router';
 })
 export class CivilOralPage implements OnInit {
 
-  // Variables para el mapache cantando
   showSpeech = false;
   showMusicNotes = false;
   currentMessage = '';
 
-  // Mensajes específicos para modo oral
   oralMessages = [
     '¡Hora de practicar con tu voz!',
     '¿Listo para el desafío oral?',
@@ -23,49 +23,113 @@ export class CivilOralPage implements OnInit {
     '¡El modo voz es divertido!'
   ];
 
-  constructor(private router: Router) { }
+  constructor(
+    private router: Router,
+    private loadingController: LoadingController,
+    private apiService: ApiService
+  ) { }
 
   ngOnInit() {
-    // Activar música automáticamente al entrar
     setTimeout(() => {
       this.activateSinging();
     }, 1000);
   }
 
-  // Función para iniciar práctica rápida en modo voz
-  startVoicePractice() {
+  // INICIAR PRÁCTICA RÁPIDA - LLAMANDO AL BACKEND
+  async startVoicePractice() {
     console.log('Iniciando práctica rápida - modo voz');
-    // Navegar a la página de test oral
-    this.router.navigate(['/civil/civil-oral/test-oral-civil']);
+    
+    const loading = await this.loadingController.create({
+      message: 'Preparando tu test oral...',
+      spinner: 'crescent',
+      cssClass: 'custom-loading'
+    });
+    
+    await loading.present();
+    
+    try {
+      console.log('Creando sesión de estudio oral...');
+      
+      const sessionData = {
+        studentId: "00000000-0000-0000-0000-000000000001",
+        difficulty: "intermedio",
+        legalAreas: ["Derecho Civil"],
+        numberOfQuestions: 5
+      };
+      
+      console.log('Enviando datos de sesión:', sessionData);
+      
+      // Llamar al backend para crear sesión
+      const sessionResponse = await this.apiService.startStudySession(sessionData).toPromise();
+      console.log('Sesión creada exitosamente:', sessionResponse);
+      
+      // Guardar la sesión
+      this.apiService.setCurrentSession(sessionResponse);
+      
+      // Navegar al test oral
+      await this.router.navigate(['/civil/civil-oral/test-oral-civil']);
+      
+      // Polling para verificar que las preguntas están cargadas
+      let attempts = 0;
+      const maxAttempts = 30;
+      
+      const checkQuestionsLoaded = () => {
+        return new Promise<void>((resolve, reject) => {
+          const interval = setInterval(() => {
+            attempts++;
+            
+            const currentSession = this.apiService.getCurrentSession();
+            const hasQuestions = currentSession?.questions && currentSession.questions.length > 0;
+            
+            console.log(`Intento ${attempts}: Preguntas cargadas = ${hasQuestions}`);
+            
+            if (hasQuestions) {
+              clearInterval(interval);
+              console.log('Preguntas detectadas, cerrando loading');
+              resolve();
+            } else if (attempts >= maxAttempts) {
+              clearInterval(interval);
+              console.log('Timeout esperando preguntas');
+              reject(new Error('Timeout cargando preguntas'));
+            }
+          }, 500);
+        });
+      };
+      
+      await checkQuestionsLoaded();
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      
+      console.log('Test oral completamente cargado');
+      
+    } catch (error) {
+      console.error('Error al crear sesión o cargar preguntas:', error);
+      alert('Error al cargar el test oral. Verifica tu conexión e inténtalo nuevamente.');
+    } finally {
+      await loading.dismiss();
+      console.log('Loading cerrado');
+    }
   }
 
-  // Función cuando el usuario toca el mapache
   mapacheSing() {
     this.activateSinging();
   }
 
-  // Función para activar la animación de canto
   private activateSinging() {
-    // Mostrar notas musicales
     this.showMusicNotes = true;
     
-    // Mostrar mensaje aleatorio después de un momento
     setTimeout(() => {
       this.currentMessage = this.getRandomOralMessage();
       this.showSpeech = true;
     }, 500);
 
-    // Ocultar todo después de 3 segundos
     setTimeout(() => {
       this.showSpeech = false;
       this.showMusicNotes = false;
     }, 3000);
   }
 
-  // Obtener mensaje aleatorio para modo oral
   private getRandomOralMessage(): string {
     const randomIndex = Math.floor(Math.random() * this.oralMessages.length);
     return this.oralMessages[randomIndex];
   }
-
 }

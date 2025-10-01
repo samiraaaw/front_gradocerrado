@@ -21,21 +21,16 @@ export class BottomNavComponent implements OnInit {
     return this.router.url.includes(route);
   }
 
-  // ========================================
-  // FUNCIONES DE NAVEGACIÓN ACTUALIZADAS
-  // ========================================
-
-  // Navegar a Home - FUNCIÓN PRINCIPAL
+  // Navegar a Home
   goToHome() {
     console.log('Navegando a Home...');
     this.router.navigate(['/home']);
   }
 
-  // Navegar a Estadísticas
+  // Navegar a Dashboard (Estadísticas)
   goToStats() {
-    console.log('Ir a estadísticas - Por implementar');
-    // Cuando tengas la página de stats:
-    // this.router.navigate(['/stats']);
+    console.log('Navegando a Dashboard...');
+    this.router.navigate(['/dashboard']);
   }
 
   // Navegar a Racha
@@ -44,24 +39,21 @@ export class BottomNavComponent implements OnInit {
     this.router.navigate(['/racha']);
   }
 
-  // Abrir menú de agregar (función original)
+  // Abrir menú de agregar
   openAddMenu() {
     console.log('Abrir menú de agregar');
-    // Aquí puedes abrir un modal o menú
   }
 
   // Navegar a Notificaciones
   goToNotifications() {
-    console.log('Ir a notificaciones - Por implementar');
-    // Cuando tengas la página de notifications:
-    // this.router.navigate(['/notifications']);
+    console.log('Navegando a Notificaciones...');
+    this.router.navigate(['/notifications']);
   }
 
   // Navegar a Perfil
   goToProfile() {
-    console.log('Ir a perfil - Por implementar');
-    // Cuando tengas la página de profile:
-    // this.router.navigate(['/profile']);
+    console.log('Navegando a Perfil...');
+    this.router.navigate(['/profile']);
   }
 
 }

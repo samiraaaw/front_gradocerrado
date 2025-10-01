@@ -1,0 +1,75 @@
+<ion-content class="civil-content">
+  <!-- Header idéntico al de Material/Civil -->
+  <div class="custom-header-section">
+    <ion-back-button class="gc-back-btn" text="" defaultHref="/civil"></ion-back-button>
+    <div class="orange-background">
+      <div class="derecho-civil-container-full">
+        <img src="assets/image/civil/logo_civil.png"
+             alt="Derecho Civil"
+             class="derecho-civil-image-responsive" />
+      </div>
+    </div>
+  </div>
+
+  <!-- Contenido -->
+  <div class="content-area">
+    <!-- Hero guía estilo calendario/libro -->
+    <div class="guide-hero">
+      <div class="guide-icon">
+        <ion-icon name="calendar-number-outline"></ion-icon>
+      </div>
+      <div class="guide-info">
+        <h2>Guía de Plan de Estudio</h2>
+        <p>Elige un plan y se desplegarán recomendaciones y tareas al instante.</p>
+      </div>
+      <ion-button fill="outline" size="small" (click)="abrirGuia()">
+        <ion-icon slot="start" name="book-outline"></ion-icon>
+        Ver Guía
+      </ion-button>
+    </div>
+
+    <!-- Planes (expandibles en la misma página) -->
+    <div class="plans">
+      <div
+        class="plan-card"
+        *ngFor="let p of planes"
+        [class.open]="esAbierto(p.key)"
+        (click)="toggle(p.key)"
+      >
+        <div class="plan-header">
+          <div class="plan-title">
+            <ion-icon
+              [name]="p.key==='relax' ? 'leaf-outline' : (p.key==='full' ? 'flash-outline' : 'skull-outline')">
+            </ion-icon>
+            <div>
+              <h3>{{ p.titulo }}</h3>
+              <small>{{ p.subtitulo }}</small>
+            </div>
+          </div>
+          <ion-icon class="chev" [name]="esAbierto(p.key) ? 'chevron-up-outline' : 'chevron-down-outline'"></ion-icon>
+        </div>
+
+        <div class="plan-body" *ngIf="esAbierto(p.key)" (click)="$event.stopPropagation()">
+          <p class="resumen">{{ p.resumen }}</p>
+
+          <div class="section">
+            <h4>Recomendaciones</h4>
+            <ul>
+              <li *ngFor="let tip of p.tips">{{ tip }}</li>
+            </ul>
+          </div>
+
+          <div class="section">
+            <h4>Tareas sugeridas</h4>
+            <ul>
+              <li *ngFor="let t of p.tareasSugeridas">{{ t }}</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Bottom Navigation idéntico -->
+  <app-bottom-nav></app-bottom-nav>
+</ion-content>

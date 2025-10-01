@@ -77,18 +77,18 @@
           </div>
         </div>
 
-        <!-- Controles adicionales -->
-        <div class="recording-actions" *ngIf="hasRecording">
-          <button class="action-button replay" (click)="replayRecording()">
-            <ion-icon name="play"></ion-icon>
-            <span>Pausar</span>
-          </button>
-          
-          <button class="action-button restart" (click)="restartRecording()">
-            <ion-icon name="refresh"></ion-icon>
-            <span>Reiniciar</span>
-          </button>
-        </div>
+<!-- Controles adicionales -->
+<div class="recording-actions" *ngIf="hasRecording">
+  <button class="action-button replay" (click)="replayRecording()">
+    <ion-icon [name]="isPlayingRecording ? 'pause' : 'play'"></ion-icon>
+    <span>{{ getReplayButtonText() }}</span>
+  </button>
+  
+  <button class="action-button restart" (click)="restartRecording()">
+    <ion-icon name="refresh"></ion-icon>
+    <span>Reiniciar</span>
+  </button>
+</div>
       </div>
     </div>
 

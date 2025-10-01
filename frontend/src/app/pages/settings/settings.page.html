@@ -1,0 +1,286 @@
+<ion-content class="settings-content">
+  
+  <!-- Header con fondo gris -->
+  <div class="header-section">
+    <div class="background-image">
+      <img src="assets/image/superior_gris.png" alt="Background" class="superior-gris">
+    </div>
+    
+    <div class="header-content">
+      <ion-button fill="clear" (click)="goBack()" class="back-button">
+        <ion-icon name="chevron-back"></ion-icon>
+      </ion-button>
+      
+      <h1>Configuración</h1>
+    </div>
+  </div>
+
+  <!-- Contenido scrollable -->
+  <div class="scrollable-content">
+
+    <!-- INTERRUPTOR MAESTRO -->
+    <div class="master-switch-card">
+      <div class="master-switch-content">
+        <div class="master-icon">
+          <ion-icon name="notifications"></ion-icon>
+        </div>
+        <div class="master-text">
+          <h3>Todas las notificaciones</h3>
+          <p>Activar o desactivar todas las notificaciones</p>
+        </div>
+        <ion-toggle 
+          [(ngModel)]="notificationSettings.masterSwitch"
+          (ionChange)="onMasterSwitchChange()"
+          class="master-toggle">
+        </ion-toggle>
+      </div>
+    </div>
+
+    <!-- TIPOS DE NOTIFICACIONES -->
+    <div class="settings-section" *ngIf="notificationSettings.masterSwitch">
+      <h3>Tipos de notificaciones</h3>
+      
+      <div class="setting-item">
+        <div class="setting-info">
+          <ion-icon name="flame" style="color: #f59e0b;"></ion-icon>
+          <div class="setting-text">
+            <h4>Notificaciones de racha</h4>
+            <p>Recibe alertas sobre tu racha de estudio</p>
+          </div>
+        </div>
+        <ion-toggle 
+          [(ngModel)]="notificationSettings.streakNotifications"
+          (ionChange)="onSettingChange()">
+        </ion-toggle>
+      </div>
+
+      <div class="setting-item">
+        <div class="setting-info">
+          <ion-icon name="trophy" style="color: #10b981;"></ion-icon>
+          <div class="setting-text">
+            <h4>Logros desbloqueados</h4>
+            <p>Notificaciones cuando alcances un logro</p>
+          </div>
+        </div>
+        <ion-toggle 
+          [(ngModel)]="notificationSettings.achievementNotifications"
+          (ionChange)="onSettingChange()">
+        </ion-toggle>
+      </div>
+
+      <div class="setting-item">
+        <div class="setting-info">
+          <ion-icon name="alarm" style="color: #3b82f6;"></ion-icon>
+          <div class="setting-text">
+            <h4>Recordatorios de estudio</h4>
+            <p>Recibe recordatorios para estudiar</p>
+          </div>
+        </div>
+        <ion-toggle 
+          [(ngModel)]="notificationSettings.studyReminders"
+          (ionChange)="onSettingChange()">
+        </ion-toggle>
+      </div>
+
+      <div class="setting-item">
+        <div class="setting-info">
+          <ion-icon name="bulb" style="color: #f59e0b;"></ion-icon>
+          <div class="setting-text">
+            <h4>Consejos y tips</h4>
+            <p>Recibe consejos para mejorar tu estudio</p>
+          </div>
+        </div>
+        <ion-toggle 
+          [(ngModel)]="notificationSettings.tipsNotifications"
+          (ionChange)="onSettingChange()">
+        </ion-toggle>
+      </div>
+
+      <div class="setting-item">
+        <div class="setting-info">
+          <ion-icon name="flag" style="color: #8b5cf6;"></ion-icon>
+          <div class="setting-text">
+            <h4>Notificaciones de metas</h4>
+            <p>Alertas cuando estés cerca de tu meta</p>
+          </div>
+        </div>
+        <ion-toggle 
+          [(ngModel)]="notificationSettings.goalNotifications"
+          (ionChange)="onSettingChange()">
+        </ion-toggle>
+      </div>
+
+      <div class="setting-item">
+        <div class="setting-info">
+          <ion-icon name="heart" style="color: #ec4899;"></ion-icon>
+          <div class="setting-text">
+            <h4>Mensajes motivacionales</h4>
+            <p>Recibe mensajes de ánimo y motivación</p>
+          </div>
+        </div>
+        <ion-toggle 
+          [(ngModel)]="notificationSettings.motivationalMessages"
+          (ionChange)="onSettingChange()">
+        </ion-toggle>
+      </div>
+
+      <div class="setting-item">
+        <div class="setting-info">
+          <ion-icon name="stats-chart" style="color: #06b6d4;"></ion-icon>
+          <div class="setting-text">
+            <h4>Reporte semanal</h4>
+            <p>Resumen de tu progreso cada semana</p>
+          </div>
+        </div>
+        <ion-toggle 
+          [(ngModel)]="notificationSettings.weeklyReport"
+          (ionChange)="onSettingChange()">
+        </ion-toggle>
+      </div>
+    </div>
+
+    <!-- RECORDATORIOS DE ESTUDIO -->
+    <div class="settings-section" *ngIf="notificationSettings.masterSwitch && notificationSettings.studyReminders">
+      <h3>Configuración de recordatorios</h3>
+      
+      <div class="setting-item">
+        <div class="setting-info">
+          <ion-icon name="alarm" style="color: #3b82f6;"></ion-icon>
+          <div class="setting-text">
+            <h4>Recordatorio diario</h4>
+            <p>Recibe una notificación para estudiar cada día</p>
+          </div>
+        </div>
+        <ion-toggle 
+          [(ngModel)]="notificationSettings.dailyReminder"
+          (ionChange)="onSettingChange()">
+        </ion-toggle>
+      </div>
+
+      <div class="setting-item time-picker" *ngIf="notificationSettings.dailyReminder">
+        <div class="setting-info">
+          <ion-icon name="time" style="color: #3b82f6;"></ion-icon>
+          <div class="setting-text">
+            <h4>Hora del recordatorio</h4>
+            <p>¿A qué hora prefieres estudiar?</p>
+          </div>
+        </div>
+        <input 
+          type="time" 
+          [(ngModel)]="notificationSettings.dailyReminderTime"
+          (change)="onSettingChange()"
+          class="time-input">
+      </div>
+    </div>
+
+    <!-- CANALES DE NOTIFICACIÓN -->
+    <div class="settings-section" *ngIf="notificationSettings.masterSwitch">
+      <h3>Canales de notificación</h3>
+      
+      <div class="setting-item">
+        <div class="setting-info">
+          <ion-icon name="phone-portrait" style="color: #3b82f6;"></ion-icon>
+          <div class="setting-text">
+            <h4>Notificaciones push</h4>
+            <p>Recibe notificaciones en tu dispositivo</p>
+          </div>
+        </div>
+        <ion-toggle 
+          [(ngModel)]="notificationSettings.pushNotifications"
+          (ionChange)="onSettingChange()">
+        </ion-toggle>
+      </div>
+    </div>
+
+    <!-- CONFIGURACIÓN AVANZADA -->
+    <div class="settings-section" *ngIf="notificationSettings.masterSwitch && notificationSettings.pushNotifications">
+      <h3>Configuración avanzada</h3>
+      
+      <div class="setting-item">
+        <div class="setting-info">
+          <ion-icon name="volume-high" style="color: #3b82f6;"></ion-icon>
+          <div class="setting-text">
+            <h4>Sonido</h4>
+            <p>Reproducir sonido con las notificaciones</p>
+          </div>
+        </div>
+        <ion-toggle 
+          [(ngModel)]="notificationSettings.soundEnabled"
+          (ionChange)="onSettingChange()">
+        </ion-toggle>
+      </div>
+
+      <div class="setting-item">
+        <div class="setting-info">
+          <ion-icon name="phone-portrait" style="color: #3b82f6;"></ion-icon>
+          <div class="setting-text">
+            <h4>Vibración</h4>
+            <p>Vibrar al recibir notificaciones</p>
+          </div>
+        </div>
+        <ion-toggle 
+          [(ngModel)]="notificationSettings.vibrationEnabled"
+          (ionChange)="onSettingChange()">
+        </ion-toggle>
+      </div>
+
+      <div class="setting-item">
+        <div class="setting-info">
+          <ion-icon name="moon" style="color: #6366f1;"></ion-icon>
+          <div class="setting-text">
+            <h4>No molestar</h4>
+            <p>Silenciar notificaciones en horario específico</p>
+          </div>
+        </div>
+        <ion-toggle 
+          [(ngModel)]="notificationSettings.doNotDisturbEnabled"
+          (ionChange)="onSettingChange()">
+        </ion-toggle>
+      </div>
+
+      <div class="setting-item time-picker" *ngIf="notificationSettings.doNotDisturbEnabled">
+        <div class="setting-info">
+          <ion-icon name="time" style="color: #6366f1;"></ion-icon>
+          <div class="setting-text">
+            <h4>Desde</h4>
+            <p>Hora de inicio de no molestar</p>
+          </div>
+        </div>
+        <input 
+          type="time" 
+          [(ngModel)]="notificationSettings.doNotDisturbStart"
+          (change)="onSettingChange()"
+          class="time-input">
+      </div>
+
+      <div class="setting-item time-picker" *ngIf="notificationSettings.doNotDisturbEnabled">
+        <div class="setting-info">
+          <ion-icon name="time" style="color: #6366f1;"></ion-icon>
+          <div class="setting-text">
+            <h4>Hasta</h4>
+            <p>Hora de fin de no molestar</p>
+          </div>
+        </div>
+        <input 
+          type="time" 
+          [(ngModel)]="notificationSettings.doNotDisturbEnd"
+          (change)="onSettingChange()"
+          class="time-input">
+      </div>
+    </div>
+
+    <!-- INFORMACIÓN DE GUARDADO -->
+    <div class="save-info">
+      <ion-icon name="checkmark-circle"></ion-icon>
+      <p>Los cambios se guardan automáticamente</p>
+    </div>
+
+    <!-- Espaciado inferior -->
+    <div class="bottom-spacer"></div>
+
+  </div>
+
+  <!-- Navegación inferior -->
+  <app-bottom-nav></app-bottom-nav>
+
+</ion-content>

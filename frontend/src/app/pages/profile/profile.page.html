@@ -1,0 +1,190 @@
+<ion-content class="profile-content">
+  
+  <div class="header-section">
+    <div class="background-image">
+      <img src="assets/image/superior_gris.png" alt="Background" class="superior-gris">
+    </div>
+    
+    <ion-button fill="clear" (click)="goBack()" class="back-button">
+      <ion-icon name="chevron-back"></ion-icon>
+    </ion-button>
+    
+    <div class="profile-header">
+      <div class="avatar-container" (click)="changeAvatar()">
+        <img [src]="user.avatar" alt="Avatar" class="avatar-image">
+        <div class="avatar-edit-badge">
+          <ion-icon name="camera"></ion-icon>
+        </div>
+      </div>
+      <h1>{{ user.nombre }}</h1>
+      <p class="user-email">{{ user.email }}</p>
+      <button class="edit-profile-btn" (click)="editProfile()">
+        <ion-icon name="create"></ion-icon>
+        Editar Perfil
+      </button>
+    </div>
+  </div>
+
+  <div class="scrollable-content">
+
+    <div class="quick-stats">
+      <div class="stat-box">
+        <ion-icon name="flame" class="stat-icon streak"></ion-icon>
+        <h3>{{ stats.racha_dias_actual }}</h3>
+        <p>días de racha</p>
+      </div>
+      <div class="stat-box">
+        <ion-icon name="trophy" class="stat-icon trophy"></ion-icon>
+        <h3>{{ stats.total_tests }}</h3>
+        <p>sesiones</p>
+      </div>
+      <div class="stat-box">
+        <ion-icon name="time" class="stat-icon time"></ion-icon>
+        <h3>{{ stats.total_dias_estudiados }}</h3>
+        <p>días estudiando</p>
+      </div>
+    </div>
+
+    <div class="section">
+      <h2 class="section-title">Información Personal</h2>
+      
+      <div class="info-card">
+        <div class="info-item">
+          <ion-icon name="person"></ion-icon>
+          <div class="info-text">
+            <span class="info-label">Nombre Completo</span>
+            <span class="info-value">{{ user.nombre }}</span>
+          </div>
+        </div>
+        
+        <div class="info-item">
+          <ion-icon name="mail"></ion-icon>
+          <div class="info-text">
+            <span class="info-label">Email</span>
+            <span class="info-value">{{ user.email }}</span>
+          </div>
+        </div>
+        
+        <div class="info-item">
+          <ion-icon name="trending-up"></ion-icon>
+          <div class="info-text">
+            <span class="info-label">Nivel Actual</span>
+            <span class="info-value">{{ getNivelFormatted() }}</span>
+          </div>
+        </div>
+        
+        <div class="info-item">
+          <ion-icon name="checkmark-circle"></ion-icon>
+          <div class="info-text">
+            <span class="info-label">Miembro desde</span>
+            <span class="info-value">{{ getFechaRegistroFormatted() }}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <h2 class="section-title">Progreso y Logros</h2>
+      
+      <div class="action-cards">
+        <div class="action-card" (click)="viewHistory()">
+          <div class="action-icon dashboard">
+            <ion-icon name="stats-chart"></ion-icon>
+          </div>
+          <div class="action-text">
+            <h3>Historial de Estudio</h3>
+            <p>Ver todas tus sesiones</p>
+          </div>
+          <ion-icon name="chevron-forward" class="action-arrow"></ion-icon>
+        </div>
+        
+        <div class="action-card" (click)="viewAchievements()">
+          <div class="action-icon achievements">
+            <ion-icon name="medal"></ion-icon>
+          </div>
+          <div class="action-text">
+            <h3>Logros</h3>
+            <p>{{ stats.racha_dias_maxima }} días - Mejor racha</p>
+          </div>
+          <ion-icon name="chevron-forward" class="action-arrow"></ion-icon>
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <h2 class="section-title">Configuración</h2>
+      
+      <div class="settings-card">
+        <div class="setting-item action" (click)="editProfile()">
+          <div class="setting-info">
+            <ion-icon name="key"></ion-icon>
+            <span>Cambiar contraseña</span>
+          </div>
+          <ion-icon name="chevron-forward"></ion-icon>
+        </div>
+        
+        <div class="setting-item">
+          <div class="setting-info">
+            <ion-icon name="moon"></ion-icon>
+            <span>Modo oscuro</span>
+          </div>
+          <ion-toggle 
+            [(ngModel)]="settings.darkMode"
+            (ionChange)="saveSettings()">
+          </ion-toggle>
+        </div>
+        
+        <div class="setting-item">
+          <div class="setting-info">
+            <ion-icon name="volume-high"></ion-icon>
+            <span>Efectos de sonido</span>
+          </div>
+          <ion-toggle 
+            [(ngModel)]="settings.soundEffects"
+            (ionChange)="saveSettings()">
+          </ion-toggle>
+        </div>
+        
+        <div class="setting-item">
+          <div class="setting-info">
+            <ion-icon name="phone-portrait"></ion-icon>
+            <span>Vibración</span>
+          </div>
+          <ion-toggle 
+            [(ngModel)]="settings.vibration"
+            (ionChange)="saveSettings()">
+          </ion-toggle>
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <h2 class="section-title">Ayuda</h2>
+      
+      <div class="help-buttons">
+        <button class="help-btn" (click)="getHelp()">
+          <ion-icon name="help-circle"></ion-icon>
+          <span>Ayuda y Soporte</span>
+        </button>
+        
+        <button class="help-btn" (click)="aboutApp()">
+          <ion-icon name="information-circle"></ion-icon>
+          <span>Acerca de Grado Cerrado</span>
+        </button>
+      </div>
+    </div>
+
+    <div class="section">
+      <button class="logout-btn" (click)="logout()">
+        <ion-icon name="log-out"></ion-icon>
+        <span>Cerrar Sesión</span>
+      </button>
+    </div>
+
+    <div class="bottom-spacer"></div>
+
+  </div>
+
+  <app-bottom-nav></app-bottom-nav>
+
+</ion-content>

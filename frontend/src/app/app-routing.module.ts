@@ -48,6 +48,36 @@ const routes: Routes = [
     loadChildren: () => import('./pages/home/home.module').then( m => m.HomePageModule)
   },
 
+  // Dashboard
+  {
+    path: 'dashboard',
+    loadComponent: () => import('./pages/dashboard/dashboard.page').then(m => m.DashboardPage)
+  },
+
+  // Notificaciones
+  {
+    path: 'notifications',
+    loadComponent: () => import('./pages/notifications/notifications.page').then(m => m.NotificationsPage)
+  },
+
+  // Settings
+  {
+    path: 'settings',
+    loadComponent: () => import('./pages/settings/settings.page').then(m => m.SettingsPage)
+  },
+
+  // Racha
+  {
+    path: 'racha',
+    loadComponent: () => import('./pages/racha/racha.page').then(m => m.RachaPage)
+  },
+
+  // Perfil
+  {
+    path: 'profile',
+    loadComponent: () => import('./pages/profile/profile.page').then(m => m.ProfilePage)
+  },
+
   // Contenedor CIVIL (lazy)
   {
     path: 'civil',
@@ -56,11 +86,7 @@ const routes: Routes = [
   },
 
   // Fallback - SIEMPRE AL FINAL
-  { path: '**', redirectTo: '/welcome' },
-  {
-  path: 'racha',
-  loadComponent: () => import('./pages/racha/racha.page').then(m => m.RachaPage)
-},
+  { path: '**', redirectTo: '/welcome' }
 ];
 
 @NgModule({

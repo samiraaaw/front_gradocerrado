@@ -1,0 +1,296 @@
+<ion-content class="dashboard-content">
+  <!-- Header FIJO igual que home -->
+  <div class="header-section">
+    <div class="background-image">
+      <img src="assets/image/superior_gris.png" alt="Background" class="superior-gris">
+    </div>
+
+  <!-- Saludo del usuario -->
+  <div class="user-greeting">
+    <!-- AGREGAR ESTE BOTÓN AQUÍ -->
+    <ion-button fill="clear" (click)="goBack()" class="back-button">
+      <ion-icon name="chevron-back"></ion-icon>
+    </ion-button>
+    
+    <div class="avatar-container">
+      <img src="assets/image/msombra.png" alt="Avatar" class="user-avatar">
+    </div>
+      <div class="greeting-text">
+        <h1 class="greeting-title">¡Hola {{ userName }}!</h1>
+        <p class="greeting-subtitle">Tu progreso</p>
+      </div>
+      
+      <!-- Racha con hojitas -->
+      <div class="streak-display">
+        <img src="assets/image/menu/hoja.png" alt="Racha" class="streak-icon">
+        <span class="streak-count">{{ userStreak }}</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Loading State -->
+  <div *ngIf="isLoading" class="loading-container">
+    <ion-spinner name="circular"></ion-spinner>
+    <p>Cargando estadísticas...</p>
+  </div>
+
+  <!-- CONTENIDO que hace scroll - DEBAJO del header fijo -->
+  <div *ngIf="!isLoading" class="scrollable-content">
+
+    <!-- Estadísticas Generales con Gráficos -->
+    <div class="stats-overview">
+      
+      <!-- Tarjeta 1: Sesiones Completadas (Sin gráfico) -->
+      <div class="stat-card sessions-card">
+        <h4 class="stat-title">Sesiones</h4>
+        <div class="sessions-badges">
+          <div class="session-badge completed">
+            <ion-icon name="checkmark-circle"></ion-icon>
+          </div>
+          <div class="session-badge completed">
+            <ion-icon name="checkmark-circle"></ion-icon>
+          </div>
+          <div class="session-badge completed">
+            <ion-icon name="checkmark-circle"></ion-icon>
+          </div>
+          <div class="session-badge completed">
+            <ion-icon name="checkmark-circle"></ion-icon>
+          </div>
+          <div class="session-badge pending">
+            <ion-icon name="ellipse-outline"></ion-icon>
+          </div>
+        </div>
+        <div class="sessions-count">
+          <span class="count-number">{{ totalSessions }}</span>
+          <span class="count-label">Completadas</span>
+        </div>
+        <div class="sessions-progress-text">
+          <ion-icon name="trophy"></ion-icon>
+          <span>¡Sigue así!</span>
+        </div>
+      </div>
+
+      <!-- Tarjeta 2: Preguntas con Meta Progresiva -->
+      <div class="stat-card">
+        <h4 class="stat-title">Preguntas</h4>
+        <div class="donut-chart">
+          <svg viewBox="0 0 100 100" class="donut-svg">
+            <circle 
+              cx="50" 
+              cy="50" 
+              r="35" 
+              fill="none" 
+              stroke="#e5e7eb" 
+              stroke-width="12">
+            </circle>
+            <circle 
+              cx="50" 
+              cy="50" 
+              r="35" 
+              fill="none" 
+              stroke="url(#gradient2)" 
+              stroke-width="12"
+              stroke-dasharray="219.8"
+              stroke-dashoffset="0"
+              transform="rotate(-90 50 50)"
+              class="donut-progress"
+              [style.stroke-dashoffset]="getDonutOffset()">
+            </circle>
+            <defs>
+              <linearGradient id="gradient2" x1="0%" y1="0%" x2="100%" y2="0%">
+                <stop offset="0%" style="stop-color:#3b82f6;stop-opacity:1" />
+                <stop offset="100%" style="stop-color:#10b981;stop-opacity:1" />
+              </linearGradient>
+            </defs>
+          </svg>
+          <div class="donut-center">
+            <span class="donut-value">{{ totalQuestions }}</span>
+          </div>
+        </div>
+        <div class="progress-meta">
+          <span class="meta-text">Meta: {{ currentGoal }}</span>
+          <p class="stat-label">Respondidas</p>
+        </div>
+      </div>
+
+      <!-- Tarjeta 3: Velocímetro de Precisión -->
+      <div class="stat-card">
+        <h4 class="stat-title">Precisión</h4>
+        <div class="gauge-chart">
+          <svg viewBox="0 0 100 60" class="gauge-svg">
+            <!-- Fondo del arco -->
+            <path 
+              d="M 15 55 A 35 35 0 0 1 85 55" 
+              fill="none" 
+              stroke="#e5e7eb" 
+              stroke-width="10"
+              stroke-linecap="round">
+            </path>
+            <!-- Arco de progreso -->
+            <path 
+              d="M 15 55 A 35 35 0 0 1 85 55" 
+              fill="none" 
+              stroke="url(#gradient3)" 
+              stroke-width="10"
+              stroke-linecap="round"
+              stroke-dasharray="110"
+              [style.stroke-dashoffset]="getGaugeOffset()"
+              class="gauge-progress">
+            </path>
+            <defs>
+              <linearGradient id="gradient3" x1="0%" y1="0%" x2="100%" y2="0%">
+                <stop offset="0%" style="stop-color:#f59e0b;stop-opacity:1" />
+                <stop offset="50%" style="stop-color:#10b981;stop-opacity:1" />
+                <stop offset="100%" style="stop-color:#059669;stop-opacity:1" />
+              </linearGradient>
+            </defs>
+          </svg>
+          <div class="gauge-center">
+            <span class="gauge-value">{{ overallSuccessRate }}%</span>
+          </div>
+        </div>
+        <p class="stat-label">Tasa de éxito</p>
+      </div>
+      
+    </div>
+
+    <!-- Gráfico de Progreso Semanal -->
+    <div class="chart-container">
+      <div class="chart-header">
+        <h2>Progreso Semanal</h2>
+        <div class="time-selector">
+          <button 
+            class="time-btn" 
+            [class.active]="selectedTimeFrame === 'week'"
+            (click)="changeTimeFrame('week')">
+            Semana
+          </button>
+          <button 
+            class="time-btn" 
+            [class.active]="selectedTimeFrame === 'month'"
+            (click)="changeTimeFrame('month')">
+            Mes
+          </button>
+        </div>
+      </div>
+
+      <div class="chart-legend">
+        <div class="legend-item">
+          <span class="legend-color civil"></span>
+          <span>Civil</span>
+        </div>
+        <div class="legend-item">
+          <span class="legend-color procesal"></span>
+          <span>Procesal</span>
+        </div>
+      </div>
+
+      <div class="chart-area">
+        <div class="chart-bars">
+          <div *ngFor="let day of chartData" class="bar-group">
+            <div class="bar-container">
+              <div 
+                class="bar bar-civil" 
+                [style.height.%]="getBarHeight(day.civil, 'civil')">
+                <span class="bar-value">{{ day.civil }}</span>
+              </div>
+              <div 
+                class="bar bar-procesal" 
+                [style.height.%]="getBarHeight(day.procesal, 'procesal')">
+                <span class="bar-value">{{ day.procesal }}</span>
+              </div>
+            </div>
+            <div class="bar-label">{{ day.date }}</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Estadísticas por Área -->
+    <div class="area-stats-container">
+      <h2>Rendimiento por Área</h2>
+      
+      <div class="area-cards">
+        <div *ngFor="let area of areaStats" class="area-card" (click)="goToAreaDetails(area.area)">
+          <div class="area-header">
+            <h3>{{ area.area }}</h3>
+            <ion-icon name="chevron-forward"></ion-icon>
+          </div>
+          
+          <div class="area-progress">
+            <div class="progress-info">
+              <span>{{ area.correctAnswers }}/{{ area.totalQuestions }} correctas</span>
+              <span class="percentage">{{ area.successRate }}%</span>
+            </div>
+            <ion-progress-bar 
+              [value]="area.successRate / 100" 
+              [color]="getProgressColor(area.successRate)">
+            </ion-progress-bar>
+          </div>
+          
+          <div class="area-details">
+            <div class="detail-item">
+              <ion-icon name="timer"></ion-icon>
+              <span>{{ area.sessions }} sesiones</span>
+            </div>
+            <div class="detail-item">
+              <ion-icon name="trending-up"></ion-icon>
+              <span>{{ area.successRate }}% precisión</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Sesiones Recientes -->
+    <div class="recent-sessions-container">
+      <div class="section-header">
+        <h2>Sesiones Recientes</h2>
+        <button class="see-all-btn">Ver todas</button>
+      </div>
+
+      <div class="sessions-list">
+        <div *ngFor="let session of recentSessions" class="session-card" (click)="goToSession(session.id)">
+          
+          <!-- Calendario mejorado -->
+          <div class="session-date-box">
+            <div class="calendar-icon">
+              <ion-icon name="calendar-outline"></ion-icon>
+            </div>
+            <span class="date-text">{{ session.date }}</span>
+          </div>
+          
+          <div class="session-info">
+            <div class="session-title">
+              <h4>{{ session.area }}</h4>
+              <span class="duration">{{ session.duration }}</span>
+            </div>
+            
+            <div class="session-stats">
+              <span class="questions">{{ session.questions }} preguntas</span>
+              <span class="score" [class.high-score]="session.successRate >= 80">
+                {{ session.correct }}/{{ session.questions }} ({{ session.successRate }}%)
+              </span>
+            </div>
+          </div>
+          
+          <ion-icon name="chevron-forward" class="session-arrow"></ion-icon>
+        </div>
+      </div>
+    </div>
+
+    <!-- Botón de Acción -->
+    <div class="action-section">
+      <button class="start-session-btn" (click)="startNewSession()">
+        <ion-icon name="add-circle"></ion-icon>
+        <span>Nueva Sesión de Estudio</span>
+      </button>
+    </div>
+
+    <!-- Espaciado para la navegación inferior -->
+    <div class="bottom-spacer"></div>
+  </div>
+
+  <!-- Navegación inferior -->
+  <app-bottom-nav></app-bottom-nav>
+</ion-content>
