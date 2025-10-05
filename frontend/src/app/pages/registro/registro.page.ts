@@ -96,7 +96,7 @@ export class RegistroPage implements OnInit {
     const registerData = {
       name: nombreCompleto,
       email: this.correoElectronico.toLowerCase().trim(),
-      password: this.contrasena // Agregar la contraseña al registro
+      password: this.contrasena
     };
 
     try {
@@ -112,11 +112,8 @@ export class RegistroPage implements OnInit {
         // Guardar datos del usuario en localStorage
         localStorage.setItem('currentUser', JSON.stringify(response.user));
         
-        // Mostrar mensaje de éxito
-        await this.showAlert('Registro exitoso', 'Tu cuenta ha sido creada correctamente. ¡Bienvenido!');
-        
-        // Navegar a la página principal
-        this.router.navigate(['/home']);
+        // Navegar directamente a felicitaciones sin mostrar pop-up
+        this.router.navigate(['/felicidades']);
       } else {
         await this.showAlert('Error en el registro', response.message || 'Error desconocido');
       }

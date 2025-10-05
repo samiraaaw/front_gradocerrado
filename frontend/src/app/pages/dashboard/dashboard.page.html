@@ -7,7 +7,6 @@
 
   <!-- Saludo del usuario -->
   <div class="user-greeting">
-    <!-- AGREGAR ESTE BOTÓN AQUÍ -->
     <ion-button fill="clear" (click)="goBack()" class="back-button">
       <ion-icon name="chevron-back"></ion-icon>
     </ion-button>
@@ -40,116 +39,118 @@
     <!-- Estadísticas Generales con Gráficos -->
     <div class="stats-overview">
       
-      <!-- Tarjeta 1: Sesiones Completadas (Sin gráfico) -->
-      <div class="stat-card sessions-card">
-        <h4 class="stat-title">Sesiones</h4>
-        <div class="sessions-badges">
-          <div class="session-badge completed">
-            <ion-icon name="checkmark-circle"></ion-icon>
+      <!-- FILA SUPERIOR: Sesiones y Preguntas lado a lado -->
+      <div class="stats-row-top">
+        
+        <!-- Tarjeta 1: Sesiones Completadas con Sistema de Objetivos -->
+        <div class="stat-card sessions-card">
+          <h4 class="stat-title">Sesiones</h4>
+          <div class="sessions-badges">
+            <!-- ✅ Mostrar 5 bolitas, cada una representa 10 tests -->
+            <ng-container *ngFor="let milestone of [0, 1, 2, 3, 4]; let i = index">
+              <div class="session-badge" [class.completed]="totalSessions >= (i + 1) * 10" [class.pending]="totalSessions < (i + 1) * 10">
+                <ion-icon *ngIf="totalSessions >= (i + 1) * 10" name="checkmark-circle"></ion-icon>
+                <ion-icon *ngIf="totalSessions < (i + 1) * 10" name="ellipse-outline"></ion-icon>
+              </div>
+            </ng-container>
           </div>
-          <div class="session-badge completed">
-            <ion-icon name="checkmark-circle"></ion-icon>
+          <div class="sessions-count">
+            <span class="count-number">{{ totalSessions }}</span>
+            <span class="count-label">de {{ currentSessionGoal }} completadas</span>
           </div>
-          <div class="session-badge completed">
-            <ion-icon name="checkmark-circle"></ion-icon>
-          </div>
-          <div class="session-badge completed">
-            <ion-icon name="checkmark-circle"></ion-icon>
-          </div>
-          <div class="session-badge pending">
-            <ion-icon name="ellipse-outline"></ion-icon>
+          <div class="sessions-progress-text">
+            <ion-icon name="trophy"></ion-icon>
+            <span>{{ getMotivationalMessage() }}</span>
           </div>
         </div>
-        <div class="sessions-count">
-          <span class="count-number">{{ totalSessions }}</span>
-          <span class="count-label">Completadas</span>
+
+        <!-- Tarjeta 2: Preguntas con Meta Progresiva -->
+        <div class="stat-card">
+          <h4 class="stat-title">Preguntas</h4>
+          <div class="donut-chart">
+            <svg viewBox="0 0 100 100" class="donut-svg">
+              <circle 
+                cx="50" 
+                cy="50" 
+                r="35" 
+                fill="none" 
+                stroke="#e5e7eb" 
+                stroke-width="12">
+              </circle>
+              <circle 
+                cx="50" 
+                cy="50" 
+                r="35" 
+                fill="none" 
+                stroke="url(#gradient2)" 
+                stroke-width="12"
+                stroke-dasharray="219.8"
+                stroke-dashoffset="0"
+                transform="rotate(-90 50 50)"
+                class="donut-progress"
+                [style.stroke-dashoffset]="getDonutOffset()">
+              </circle>
+              <defs>
+                <linearGradient id="gradient2" x1="0%" y1="0%" x2="100%" y2="0%">
+                  <stop offset="0%" style="stop-color:#3b82f6;stop-opacity:1" />
+                  <stop offset="100%" style="stop-color:#10b981;stop-opacity:1" />
+                </linearGradient>
+              </defs>
+            </svg>
+            <div class="donut-center">
+              <span class="donut-value">{{ totalQuestions }}</span>
+            </div>
+          </div>
+          <div class="progress-meta">
+            <span class="meta-text">Meta: {{ currentGoal }}</span>
+            <p class="stat-label">Respondidas</p>
+          </div>
         </div>
-        <div class="sessions-progress-text">
-          <ion-icon name="trophy"></ion-icon>
-          <span>¡Sigue así!</span>
-        </div>
+        
       </div>
 
-      <!-- Tarjeta 2: Preguntas con Meta Progresiva -->
-      <div class="stat-card">
-        <h4 class="stat-title">Preguntas</h4>
-        <div class="donut-chart">
-          <svg viewBox="0 0 100 100" class="donut-svg">
-            <circle 
-              cx="50" 
-              cy="50" 
-              r="35" 
-              fill="none" 
-              stroke="#e5e7eb" 
-              stroke-width="12">
-            </circle>
-            <circle 
-              cx="50" 
-              cy="50" 
-              r="35" 
-              fill="none" 
-              stroke="url(#gradient2)" 
-              stroke-width="12"
-              stroke-dasharray="219.8"
-              stroke-dashoffset="0"
-              transform="rotate(-90 50 50)"
-              class="donut-progress"
-              [style.stroke-dashoffset]="getDonutOffset()">
-            </circle>
-            <defs>
-              <linearGradient id="gradient2" x1="0%" y1="0%" x2="100%" y2="0%">
-                <stop offset="0%" style="stop-color:#3b82f6;stop-opacity:1" />
-                <stop offset="100%" style="stop-color:#10b981;stop-opacity:1" />
-              </linearGradient>
-            </defs>
-          </svg>
-          <div class="donut-center">
-            <span class="donut-value">{{ totalQuestions }}</span>
+      <!-- FILA INFERIOR: Precisión (ancho completo) -->
+      <div class="stats-row-bottom">
+        
+        <!-- Tarjeta 3: Velocímetro de Precisión ARREGLADO -->
+        <div class="stat-card precision-card-full">
+          <h4 class="stat-title">Precisión</h4>
+          <div class="gauge-chart-large">
+            <svg viewBox="0 0 120 70" class="gauge-svg">
+              <!-- Fondo del arco -->
+              <path 
+                d="M 20 65 A 40 40 0 0 1 100 65" 
+                fill="none" 
+                stroke="#e5e7eb" 
+                stroke-width="12"
+                stroke-linecap="round">
+              </path>
+              <!-- Arco de progreso -->
+              <path 
+                d="M 20 65 A 40 40 0 0 1 100 65" 
+                fill="none" 
+                stroke="url(#gradient3)" 
+                stroke-width="12"
+                stroke-linecap="round"
+                stroke-dasharray="125.6"
+                [style.stroke-dashoffset]="getGaugeOffsetLarge()"
+                class="gauge-progress">
+              </path>
+              <defs>
+                <linearGradient id="gradient3" x1="0%" y1="0%" x2="100%" y2="0%">
+                  <stop offset="0%" style="stop-color:#f59e0b;stop-opacity:1" />
+                  <stop offset="50%" style="stop-color:#10b981;stop-opacity:1" />
+                  <stop offset="100%" style="stop-color:#059669;stop-opacity:1" />
+                </linearGradient>
+              </defs>
+            </svg>
+            <div class="gauge-center-large">
+              <span class="gauge-value-large">{{ overallSuccessRate }}%</span>
+            </div>
           </div>
+          <p class="stat-label">Tasa de éxito</p>
         </div>
-        <div class="progress-meta">
-          <span class="meta-text">Meta: {{ currentGoal }}</span>
-          <p class="stat-label">Respondidas</p>
-        </div>
-      </div>
-
-      <!-- Tarjeta 3: Velocímetro de Precisión -->
-      <div class="stat-card">
-        <h4 class="stat-title">Precisión</h4>
-        <div class="gauge-chart">
-          <svg viewBox="0 0 100 60" class="gauge-svg">
-            <!-- Fondo del arco -->
-            <path 
-              d="M 15 55 A 35 35 0 0 1 85 55" 
-              fill="none" 
-              stroke="#e5e7eb" 
-              stroke-width="10"
-              stroke-linecap="round">
-            </path>
-            <!-- Arco de progreso -->
-            <path 
-              d="M 15 55 A 35 35 0 0 1 85 55" 
-              fill="none" 
-              stroke="url(#gradient3)" 
-              stroke-width="10"
-              stroke-linecap="round"
-              stroke-dasharray="110"
-              [style.stroke-dashoffset]="getGaugeOffset()"
-              class="gauge-progress">
-            </path>
-            <defs>
-              <linearGradient id="gradient3" x1="0%" y1="0%" x2="100%" y2="0%">
-                <stop offset="0%" style="stop-color:#f59e0b;stop-opacity:1" />
-                <stop offset="50%" style="stop-color:#10b981;stop-opacity:1" />
-                <stop offset="100%" style="stop-color:#059669;stop-opacity:1" />
-              </linearGradient>
-            </defs>
-          </svg>
-          <div class="gauge-center">
-            <span class="gauge-value">{{ overallSuccessRate }}%</span>
-          </div>
-        </div>
-        <p class="stat-label">Tasa de éxito</p>
+        
       </div>
       
     </div>
@@ -252,7 +253,6 @@
       <div class="sessions-list">
         <div *ngFor="let session of recentSessions" class="session-card" (click)="goToSession(session.id)">
           
-          <!-- Calendario mejorado -->
           <div class="session-date-box">
             <div class="calendar-icon">
               <ion-icon name="calendar-outline"></ion-icon>
@@ -287,10 +287,8 @@
       </button>
     </div>
 
-    <!-- Espaciado para la navegación inferior -->
     <div class="bottom-spacer"></div>
   </div>
 
-  <!-- Navegación inferior -->
   <app-bottom-nav></app-bottom-nav>
 </ion-content>

@@ -33,11 +33,12 @@
       <h2>Pregunta {{ currentQuestionNumber }}</h2>
     </div>
 
-    <!-- Texto de la pregunta -->
-    <div class="question-text">
-      <p>{{ getCurrentQuestionText() }}</p>
-    </div>
-
+    <!-- Reemplazar la sección comentada del texto por esto: -->
+  <div class="listening-indicator" *ngIf="!audioCompleted">
+    <ion-icon name="volume-high" class="pulse-icon"></ion-icon>
+    <p>Escucha atentamente la pregunta...</p>
+  </div>
+  
     <!-- Control de audio para escuchar la pregunta -->
     <div class="audio-control-section">
       <div class="audio-player" [class.playing]="isPlaying" [class.completed]="audioCompleted">
@@ -50,6 +51,18 @@
         </div>
       </div>
     </div>
+
+<div class="response-timer" *ngIf="audioCompleted && questionReadyTime > 0">
+  <div class="timer-container">
+    <ion-icon name="timer-outline" class="timer-icon"></ion-icon>
+    <div class="timer-info">
+      <span class="timer-label">Tiempo de respuesta</span>
+      <span class="timer-display" [class.warning]="getTimerWarning()">
+        {{ elapsedResponseTime }}
+      </span>
+    </div>
+  </div>
+</div>
 
     <!-- Sección de grabación de respuesta -->
     <div class="recording-section">

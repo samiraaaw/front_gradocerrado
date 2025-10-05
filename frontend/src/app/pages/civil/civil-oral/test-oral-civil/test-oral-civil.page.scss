@@ -1,4 +1,57 @@
 // ========================================
+// CONTADOR DE TIEMPO DE RESPUESTA
+// ========================================
+.response-timer {
+  margin-bottom: 24px;
+  animation: fadeIn 0.5s ease;
+
+  .timer-container {
+    background: linear-gradient(135deg, #E3F2FD, #BBDEFB);
+    border: 2px solid #2196F3;
+    border-radius: 16px;
+    padding: 16px 20px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    box-shadow: 0 4px 12px rgba(33, 150, 243, 0.2);
+
+    .timer-icon {
+      font-size: 2rem;
+      color: #1976D2;
+      animation: pulse 2s infinite;
+    }
+
+    .timer-info {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+
+      .timer-label {
+        font-size: 0.85rem;
+        color: #1565C0;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+      }
+
+      .timer-display {
+        font-size: 2rem;
+        font-weight: 800;
+        color: #0D47A1;
+        font-family: 'Courier New', monospace;
+        letter-spacing: 2px;
+
+        &.warning {
+          color: #E65100;
+          animation: blink 1s infinite;
+        }
+      }
+    }
+  }
+}
+
+// ========================================
 // CONFIGURACIÓN BÁSICA
 // ========================================
 .test-content {
@@ -445,9 +498,53 @@
 }
 
 // ========================================
+// INDICADOR DE ESCUCHA
+// ========================================
+.listening-indicator {
+  text-align: center;
+  padding: 30px 20px;
+  margin-bottom: 20px;
+  
+  .pulse-icon {
+    font-size: 3rem;
+    color: #4CAF50;
+    animation: pulse 1.5s infinite;
+  }
+  
+  p {
+    margin-top: 15px;
+    font-size: 1.1rem;
+    color: #666;
+    font-weight: 500;
+  }
+}
+
+// ========================================
 // ANIMACIONES
 // ========================================
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
 @keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.6;
+    transform: scale(1.1);
+  }
+}
+
+@keyframes blink {
   0%, 100% {
     opacity: 1;
   }
@@ -501,5 +598,89 @@
   .navigation-buttons {
     flex-direction: column;
     gap: 8px;
+  }
+}
+
+// ========================================
+// ESTILOS PARA ALERTS PERSONALIZADOS
+// ========================================
+::ng-deep {
+  .oral-alert-correct,
+  .oral-alert-incorrect {
+    .alert-wrapper {
+      max-width: 340px;
+      background: white !important;
+    }
+
+    .alert-head {
+      padding: 20px 16px 15px;
+      text-align: center;
+      background: transparent !important;
+      
+      h2 {
+        font-weight: 700 !important;
+        font-size: 1.3rem !important;
+      }
+    }
+    
+    .alert-message {
+      font-size: 0.95rem !important;
+      line-height: 1.6;
+      padding: 20px !important;
+      white-space: pre-line;
+      text-align: left;
+      color: #333 !important;
+      background: white !important;
+      max-height: 400px;
+      overflow-y: auto;
+    }
+    
+    .alert-button-group {
+      border-top: 1px solid #E0E0E0;
+      background: white !important;
+      padding: 16px;
+      
+      button {
+        font-weight: 600 !important;
+        font-size: 1rem !important;
+        text-transform: uppercase;
+      }
+    }
+  }
+
+  .oral-alert-correct {
+    .alert-wrapper {
+      border-top: 4px solid #4CAF50;
+    }
+
+    .alert-head {
+      background: linear-gradient(to bottom, #E8F5E9, #fff) !important;
+      
+      h2 {
+        color: #2E7D32 !important;
+      }
+    }
+    
+    .alert-button-group button {
+      color: #2E7D32 !important;
+    }
+  }
+
+  .oral-alert-incorrect {
+    .alert-wrapper {
+      border-top: 4px solid #F44336;
+    }
+
+    .alert-head {
+      background: linear-gradient(to bottom, #FFEBEE, #fff) !important;
+      
+      h2 {
+        color: #C62828 !important;
+      }
+    }
+    
+    .alert-button-group button {
+      color: #C62828 !important;
+    }
   }
 }

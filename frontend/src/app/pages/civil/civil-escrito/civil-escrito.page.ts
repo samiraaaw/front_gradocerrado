@@ -59,13 +59,22 @@ export class CivilEscritoPage implements OnInit {
       // 1. CREAR LA SESIÓN PRIMERO
       console.log('Creando sesión de estudio...');
       
+      // Obtener el usuario actual logueado
+      const currentUser = this.apiService.getCurrentUser();
+
+      if (!currentUser || !currentUser.id) {
+        await loading.dismiss();
+        alert('Debes iniciar sesión para hacer un test');
+        this.router.navigate(['/login']);
+        return;
+      }
+
       const sessionData = {
-        studentId: "00000000-0000-0000-0000-000000000001",
+        studentId: currentUser.id,  // Usar el ID real del usuario
         difficulty: "intermedio",
         legalAreas: ["Derecho Civil"],
         numberOfQuestions: 5
       };
-      
       console.log('Enviando datos de sesión:', sessionData);
       
       // Llamar al backend para crear sesión

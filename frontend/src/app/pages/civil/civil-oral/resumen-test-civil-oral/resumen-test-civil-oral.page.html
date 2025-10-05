@@ -1,95 +1,99 @@
-<ion-content class="civil-content">
-  <!-- Header personalizado EXACTO como civil.page.html -->
+<ion-content class="results-content">
+  <!-- Header personalizado igual que otras páginas -->
   <div class="custom-header-section">
     <div class="orange-background">
-      <!-- Imagen de extremo a extremo -->
       <div class="derecho-civil-container-full">
         <img src="assets/image/civil/logo_civil.png" alt="Derecho Civil" class="derecho-civil-image-responsive">
       </div>
     </div>
   </div>
-  <!-- Resto del contenido igual -->
+
+  <!-- Contenido principal -->
   <div class="content-area">
     
-    <!-- Resultado principal -->
-    <div class="result-card">
-      <div class="result-icon">
-        <ion-icon name="checkmark-circle" class="success-icon"></ion-icon>
+    <!-- Card principal de resultados -->
+    <div class="results-main-card">
+      
+      <!-- Sección de medalla y nivel -->
+      <div class="medal-section">
+        <div class="medal-container">
+          <div class="medal-ribbon">
+            <ion-icon name="ribbon-outline" class="ribbon-icon"></ion-icon>
+          </div>
+          <div class="medal-circle">
+            <span class="medal-number">3</span>
+          </div>
+        </div>
+        <div class="mapache-celebration">
+          <img src="assets/image/mok.png" alt="Mapache celebrando" class="mapache-result">
+        </div>
       </div>
-      <h2 class="result-title">¡Test Oral Completado!</h2>
-      <div class="percentage-display">
-        <span class="percentage-number">85%</span>
-        <span class="percentage-label">de respuestas correctas</span>
+
+      <!-- Título del nivel -->
+      <h2 class="level-title">{{ levelTitle }}</h2>
+      <p class="level-subtitle">{{ levelSubtitle }}</p>
+
+      <!-- Porcentaje principal -->
+      <div class="score-main">
+        <div class="percentage-display">{{ percentage }}%</div>
+        <p class="score-label">Puntuación del test</p>
+      </div>
+
+    </div>
+
+    <!-- Resumen de respuestas -->
+    <div class="summary-section">
+      <h3 class="summary-title">
+        <ion-icon name="bar-chart-outline"></ion-icon>
+        Resumen de Respuestas
+      </h3>
+      
+      <div class="summary-stats">
+        <div class="stat-correct">
+          <div class="stat-number">{{ correctAnswers }}</div>
+          <div class="stat-label">CORRECTAS</div>
+        </div>
+        <div class="stat-incorrect">
+          <div class="stat-number">{{ incorrectAnswers }}</div>
+          <div class="stat-label">INCORRECTAS</div>
+        </div>
+      </div>
+
+      <!-- Círculos numerados de preguntas -->
+      <div class="questions-grid">
+        <div 
+          class="question-circle" 
+          [class.correct]="status.isCorrect" 
+          [class.incorrect]="!status.isCorrect"
+          *ngFor="let status of questionsStatus">
+          {{ status.questionNumber }}
+        </div>
       </div>
     </div>
 
-    <!-- Estadísticas del test -->
-    <div class="stats-section">
-      <h3>Resumen de tu sesión</h3>
-      
-      <div class="stats-grid">
-        <div class="stat-item">
-          <div class="stat-number correct">4</div>
-          <div class="stat-label">Correctas</div>
-        </div>
-        <div class="stat-item">
-          <div class="stat-number incorrect">1</div>
-          <div class="stat-label">Incorrectas</div>
-        </div>
-        <div class="stat-item">
-          <div class="stat-number total">5</div>
-          <div class="stat-label">Total</div>
-        </div>
-      </div>
-      
-      <div class="time-used">
+    <!-- Información adicional de tiempo -->
+    <div class="info-section">
+      <div class="info-item">
         <ion-icon name="time-outline"></ion-icon>
-        <span>Tiempo utilizado: 8:45 min</span>
-      </div>
-    </div>
-
-    <!-- Indicadores de preguntas -->
-    <div class="questions-status">
-      <h4>Estado de tus respuestas</h4>
-      <div class="questions-circles">
-        <div class="question-circle correct">1</div>
-        <div class="question-circle correct">2</div>
-        <div class="question-circle correct">3</div>
-        <div class="question-circle incorrect">4</div>
-        <div class="question-circle correct">5</div>
+        <span>Tiempo utilizado: {{ timeUsed }}</span>
       </div>
     </div>
 
     <!-- Botones de acción -->
     <div class="action-buttons">
-      <ion-button expand="block" fill="outline" class="review-btn" (click)="reviewIncorrect()">
-        <ion-icon name="eye-outline" slot="start"></ion-icon>
-        Revisar Respuestas Incorrectas
-      </ion-button>
-      
-      <ion-button expand="block" class="new-test-btn" (click)="takeNewTest()">
+      <ion-button expand="block" class="btn-new-test" (click)="takeNewTest()">
         <ion-icon name="refresh-outline" slot="start"></ion-icon>
-        Hacer Nuevo Test Oral
+        Hacer Nuevo Test
       </ion-button>
       
-      <ion-button expand="block" fill="clear" class="back-btn" (click)="goBack()">
-        <ion-icon name="arrow-back-outline" slot="start"></ion-icon>
+      <ion-button expand="block" fill="outline" class="btn-back" (click)="goBack()">
+        <ion-icon name="home-outline" slot="start"></ion-icon>
         Volver al Inicio
       </ion-button>
     </div>
 
-    <!-- Mapache de felicitación -->
-    <div class="mapache-section">
-      <div class="mapache-container">
-        <img src="assets/image/mcantante.png" alt="Mapache feliz" class="mapache-celebration">
-        <div class="celebration-message">
-          ¡Excelente trabajo en el modo oral!
-        </div>
-      </div>
-    </div>
-
   </div>
-
-  <!-- Bottom Navigation Component -->
+<!-- Bottom Navigation -->
   <app-bottom-nav></app-bottom-nav>
+
 </ion-content>

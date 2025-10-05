@@ -12,49 +12,109 @@ import { BottomNavComponent } from '../../../../shared/components/bottom-nav/bot
   imports: [IonicModule, CommonModule, BottomNavComponent]
 })
 export class ResumenTestCivilOralPage implements OnInit {
-
-  // Datos del resumen
-  correctAnswers: number = 4;
-  incorrectAnswers: number = 1;
-  totalQuestions: number = 5;
-  percentage: number = 85;
-  timeUsed: string = '8:45';
   
-  // Estado de cada pregunta para los círculos
-  questionsStatus = [
-    { questionNumber: 1, isCorrect: true },
-    { questionNumber: 2, isCorrect: true },
-    { questionNumber: 3, isCorrect: true },
-    { questionNumber: 4, isCorrect: false },
-    { questionNumber: 5, isCorrect: true }
-  ];
+  // Variables de resultados
+  correctAnswers: number = 0;
+  incorrectAnswers: number = 0;
+  totalQuestions: number = 5;
+  percentage: number = 0;
+  timeUsed: string = '0:00 min';
+  
+  // Variables de nivel
+  levelTitle: string = 'NIVEL PRINCIPIANTE';
+  levelSubtitle: string = '¡Sigue practicando!';
+  
+  // Estado de preguntas
+  questionsStatus: any[] = [];
+  
+  // Resultados completos
+  testResults: any = null;
 
   constructor(private router: Router) { }
 
   ngOnInit() {
     this.loadTestResults();
+    this.generateQuestionsStatus();
+    this.setLevelInfo();
   }
 
-  // Cargar resultados del test
+  // Cargar resultados del test desde localStorage
   loadTestResults() {
-    console.log('Cargando resultados del test oral...');
+    try {
+      const savedResults = localStorage.getItem('current_oral_test_results');
+      console.log('📊 Cargando resultados del test oral:', savedResults);
+      
+      if (savedResults) {
+        this.testResults = JSON.parse(savedResults);
+        
+        this.correctAnswers = this.testResults.correctAnswers || 0;
+        this.incorrectAnswers = this.testResults.incorrectAnswers || 0;
+        this.totalQuestions = this.testResults.totalQuestions || 5;
+        this.percentage = this.testResults.percentage || 0;
+        this.timeUsed = this.testResults.timeUsedFormatted || '0:00 min';
+      } else {
+        console.warn('⚠️ No se encontraron resultados guardados');
+        this.correctAnswers = 0;
+        this.incorrectAnswers = 5;
+        this.totalQuestions = 5;
+        this.percentage = 0;
+      }
+    } catch (error) {
+      console.error('❌ Error cargando resultados:', error);
+      this.correctAnswers = 0;
+      this.incorrectAnswers = 5;
+      this.totalQuestions = 5;
+      this.percentage = 0;
+    }
   }
 
-  // Ver respuestas incorrectas
-  reviewIncorrect() {
-    console.log('Revisando respuestas incorrectas...');
-    // TODO: Implementar vista detallada de respuestas incorrectas
+  // Generar el estado de cada pregunta para los círculos
+  generateQuestionsStatus() {
+    this.questionsStatus = [];
+    
+    if (this.testResults && this.testResults.questionDetails) {
+      this.questionsStatus = this.testResults.questionDetails.map((q: any) => ({
+        questionNumber: q.questionNumber,
+        isCorrect: q.correct
+      }));
+    } else {
+      // Generar estado basado en correctas/incorrectas
+      for (let i = 1; i <= this.totalQuestions; i++) {
+        this.questionsStatus.push({
+          questionNumber: i,
+          isCorrect: i <= this.correctAnswers
+        });
+      }
+    }
+    
+    console.log('✅ Estado de preguntas generado:', this.questionsStatus);
   }
 
-  // Hacer nuevo test oral
+  // Determinar nivel según porcentaje
+  setLevelInfo() {
+    if (this.percentage >= 80) {
+      this.levelTitle = 'NIVEL AVANZADO';
+      this.levelSubtitle = '¡Excelente dominio!';
+    } else if (this.percentage >= 60) {
+      this.levelTitle = 'NIVEL INTERMEDIO';
+      this.levelSubtitle = '¡Excelente progreso!';
+    } else {
+      this.levelTitle = 'NIVEL PRINCIPIANTE';
+      this.levelSubtitle = '¡Sigue practicando!';
+    }
+  }
+
+  // Hacer nuevo test
   takeNewTest() {
-    console.log('Iniciando nuevo test oral...');
+    console.log('🔄 Iniciando nuevo test oral...');
+    localStorage.removeItem('current_oral_test_results');
     this.router.navigate(['/civil/civil-oral']);
   }
 
   // Volver al inicio
   goBack() {
-    console.log('Volviendo al inicio...');
-    this.router.navigate(['/civil']);
+    console.log('🏠 Volviendo al inicio...');
+    localStorage.removeItem('current_oral_test_results');
+    this.router.navigate(['/civil/civil-oral']);
   }
 }

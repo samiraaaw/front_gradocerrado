@@ -1,509 +1,301 @@
 .racha-content {
-  --background: linear-gradient(180deg, #10b981 0%, #059669 100%);
+  --background: transparent;
+  background-image: url('/assets/image/fondo_blanco_app.png');
+  background-repeat: no-repeat;
+  background-position: center top;
+  background-size: cover;
+  background-attachment: fixed;
+  min-height: 100vh;
 }
 
-// Header
-.racha-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 50px 20px 20px 20px;
-  position: relative;
-  z-index: 10;
+ion-content.racha-content {
+  --overflow: auto;
+  height: 100%;
+}
+
+// Header EXACTO como Civil
+.custom-header-section {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 1000;
+  background: transparent;
   
-  
-  // Header personalizado con imagen
-.racha-header-custom {
-  position: relative;
-  height: 200px;
-  overflow: visible;
-  
-  .racha-background-container {
-    position: absolute;
-    top: 0;
-    left: 50%;
-    transform: translateX(-50%);
+  .green-background {
+    background: transparent;
+    padding: 0;
+    border-radius: 0;
+    position: relative;
+    overflow: hidden;
     width: 100vw;
-    height: auto;
-    z-index: 1;
-    
-    .racha-header-image {
+
+    .racha-container-full {
+      display: block;
       width: 100%;
       height: auto;
-      object-fit: contain;
-      filter: drop-shadow(0 6px 16px rgba(0,0,0,0.18));
-    }
-  }
-  
-  .back-button {
-    position: absolute;
-    left: 20px;
-    top: 50px;
-    --color: white;
-    --padding-start: 0;
-    --padding-end: 0;
-    margin: 0;
-    z-index: 10;
-  }
-}
-  
-  h1 {
-    color: white;
-    font-size: 24px;
-    font-weight: 700;
-    margin: 0;
-  }
-  
-  .spacer {
-    width: 40px;
-  }
-}
+      position: relative;
+      z-index: 3;
 
-// Contenido principal
-.racha-main {
-  background: white;
-  border-radius: 30px 30px 0 0;
-  padding: 40px 20px;
-  min-height: calc(100vh - 100px);
-  position: relative;
-}
-
-// Sección Hero con mapache
-.hero-section {
-  text-align: center;
-  margin-bottom: 40px;
-  position: relative;
-  
-  .streak-flame {
-    position: absolute;
-    top: -30px;
-    left: 50%;
-    transform: translateX(-50%);
-    z-index: 5;
-    
-    .flame-animation {
-      animation: float 3s ease-in-out infinite;
-      
-      .flame-icon {
-        width: 60px;
-        height: 60px;
-        filter: drop-shadow(0 4px 12px rgba(16, 185, 129, 0.5));
+      .racha-image-responsive {
+        display: block;
+        width: 100vw;
+        height: auto;
+        min-height: 120px;
+        max-height: 200px;
+        object-fit: cover;
+        object-position: center;
+        filter: drop-shadow(0 6px 16px rgba(0,0,0,0.18));
       }
     }
   }
-  
-  .mapache-celebration {
-    margin: 50px 0 20px 0;
+}
+
+// Botón EXACTO como Civil
+.back-button {
+  position: absolute;
+  top: calc(env(safe-area-inset-top, 0px) + 12px);
+  left: 12px;
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  background: #ffffff;
+  box-shadow: 0 4px 14px rgba(0,0,0,0.15);
+  z-index: 1100;
+  --min-width: 42px;
+  --padding-start: 0;
+  --padding-end: 0;
+
+  ion-icon {
+    font-size: 22px;
+    color: #222;
+  }
+}
+
+// Contenido
+.content-area {
+  margin-top: 140px;
+  padding: 20px 16px 100px;
+  background: transparent;
+  border-radius: 30px 30px 0 0;
+  min-height: calc(100vh - 100px);
+}
+
+// Loading
+.loading-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 100px 20px;
+}
+
+// Tarjeta principal de racha
+.streak-main-card {
+  background: white;
+  border-radius: 24px;
+  padding: 32px 20px;
+  text-align: center;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.08);
+  margin-bottom: 20px;
+  position: relative;
+  overflow: hidden;
+
+  .streak-mascot {
+    margin-bottom: 16px;
     
-    .mapache-image {
-      width: 150px;
-      height: 150px;
-      object-fit: contain;
-      animation: celebration 2s ease-in-out infinite;
+    img {
+      width: 80px;
+      height: 80px;
+      animation: float 3s ease-in-out infinite;
     }
   }
-  
-  .streak-counter {
-    margin: 20px 0;
-    
-    h2 {
-      font-size: 72px;
-      font-weight: 800;
-      background: linear-gradient(135deg, #10b981, #059669);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
-      margin: 0;
-      line-height: 1;
-    }
-    
-    p {
-      font-size: 18px;
-      color: #64748b;
-      margin: 10px 0 0 0;
-      font-weight: 500;
-    }
+
+  .streak-number {
+    font-size: 72px;
+    font-weight: 800;
+    color: #10b981;
+    line-height: 1;
+    text-shadow: 0 2px 8px rgba(16, 185, 129, 0.2);
   }
-  
-  .motivational-message {
-    p {
-      font-size: 20px;
+
+  .streak-label {
+    font-size: 16px;
+    color: #6b7280;
+    margin-top: 8px;
+  }
+
+  .streak-message {
+    margin-top: 16px;
+    padding: 12px 20px;
+    background: linear-gradient(135deg, #d1fae5, #a7f3d0);
+    border-radius: 16px;
+    
+    span {
+      font-size: 15px;
       font-weight: 600;
-      color: #10b981;
-      margin: 15px 0 0 0;
+      color: #065f46;
     }
   }
 }
 
-// Animaciones
 @keyframes float {
-  0%, 100% {
-    transform: translateY(0);
-  }
-  50% {
-    transform: translateY(-15px);
-  }
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
 }
 
-@keyframes celebration {
-  0%, 100% {
-    transform: rotate(-5deg);
-  }
-  50% {
-    transform: rotate(5deg);
-  }
-}
-
-// Estadísticas rápidas
-.stats-quick {
+// Estadísticas
+.stats-row {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 15px;
-  margin-bottom: 30px;
-  
-  .stat-item {
-    background: linear-gradient(145deg, #f8fafc, #e2e8f0);
+  gap: 12px;
+  margin-bottom: 20px;
+
+  .stat-card {
+    background: white;
     border-radius: 16px;
     padding: 20px;
-    display: flex;
-    align-items: center;
-    gap: 15px;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.06);
-    
-    ion-icon {
-      font-size: 32px;
-      color: #10b981;
-    }
-    
-    .stat-info {
-      display: flex;
-      flex-direction: column;
-      
-      .stat-value {
-        font-size: 24px;
-        font-weight: 700;
-        color: #1e293b;
-      }
-      
-      .stat-label {
-        font-size: 12px;
-        color: #64748b;
-        margin-top: 2px;
-      }
-    }
-  }
-}
-
-// Sección de meta
-.milestone-section {
-  background: white;
-  border-radius: 16px;
-  padding: 25px;
-  margin-bottom: 30px;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
-  border: 2px solid #10b981;
-  
-  h3 {
-    margin: 0 0 20px 0;
-    font-size: 18px;
-    font-weight: 600;
-    color: #1e293b;
     text-align: center;
-  }
-  
-  .milestone-progress {
-    .progress-track {
-      height: 12px;
-      background: #e5e7eb;
-      border-radius: 10px;
-      overflow: hidden;
-      margin-bottom: 10px;
-      
-      .progress-fill {
-        height: 100%;
-        background: linear-gradient(90deg, #10b981, #059669);
-        border-radius: 10px;
-        transition: width 1s ease-out;
-      }
+    box-shadow: 0 4px 12px rgba(0,0,0,0.06);
+
+    .stat-icon {
+      font-size: 32px;
+      color: #f59e0b;
+      margin-bottom: 8px;
     }
-    
-    .progress-labels {
-      display: flex;
-      justify-content: space-between;
-      font-size: 12px;
-      color: #64748b;
-      font-weight: 500;
+
+    .stat-number {
+      font-size: 28px;
+      font-weight: 700;
+      color: #1f2937;
+    }
+
+    .stat-label {
+      font-size: 13px;
+      color: #6b7280;
+      margin-top: 4px;
     }
   }
 }
 
-// Calendario de racha
-.calendar-section {
-  margin-bottom: 30px;
-  
+// Próxima meta
+.next-goal-card {
+  background: white;
+  border-radius: 20px;
+  padding: 24px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.06);
+  margin-bottom: 24px;
+
   h3 {
-    margin: 0 0 20px 0;
+    margin: 0 0 16px 0;
     font-size: 18px;
-    font-weight: 600;
-    color: #1e293b;
+    font-weight: 700;
+    color: #1f2937;
   }
-  
-  .calendar-grid {
-    display: grid;
-    grid-template-columns: repeat(7, 1fr);
-    gap: 10px;
-    
-    .calendar-day {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 5px;
-      
-      .day-name {
-        font-size: 11px;
-        font-weight: 600;
-        color: #94a3b8;
-      }
-      
-      .day-circle {
-        width: 40px;
-        height: 40px;
-        border-radius: 50%;
-        background: #f1f5f9;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        border: 2px solid transparent;
-        transition: all 0.3s ease;
-        
-        .day-number {
-          font-size: 12px;
-          color: #94a3b8;
-          font-weight: 500;
-        }
-        
-        ion-icon {
-          font-size: 20px;
-          color: white;
-        }
-        
-        .today-icon {
-          width: 20px;
-          height: 20px;
-        }
-      }
-      
-      &.completed {
-        .day-circle {
-          background: linear-gradient(135deg, #10b981, #059669);
-          border-color: #10b981;
-          animation: popIn 0.3s ease-out;
-        }
-      }
-      
-      &.today {
-        .day-name {
-          color: #10b981;
-          font-weight: 700;
-        }
-        
-        .day-circle {
-          background: #fef3c7;
-          border-color: #f59e0b;
-          animation: pulse 2s ease-in-out infinite;
-        }
-      }
+
+  .goal-progress-bar {
+    height: 12px;
+    background: #e5e7eb;
+    border-radius: 999px;
+    overflow: hidden;
+    margin-bottom: 12px;
+
+    .goal-progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, #10b981, #059669);
+      border-radius: 999px;
+      transition: width 0.3s ease;
     }
   }
-}
 
-@keyframes popIn {
-  0% {
-    transform: scale(0);
-  }
-  60% {
-    transform: scale(1.1);
-  }
-  100% {
-    transform: scale(1);
-  }
-}
-
-@keyframes pulse {
-  0%, 100% {
-    transform: scale(1);
-    box-shadow: 0 0 0 0 rgba(245, 158, 11, 0.7);
-  }
-  50% {
-    transform: scale(1.05);
-    box-shadow: 0 0 0 6px rgba(245, 158, 11, 0);
+  .goal-text {
+    margin: 0;
+    font-size: 14px;
+    color: #6b7280;
   }
 }
 
 // Logros
 .achievements-section {
-  margin-bottom: 30px;
-  
-  h3 {
-    margin: 0 0 20px 0;
-    font-size: 18px;
-    font-weight: 600;
-    color: #1e293b;
+  .section-title {
+    font-size: 20px;
+    font-weight: 700;
+    color: #1f2937;
+    margin: 0 0 16px 0;
   }
-  
+
   .achievements-grid {
-    display: flex;
-    flex-direction: column;
+    display: grid;
     gap: 12px;
-    
-    .achievement-card {
-      background: white;
+  }
+
+  .achievement-card {
+    background: white;
+    border-radius: 16px;
+    padding: 16px;
+    display: flex;
+    gap: 16px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.06);
+    transition: transform 0.2s ease;
+
+    &.locked {
+      opacity: 0.5;
+      filter: grayscale(0.7);
+    }
+
+    &.unlocked {
+      border: 2px solid #10b981;
+    }
+
+    .achievement-icon {
+      width: 56px;
+      height: 56px;
       border-radius: 12px;
-      padding: 16px;
       display: flex;
       align-items: center;
-      gap: 15px;
-      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
-      border: 2px solid #f1f5f9;
-      transition: all 0.3s ease;
-      
-      .achievement-icon {
-        font-size: 32px;
-        width: 50px;
-        height: 50px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        background: #f8fafc;
-        border-radius: 50%;
-      }
-      
-      .achievement-info {
-        flex: 1;
-        
-        h4 {
-          margin: 0 0 4px 0;
-          font-size: 15px;
-          font-weight: 600;
-          color: #1e293b;
-        }
-        
-        p {
-          margin: 0;
-          font-size: 12px;
-          color: #64748b;
-        }
-      }
-      
-      .achievement-status {
-        .unlocked-icon {
-          font-size: 24px;
-          color: #10b981;
-        }
-        
-        .locked-icon {
-          font-size: 24px;
-          color: #cbd5e1;
-        }
-      }
-      
-      &.unlocked {
-        border-color: #10b981;
-        background: linear-gradient(145deg, #ffffff, #f0fdf4);
-        
-        .achievement-icon {
-          background: linear-gradient(135deg, #10b981, #059669);
-        }
-      }
-      
-      &:not(.unlocked) {
-        opacity: 0.6;
-        
-        .achievement-icon {
-          filter: grayscale(100%);
-        }
-      }
-    }
-  }
-}
+      justify-content: center;
+      flex-shrink: 0;
 
-// Botón de acción
-.action-section {
-  text-align: center;
-  margin-bottom: 20px;
-  
-  .study-now-btn {
-    width: 100%;
-    background: #4CAF50;
-    color: white;
-    border: none;
-    border-radius: 16px;
-    padding: 18px;
-    font-size: 16px;
-    font-weight: 600;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 10px;
-    cursor: pointer;
-    box-shadow: 0 4px 15px rgba(76, 175, 80, 0.3);
-    transition: all 0.3s ease;
-    
-    &:hover {
-      background: #45A049;
-      transform: translateY(-2px);
-      box-shadow: 0 8px 25px rgba(76, 175, 80, 0.4);
+      ion-icon {
+        font-size: 28px;
+        color: white;
+      }
     }
-    
-    &:active {
-      transform: translateY(0);
-    }
-    
-    ion-icon {
-      font-size: 20px;
-    }
-  }
-  
-  .action-hint {
-    margin: 15px 0 0 0;
-    font-size: 13px;
-    color: #64748b;
-    font-weight: 500;
-  }
-}
 
-// Espaciado inferior
-.bottom-spacer {
-  height: 100px;
+    .achievement-info {
+      flex: 1;
+
+      .achievement-title {
+        margin: 0 0 4px 0;
+        font-size: 16px;
+        font-weight: 600;
+        color: #1f2937;
+      }
+
+      .achievement-desc {
+        margin: 0 0 8px 0;
+        font-size: 13px;
+        color: #6b7280;
+        line-height: 1.4;
+      }
+
+      .achievement-days {
+        font-size: 12px;
+        color: #9ca3af;
+        font-weight: 500;
+      }
+
+      .achievement-unlocked {
+        font-size: 12px;
+        color: #10b981;
+        font-weight: 600;
+      }
+    }
+  }
 }
 
 // Responsive
-@media (max-width: 768px) {
-  .hero-section {
-    .mapache-celebration {
-      .mapache-image {
-        width: 120px;
-        height: 120px;
-      }
-    }
-    
-    .streak-counter {
-      h2 {
-        font-size: 60px;
-      }
-    }
-  }
-  
-  .calendar-section {
-    .calendar-grid {
-      gap: 8px;
-      
-      .calendar-day {
-        .day-circle {
-          width: 35px;
-          height: 35px;
-        }
-      }
-    }
+@media (max-width: 480px) {
+  .content-area {
+    margin-top: 120px;
   }
 }

@@ -3,6 +3,17 @@ import { Router } from '@angular/router';
 import { IonicModule } from '@ionic/angular';
 import { CommonModule } from '@angular/common';
 import { BottomNavComponent } from '../../shared/components/bottom-nav/bottom-nav.component';
+import { ApiService } from '../../services/api.service';
+
+interface Achievement {
+  id: string;
+  title: string;
+  description: string;
+  daysRequired: number;
+  icon: string;
+  unlocked: boolean;
+  color: string;
+}
 
 @Component({
   selector: 'app-racha',
@@ -13,113 +24,126 @@ import { BottomNavComponent } from '../../shared/components/bottom-nav/bottom-na
 })
 export class RachaPage implements OnInit {
 
-  // Datos de la racha actual
-  currentStreak: number = 12; // Días consecutivos actuales
-  longestStreak: number = 25; // Mejor racha histórica
-  totalDays: number = 156; // Total de días estudiados
-  
-  // Calendario de racha (últimos 30 días)
-  streakCalendar: any[] = [];
-  
-  // Logros desbloqueados
-  achievements: any[] = [];
-  
-  // Siguiente meta
-  nextMilestone: number = 15;
+  currentStreak: number = 0;
+  bestStreak: number = 0;
+  totalDays: number = 0;
+  nextGoal: number = 0;
 
-  constructor(private router: Router) { }
+  achievements: Achievement[] = [
+    // LOGROS DE PRUEBA (minutos para testing)
+    { id: '1min', title: 'Primer Paso', description: 'Primera sesión completada', daysRequired: 0.0007, icon: 'footsteps', unlocked: false, color: '#10b981' }, // ~1 minuto
+    { id: '5min', title: 'Comenzando', description: 'Mantén la racha 5 minutos', daysRequired: 0.0035, icon: 'leaf', unlocked: false, color: '#10b981' }, // ~5 minutos
+    { id: '10min', title: 'Constante', description: 'Racha de 10 minutos', daysRequired: 0.007, icon: 'flash', unlocked: false, color: '#10b981' }, // ~10 minutos
+    
+    // LOGROS REALES (días)
+    { id: '1day', title: 'Primer Día', description: '1 día de racha', daysRequired: 1, icon: 'star', unlocked: false, color: '#10b981' },
+    { id: '3days', title: 'Comenzando Fuerte', description: '3 días consecutivos', daysRequired: 3, icon: 'flame', unlocked: false, color: '#059669' },
+    { id: '5days', title: 'Perseverante', description: '5 días de estudio', daysRequired: 5, icon: 'trophy', unlocked: false, color: '#047857' },
+    { id: '7days', title: 'Una Semana', description: '7 días sin parar', daysRequired: 7, icon: 'ribbon', unlocked: false, color: '#065f46' },
+    { id: '10days', title: 'Imparable', description: '10 días de racha', daysRequired: 10, icon: 'rocket', unlocked: false, color: '#064e3b' },
+    { id: '15days', title: 'Dedicado', description: '15 días consecutivos', daysRequired: 15, icon: 'medal', unlocked: false, color: '#fbbf24' },
+    { id: '21days', title: 'Hábito Formado', description: '21 días de constancia', daysRequired: 21, icon: 'checkmark-circle', unlocked: false, color: '#f59e0b' },
+    { id: '30days', title: 'Un Mes Completo', description: '30 días sin fallar', daysRequired: 30, icon: 'star-half', unlocked: false, color: '#d97706' },
+    { id: '60days', title: 'Maestro', description: '60 días de dedicación', daysRequired: 60, icon: 'school', unlocked: false, color: '#b45309' },
+    { id: '100days', title: 'Leyenda', description: '100 días de racha', daysRequired: 100, icon: 'diamond', unlocked: false, color: '#92400e' }
+  ];
+
+  isLoading: boolean = true;
+
+  constructor(
+    private router: Router,
+    private apiService: ApiService
+  ) { }
 
   ngOnInit() {
     this.loadStreakData();
   }
 
-  // Cargar datos de la racha
-  loadStreakData() {
-    // Generar calendario de los últimos 30 días
-    this.streakCalendar = this.generateStreakCalendar();
-    
-    // Cargar logros
-    this.achievements = [
-      { id: 1, name: '🔥 Primer Día', description: 'Iniciaste tu racha', unlocked: true },
-      { id: 2, name: '💪 5 Días', description: 'Racha de 5 días', unlocked: true },
-      { id: 3, name: '🌟 10 Días', description: 'Racha de 10 días', unlocked: true },
-      { id: 4, name: '🏆 15 Días', description: 'Racha de 15 días', unlocked: false },
-      { id: 5, name: '👑 20 Días', description: 'Racha de 20 días', unlocked: false },
-      { id: 6, name: '🎯 1 Mes', description: 'Racha de 30 días', unlocked: false },
-      { id: 7, name: '💎 50 Días', description: 'Racha de 50 días', unlocked: false },
-      { id: 8, name: '🌈 100 Días', description: 'Racha de 100 días', unlocked: false }
-    ];
-    
-    // Calcular siguiente meta
-    this.calculateNextMilestone();
-  }
+  async loadStreakData() {
+    this.isLoading = true;
 
-  // Generar calendario de racha (últimos 30 días)
-  generateStreakCalendar(): any[] {
-    const calendar = [];
-    const today = new Date();
-    
-    for (let i = 29; i >= 0; i--) {
-      const date = new Date(today);
-      date.setDate(date.getDate() - i);
+    try {
+      const currentUser = this.apiService.getCurrentUser();
       
-      // Simular si completó ese día (los últimos 12 días sí)
-      const completed = i < this.currentStreak;
-      
-      calendar.push({
-        date: date,
-        day: date.getDate(),
-        dayName: this.getDayName(date.getDay()),
-        completed: completed,
-        isToday: i === 0
-      });
+      if (!currentUser || !currentUser.id) {
+        console.warn('No hay usuario logueado');
+        this.isLoading = false;
+        return;
+      }
+
+      const studentId = currentUser.id;
+      console.log('Cargando racha para estudiante:', studentId);
+
+      // Cargar estadísticas del dashboard
+      try {
+        const statsResponse = await this.apiService.getDashboardStats(studentId).toPromise();
+        if (statsResponse && statsResponse.success) {
+          const stats = statsResponse.data;
+          this.currentStreak = stats.streak || 0;
+          this.totalDays = stats.totalTests || 0; // Usar total de sesiones como días estudiados
+          
+          // Calcular mejor racha (por ahora igual a la actual, después agregar campo en BD)
+          this.bestStreak = Math.max(this.currentStreak, this.totalDays);
+          
+          // Calcular siguiente meta
+          this.nextGoal = this.calculateNextGoal(this.currentStreak);
+          
+          // Desbloquear logros basados en racha actual
+          this.unlockAchievements(this.currentStreak);
+          
+          console.log('Datos de racha cargados:', {
+            current: this.currentStreak,
+            best: this.bestStreak,
+            total: this.totalDays
+          });
+        }
+      } catch (error) {
+        console.error('Error cargando datos de racha:', error);
+      }
+
+    } catch (error) {
+      console.error('Error general en loadStreakData:', error);
+    } finally {
+      this.isLoading = false;
     }
-    
-    return calendar;
   }
 
-  // Obtener nombre del día
-  getDayName(dayIndex: number): string {
-    const days = ['D', 'L', 'M', 'M', 'J', 'V', 'S'];
-    return days[dayIndex];
+  unlockAchievements(streakDays: number) {
+    this.achievements.forEach(achievement => {
+      if (streakDays >= achievement.daysRequired) {
+        achievement.unlocked = true;
+      }
+    });
   }
 
-  // Calcular siguiente meta
-  calculateNextMilestone() {
-    const milestones = [5, 10, 15, 20, 30, 50, 100, 200];
-    this.nextMilestone = milestones.find(m => m > this.currentStreak) || 200;
+  calculateNextGoal(currentStreak: number): number {
+    const goals = [1, 3, 5, 7, 10, 15, 21, 30, 60, 100];
+    for (const goal of goals) {
+      if (currentStreak < goal) {
+        return goal;
+      }
+    }
+    return currentStreak + 10; // Si ya pasó todos los goals
   }
 
-  // Calcular progreso hacia siguiente meta
-  getProgressToNextMilestone(): number {
-    const previousMilestone = this.getPreviousMilestone();
-    const progress = ((this.currentStreak - previousMilestone) / (this.nextMilestone - previousMilestone)) * 100;
-    return Math.min(Math.max(progress, 0), 100);
+  getProgressToNextGoal(): number {
+    if (this.nextGoal === 0) return 0;
+    return (this.currentStreak / this.nextGoal) * 100;
   }
 
-  // Obtener meta anterior
-  getPreviousMilestone(): number {
-    const milestones = [0, 5, 10, 15, 20, 30, 50, 100];
-    const previousMilestones = milestones.filter(m => m < this.currentStreak);
-    return previousMilestones.length > 0 ? previousMilestones[previousMilestones.length - 1] : 0;
+  getDaysToNextGoal(): number {
+    return Math.max(0, this.nextGoal - this.currentStreak);
   }
 
-  // Volver atrás
+  getUnlockedCount(): number {
+    return this.achievements.filter(a => a.unlocked).length;
+  }
+
+  getTotalCount(): number {
+    return this.achievements.length;
+  }
+
   goBack() {
     this.router.navigate(['/home']);
-  }
-
-  // Ir a estudiar
-  goToStudy() {
-    this.router.navigate(['/home']);
-  }
-
-  // Obtener mensaje motivacional
-  getMotivationalMessage(): string {
-    if (this.currentStreak >= 30) return '¡Eres imparable! 🔥';
-    if (this.currentStreak >= 20) return '¡Increíble dedicación! 🌟';
-    if (this.currentStreak >= 10) return '¡Vas muy bien! 💪';
-    if (this.currentStreak >= 5) return '¡Buen comienzo! 🎯';
-    return '¡Sigue así! 🚀';
   }
 }

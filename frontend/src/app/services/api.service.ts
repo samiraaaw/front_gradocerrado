@@ -4,6 +4,30 @@ import { Observable, of } from 'rxjs';
 import { map, catchError } from 'rxjs/operators';
 import { environment } from '../../environments/environment';
 
+
+// ========================================
+// INTERFACES 
+// ========================================
+
+export interface SubmitAnswerRequest {
+  testId: number;
+  preguntaId: number;
+  userAnswer: string;
+  correctAnswer: string;
+  explanation: string;
+  timeSpent: string; 
+  numeroOrden: number;
+  isCorrect: boolean;
+}
+
+export interface SubmitAnswerResponse {
+  success: boolean;
+  isCorrect: boolean;
+  respuestaId: number;
+  explanation: string;
+  correctAnswer: string;
+}
+
 @Injectable({
   providedIn: 'root'
 })
@@ -65,6 +89,58 @@ export class ApiService {
       );
   }
 
+  
+// ========================================
+// ESTADÍSTICAS DEL DASHBOARD
+// ========================================
+
+getDashboardStats(studentId: number): Observable<any> {
+  const url = `${this.API_URL}/Dashboard/stats/${studentId}`;
+  
+  return this.http.get<any>(url, this.httpOptions)
+    .pipe(
+      map((response: any) => {
+        console.log('Estadísticas del dashboard:', response);
+        return response;
+      }),
+      catchError((error: any) => {
+        console.error('Error obteniendo estadísticas:', error);
+        throw error;
+      })
+    );
+}
+
+getRecentSessions(studentId: number, limit: number = 10): Observable<any> {
+  const url = `${this.API_URL}/Dashboard/recent-sessions/${studentId}?limit=${limit}`;
+  
+  return this.http.get<any>(url, this.httpOptions)
+    .pipe(
+      map((response: any) => {
+        console.log('Sesiones recientes:', response);
+        return response;
+      }),
+      catchError((error: any) => {
+        console.error('Error obteniendo sesiones:', error);
+        throw error;
+      })
+    );
+}
+
+getAreaStats(studentId: number): Observable<any> {
+  const url = `${this.API_URL}/Dashboard/area-stats/${studentId}`;
+  
+  return this.http.get<any>(url, this.httpOptions)
+    .pipe(
+      map((response: any) => {
+        console.log('Estadísticas por área:', response);
+        return response;
+      }),
+      catchError((error: any) => {
+        console.error('Error obteniendo stats por área:', error);
+        throw error;
+      })
+    );
+}
   // ✅ LOGIN DE USUARIO MEJORADO
   loginUser(loginData: { email: string, password: string }): Observable<any> {
     const url = `${this.API_URL}/auth/login`;
@@ -100,6 +176,28 @@ export class ApiService {
         })
       );
   }
+  evaluateOralAnswer(evaluationData: {
+  testId: number;
+  preguntaGeneradaId: number;
+  numeroOrden: number;
+  transcription: string;
+}): Observable<any> {
+  const url = `${this.API_URL}/Speech/evaluate-oral-answer`;
+  
+  console.log('📊 Evaluando respuesta oral:', evaluationData);
+  
+  return this.http.post<any>(url, evaluationData, this.httpOptions)
+    .pipe(
+      map((response: any) => {
+        console.log('✅ Evaluación recibida:', response);
+        return response;
+      }),
+      catchError((error: any) => {
+        console.error('❌ Error evaluando respuesta:', error);
+        throw error;
+      })
+    );
+}
 
   // ✅ VERIFICAR ESTADO DE LA BASE DE DATOS
   checkDatabaseStatus(): Observable<any> {
@@ -305,5 +403,35 @@ export class ApiService {
     });
   }
 
+  // ========================================
+// ENVÍO DE RESPUESTAS AL BACKEND
+// ========================================
+
+submitAnswer(answerData: SubmitAnswerRequest): Observable<SubmitAnswerResponse> {
+  const url = `${this.API_URL}/Study/submit-answer`;
+  
+  console.log('📤 Enviando respuesta al backend:', answerData);
+  
+  return this.http.post<SubmitAnswerResponse>(url, answerData, this.httpOptions)
+    .pipe(
+      map((response: SubmitAnswerResponse) => {
+        console.log('✅ Respuesta guardada:', response);
+        return response;
+      }),
+      catchError((error: any) => {
+        console.error('❌ Error enviando respuesta:', error);
+        
+        let errorMessage = 'Error al guardar la respuesta';
+        
+        if (error.status === 0) {
+          errorMessage = 'No se puede conectar al servidor';
+        } else if (error.error?.message) {
+          errorMessage = error.error.message;
+        }
+        
+        throw { ...error, friendlyMessage: errorMessage };
+      })
+    );
+}
   
 }

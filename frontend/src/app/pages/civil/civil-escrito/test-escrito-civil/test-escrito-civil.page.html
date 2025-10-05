@@ -52,7 +52,8 @@
         [class.disabled]="!canSelectOption()"
         (click)="selectAnswer(option.id)">
         
-        <div class="option-letter">{{ option.id }}</div>
+        <div class="option-letter">{{ option.letter || option.id }}</div>
+
         <div class="option-text">{{ option.text }}</div>
         
         <!-- Ícono de feedback (checkmark o cruz) -->

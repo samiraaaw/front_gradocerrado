@@ -2,89 +2,115 @@ import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { IonicModule } from '@ionic/angular';
 import { CommonModule } from '@angular/common';
-import { BottomNavComponent } from '../../shared/components/bottom-nav/bottom-nav.component'; // AGREGADO
+import { BottomNavComponent } from '../../shared/components/bottom-nav/bottom-nav.component';
+import { ApiService } from '../../services/api.service';
 
 @Component({
   selector: 'app-home',
   templateUrl: './home.page.html',
   styleUrls: ['./home.page.scss'],
   standalone: true,
-  imports: [IonicModule, CommonModule, BottomNavComponent] // AGREGADO BottomNavComponent
+  imports: [IonicModule, CommonModule, BottomNavComponent]
 })
 export class HomePage implements OnInit {
 
-  // Datos del usuario
-  userName: string = 'Lionel';
-  userCoins: number = 3;
+  userName: string = 'Estudiante';
+  userCoins: number = 0;
   
-  // Datos de progreso
-  dailyProgress = {
-    completed: 3,
-    total: 5,
-    percentage: 60
-  };
+  userStreak: number = 0;
+  totalSessions: number = 0;
+  totalQuestions: number = 0;
+  overallSuccessRate: number = 0;
+  
+  isLoading: boolean = true;
 
-  // Datos de resultados
-  results = {
-    civil: {
-      score: 3,
-      total: 10,
-      percentage: 30
-    },
-    procesal: {
-      score: 8,
-      total: 10,
-      percentage: 80
-    }
-  };
-
-  constructor(private router: Router) { }
+  constructor(
+    private router: Router,
+    private apiService: ApiService
+  ) { }
 
   ngOnInit() {
+  this.loadUserData();
+  }
+
+  ionViewWillEnter() {
     this.loadUserData();
   }
 
-  // Cargar datos del usuario
-  loadUserData() {
-    // Obtener datos del localStorage si existen
-    const userData = localStorage.getItem('currentUser');
-    if (userData) {
-      const user = JSON.parse(userData);
-      this.userName = user.name || 'Lionel';
+  async loadUserData() {
+    this.isLoading = true;
+
+    try {
+      const currentUser = this.apiService.getCurrentUser();
+      
+      if (!currentUser || !currentUser.id) {
+        console.warn('No hay usuario logueado');
+        this.userName = 'Estudiante';
+        this.isLoading = false;
+        return;
+      }
+
+      const studentId = currentUser.id;
+      this.userName = currentUser.name || 'Estudiante';
+
+      console.log('Cargando estadísticas para:', studentId, this.userName);
+
+      try {
+        const statsResponse = await this.apiService.getDashboardStats(studentId).toPromise();
+        if (statsResponse && statsResponse.success) {
+          const stats = statsResponse.data;
+          this.totalSessions = stats.totalTests || 0;
+          this.totalQuestions = stats.totalQuestions || 0;
+          this.overallSuccessRate = Math.round(stats.successRate || 0);
+          this.userStreak = stats.streak || 0;
+          
+          console.log('Estadísticas cargadas en home:', stats);
+        }
+      } catch (error) {
+        console.error('Error cargando estadísticas en home:', error);
+      }
+
+    } catch (error) {
+      console.error('Error general en loadUserData:', error);
+    } finally {
+      this.isLoading = false;
     }
   }
 
-  // Navegar a Civil
+  getProgressMessage(): string {
+    if (this.totalSessions === 0) {
+      return '¡Comienza tu primera sesión!';
+    } else if (this.totalSessions < 5) {
+      return `${this.totalSessions} ${this.totalSessions === 1 ? 'sesión completada' : 'sesiones completadas'}`;
+    } else {
+      return `${this.totalSessions} sesiones - ${this.totalQuestions} preguntas`;
+    }
+  }
+
+  getProgressSubtitle(): string {
+    if (this.totalSessions === 0) {
+      return 'Aún no tienes progreso';
+    } else if (this.userStreak === 0) {
+      return 'Mantén una racha estudiando diario';
+    } else if (this.userStreak === 1) {
+      return '¡Racha de 1 día!';
+    } else {
+      return `¡Racha de ${this.userStreak} días!`;
+    }
+  }
+
+  getProgressPercentage(): number {
+    if (this.totalQuestions === 0) return 0;
+    const goal = 200;
+    return Math.min((this.totalQuestions / goal) * 100, 100);
+  }
+
   goToCivil() {
     this.router.navigate(['/civil']);
   }
 
-  // Navegar a Procesal (por ahora redirige a civil)
   goToProcesal() {
     console.log('Navegando a Procesal...');
-    // Cuando tengas la página de procesal, cambiar por:
-    // this.router.navigate(['/procesal']);
     this.router.navigate(['/civil']);
-  }
-
-  // Métodos para la navegación inferior
-  goToStats() {
-    console.log('Ir a estadísticas');
-    // this.router.navigate(['/stats']);
-  }
-
-  openAddMenu() {
-    console.log('Abrir menú de agregar');
-    // Aquí podrías abrir un modal o menú
-  }
-
-  goToNotifications() {
-    console.log('Ir a notificaciones');
-    // this.router.navigate(['/notifications']);
-  }
-
-  goToProfile() {
-    console.log('Ir a perfil');
-    // this.router.navigate(['/profile']);
   }
 }

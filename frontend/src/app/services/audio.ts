@@ -158,42 +158,152 @@ export class AudioService {
     });
   }
 
-  // MÉTODO ACTUALIZADO - Enviar audio al nuevo endpoint
-  async uploadAudio(audioBlob: Blob, questionId: string, sessionId: string): Promise<any> {
+  async uploadAudio(
+    audioBlob: Blob, 
+    questionId: string, 
+    sessionId: string,
+    numeroOrden: number,
+    tiempoRespuestaSegundos: number 
+  ): Promise<any> {
+    
+    console.log('🎤 Preparando audio para enviar:', {
+      originalType: audioBlob.type,
+      originalSize: audioBlob.size
+    });
+
+    // CONVERTIR A WAV antes de enviar
+    let audioToSend = audioBlob;
+    
+    try {
+      // Si no es WAV, convertir
+      if (!audioBlob.type.includes('wav')) {
+        console.log('🔄 Convirtiendo audio a WAV...');
+        audioToSend = await this.convertToWav(audioBlob);
+        console.log('✅ Audio convertido a WAV:', audioToSend.size, 'bytes');
+      }
+    } catch (conversionError) {
+      console.warn('⚠️ No se pudo convertir a WAV, enviando formato original:', conversionError);
+      // Continuar con el audio original si falla la conversión
+    }
+
     const formData = new FormData();
     
-    // Determinar extensión basada en el tipo MIME
-    const fileExtension = audioBlob.type.includes('mp4') ? '.m4a' : 
-                         audioBlob.type.includes('webm') ? '.webm' : '.audio';
+    // Siempre usar .wav como extensión si logramos convertir
+    const fileExtension = audioToSend.type.includes('wav') ? '.wav' : '.webm';
     
-    // Agregar el archivo de audio con un nombre descriptivo
-    formData.append('audioFile', audioBlob, `recording_${questionId}${fileExtension}`);
+    formData.append('audioFile', audioToSend, `recording_${questionId}${fileExtension}`);
     
-    // Agregar metadatos adicionales si tu backend los necesita
-    formData.append('questionId', questionId);
-    formData.append('sessionId', sessionId);
-    formData.append('timestamp', new Date().toISOString());
+    const testIdNumber = parseInt(sessionId, 10);
+    const preguntaIdNumber = parseInt(questionId, 10);
+    
+    if (isNaN(testIdNumber) || isNaN(preguntaIdNumber)) {
+      throw new Error('IDs inválidos: testId y preguntaGeneradaId deben ser numéricos');
+    }
+    
+    formData.append('testId', testIdNumber.toString());
+    formData.append('preguntaGeneradaId', preguntaIdNumber.toString());
+    formData.append('numeroOrden', numeroOrden.toString());
+    formData.append('tiempoRespuestaSegundos', tiempoRespuestaSegundos.toString());
+
+    console.log('📤 Enviando al backend:', {
+      testId: testIdNumber,
+      preguntaGeneradaId: preguntaIdNumber,
+      numeroOrden: numeroOrden,
+      tiempoRespuestaSegundos: tiempoRespuestaSegundos,
+      audioSize: audioToSend.size,
+      audioType: audioToSend.type
+    });
 
     try {
-      // Endpoint actualizado
       const response = await this.http.post(
         'http://localhost:5183/api/Speech/speech-to-text', 
         formData
-        // No enviamos headers, el navegador los configura automáticamente para FormData
       ).toPromise();
 
-      console.log('Audio enviado al backend exitosamente:', response);
+      console.log('✅ Respuesta del backend:', response);
       return response;
 
     } catch (error: any) {
-      console.error('Error enviando audio:', error);
+      console.error('❌ Error enviando audio:', error);
+      console.error('Detalles completos:', error.error);
       
-      // Si hay error, lanzarlo para que se maneje en el componente
       throw {
         error: true,
         message: error.error?.message || 'Error al procesar el audio',
         details: error
       };
+    }
+  }
+
+  // NUEVO MÉTODO: Convertir audio a WAV
+  private async convertToWav(audioBlob: Blob): Promise<Blob> {
+    return new Promise((resolve, reject) => {
+      const audioContext = new (window.AudioContext || (window as any).webkitAudioContext)();
+      const fileReader = new FileReader();
+
+      fileReader.onload = async (e) => {
+        try {
+          const arrayBuffer = e.target?.result as ArrayBuffer;
+          const audioBuffer = await audioContext.decodeAudioData(arrayBuffer);
+          
+          // Convertir a WAV
+          const wavBlob = this.audioBufferToWav(audioBuffer);
+          resolve(wavBlob);
+        } catch (error) {
+          console.error('Error decodificando audio:', error);
+          reject(error);
+        }
+      };
+
+      fileReader.onerror = () => reject(new Error('Error leyendo el archivo'));
+      fileReader.readAsArrayBuffer(audioBlob);
+    });
+  }
+
+  // Convertir AudioBuffer a WAV Blob
+  private audioBufferToWav(audioBuffer: AudioBuffer): Blob {
+    const numChannels = audioBuffer.numberOfChannels;
+    const sampleRate = audioBuffer.sampleRate;
+    const format = 1; // PCM
+    const bitDepth = 16;
+
+    const bytesPerSample = bitDepth / 8;
+    const blockAlign = numChannels * bytesPerSample;
+
+    const samples = audioBuffer.getChannelData(0);
+    const dataLength = samples.length * bytesPerSample;
+    const buffer = new ArrayBuffer(44 + dataLength);
+    const view = new DataView(buffer);
+
+    // WAV header
+    this.writeString(view, 0, 'RIFF');
+    view.setUint32(4, 36 + dataLength, true);
+    this.writeString(view, 8, 'WAVE');
+    this.writeString(view, 12, 'fmt ');
+    view.setUint32(16, 16, true);
+    view.setUint16(20, format, true);
+    view.setUint16(22, numChannels, true);
+    view.setUint32(24, sampleRate, true);
+    view.setUint32(28, sampleRate * blockAlign, true);
+    view.setUint16(32, blockAlign, true);
+    view.setUint16(34, bitDepth, true);
+    this.writeString(view, 36, 'data');
+    view.setUint32(40, dataLength, true);
+
+    // Escribir los samples
+    let offset = 44;
+    for (let i = 0; i < samples.length; i++) {
+      const sample = Math.max(-1, Math.min(1, samples[i]));
+      view.setInt16(offset, sample < 0 ? sample * 0x8000 : sample * 0x7FFF, true);
+      offset += 2;
+    }
+
+    return new Blob([view], { type: 'audio/wav' });
+  }
+
+  private writeString(view: DataView, offset: number, string: string): void {
+    for (let i = 0; i < string.length; i++) {
+      view.setUint8(offset + i, string.charCodeAt(i));
     }
   }
 

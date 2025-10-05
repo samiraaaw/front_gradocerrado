@@ -1,7 +1,7 @@
 // ========================================
-// CONFIGURACIÓN BÁSICA - IGUAL QUE OTRAS PÁGINAS
+// CONFIGURACIÓN BÁSICA
 // ========================================
-.civil-content {
+.results-content {
   --background: transparent;
   background-image: url('/assets/image/fondo_blanco_app.png');
   background-repeat: no-repeat;
@@ -11,505 +11,392 @@
   min-height: 100vh;
 }
 
-ion-content.civil-content {
+ion-content.results-content {
   --overflow: auto;
   height: 100%;
 }
-  // ========================================
-  // HEADER FIJO - EXACTO COMO OTRAS PÁGINAS
-  // ========================================
-  .custom-header-section {
-    position: fixed;  
-    top: 0;
-    left: 0;
-    right: 0;
-    z-index: 1000;   
+
+// ========================================
+// HEADER FIJO
+// ========================================
+.custom-header-section {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 1000;
+  background: transparent;
+
+  .orange-background {
     background: transparent;
-    
-    .orange-background {
-      background: transparent;
-      padding: 0;
-      border-radius: 0;
-      position: relative;
-      overflow: hidden;
-      width: 100vw;
-
-      .derecho-civil-container-full {
-        display: block;
-        width: 100%;
-        height: auto;
-        position: relative;
-        z-index: 3;
-
-        .derecho-civil-image-responsive {
-          display: block;
-          width: 100vw;
-          height: auto;
-          min-height: 120px;
-          max-height: 200px;
-          object-fit: cover;
-          object-position: center;
-          filter: drop-shadow(0 6px 16px rgba(0,0,0,0.18));
-        }
-      }
-    }
-  }
-
-  // ========================================
-  // CONTENIDO PRINCIPAL
-  // ========================================
-  .content-area {
-    margin-top: 140px;
-    padding: 20px 16px 100px 16px;
+    padding: 0;
+    border-radius: 0;
     position: relative;
-    z-index: 2;
-    background: transparent; 
-    border-radius: 30px 30px 0 0;
-    min-height: calc(100vh - 100px);
-  }
+    overflow: hidden;
+    width: 100vw;
 
-  // ========================================
-  // CARD DE RESULTADO PRINCIPAL
-  // ========================================
-  .result-card {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    border-radius: 20px;
-    padding: 32px 20px;
-    text-align: center;
-    box-shadow: 0 8px 32px rgba(31, 38, 135, 0.37);
-    margin-bottom: 24px;
-    color: white;
+    .derecho-civil-container-full {
+      display: block;
+      width: 100%;
+      height: auto;
+      position: relative;
+      z-index: 3;
 
-    .result-icon {
-      margin-bottom: 16px;
-
-      .success-icon {
-        font-size: 64px;
-        color: #4ade80;
-        filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.2));
-      }
-    }
-
-    .result-title {
-      font-size: 28px;
-      font-weight: 800;
-      color: white;
-      margin-bottom: 20px;
-      text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
-    }
-
-    .percentage-display {
-      .percentage-number {
-        font-size: 56px;
-        font-weight: 900;
-        color: #fbbf24;
+      .derecho-civil-image-responsive {
         display: block;
-        line-height: 1;
-        text-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
-      }
-
-      .percentage-label {
-        font-size: 18px;
-        color: rgba(255, 255, 255, 0.9);
-        font-weight: 500;
-        margin-top: 8px;
+        width: 100vw;
+        height: auto;
+        min-height: 120px;
+        max-height: 200px;
+        object-fit: cover;
+        object-position: center;
+        filter: drop-shadow(0 6px 16px rgba(0,0,0,0.18));
       }
     }
   }
+}
 
-  // ========================================
-  // SECCIÓN DE ESTADÍSTICAS
-  // ========================================
-  .stats-section {
-    background: white;
-    border-radius: 20px;
-    padding: 28px;
-    margin-bottom: 24px;
-    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
-    border: 1px solid rgba(255, 255, 255, 0.8);
+// ========================================
+// CONTENIDO PRINCIPAL
+// ========================================
+.content-area {
+  margin-top: 140px;
+  padding: 20px 16px 100px 16px;
+  position: relative;
+  z-index: 2;
+  background: transparent;
+  border-radius: 30px 30px 0 0;
+  min-height: calc(100vh - 100px);
+}
 
-    h3 {
-      font-size: 20px;
-      font-weight: 700;
-      color: #1f2937;
-      margin-bottom: 24px;
-      text-align: center;
-    }
+// ========================================
+// CARD PRINCIPAL DE RESULTADOS
+// ========================================
+.results-main-card {
+  background: linear-gradient(135deg, #4CAF50 0%, #2E7D32 100%);
+  border-radius: 20px;
+  padding: 32px 20px;
+  text-align: center;
+  box-shadow: 0 8px 32px rgba(76, 175, 80, 0.4);
+  margin-bottom: 24px;
+  position: relative;
+  overflow: hidden;
+}
 
-    .stats-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr 1fr;
-      gap: 20px;
-      margin-bottom: 24px;
+// ========================================
+// SECCIÓN DE MEDALLA
+// ========================================
+.medal-section {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 20px;
+  margin-bottom: 24px;
 
-      .stat-item {
-        text-align: center;
-        padding: 16px;
-        border-radius: 16px;
-        background: linear-gradient(145deg, #f8fafc, #e2e8f0);
-        border: 1px solid rgba(226, 232, 240, 0.8);
+  .medal-container {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 
-        .stat-number {
-          font-size: 36px;
-          font-weight: 800;
-          display: block;
-          margin-bottom: 8px;
-
-          &.correct {
-            color: #10b981;
-            text-shadow: 0 2px 4px rgba(16, 185, 129, 0.3);
-          }
-
-          &.incorrect {
-            color: #ef4444;
-            text-shadow: 0 2px 4px rgba(239, 68, 68, 0.3);
-          }
-
-          &.total {
-            color: #3b82f6;
-            text-shadow: 0 2px 4px rgba(59, 130, 246, 0.3);
-          }
-        }
-
-        .stat-label {
-          font-size: 14px;
-          color: #64748b;
-          font-weight: 600;
-          text-transform: uppercase;
-          letter-spacing: 0.5px;
-        }
+    .medal-ribbon {
+      .ribbon-icon {
+        font-size: 3rem;
+        color: #FFD700;
+        filter: drop-shadow(0 4px 8px rgba(0,0,0,0.2));
       }
     }
 
-    .time-used {
+    .medal-circle {
+      position: absolute;
+      top: 20px;
+      background: white;
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
       display: flex;
       align-items: center;
       justify-content: center;
-      gap: 12px;
-      padding: 16px;
-      background: linear-gradient(135deg, #e0f2fe, #b3e5fc);
-      border-radius: 12px;
-      color: #0369a1;
-      font-size: 16px;
-      font-weight: 600;
-      border: 1px solid rgba(3, 105, 161, 0.2);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.2);
 
-      ion-icon {
-        font-size: 24px;
+      .medal-number {
+        font-size: 1.8rem;
+        font-weight: 900;
+        color: #4CAF50;
       }
     }
   }
 
-  // ========================================
-  // ESTADO DE PREGUNTAS
-  // ========================================
-  .questions-status {
-    background: white;
-    border-radius: 20px;
-    padding: 28px;
-    margin-bottom: 24px;
-    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
-    border: 1px solid rgba(255, 255, 255, 0.8);
-
-    h4 {
-      font-size: 18px;
-      font-weight: 700;
-      color: #1f2937;
-      margin-bottom: 20px;
-      text-align: center;
-    }
-
-    .questions-circles {
-      display: flex;
-      justify-content: center;
-      gap: 16px;
-      flex-wrap: wrap;
-
-      .question-circle {
-        width: 48px;
-        height: 48px;
-        border-radius: 50%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-weight: 700;
-        color: white;
-        font-size: 18px;
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
-        transition: transform 0.2s ease;
-
-        &:hover {
-          transform: scale(1.1);
-        }
-
-        &.correct {
-          background: linear-gradient(135deg, #10b981, #059669);
-        }
-
-        &.incorrect {
-          background: linear-gradient(135deg, #ef4444, #dc2626);
-        }
-      }
+  .mapache-celebration {
+    .mapache-result {
+      width: 80px;
+      height: 80px;
+      object-fit: contain;
+      filter: drop-shadow(0 4px 8px rgba(0,0,0,0.2));
     }
   }
+}
 
-  // ========================================
-  // BOTONES DE ACCIÓN
-  // ========================================
-  .action-buttons {
-    margin-bottom: 32px;
+// ========================================
+// TÍTULO Y NIVEL
+// ========================================
+.level-title {
+  font-size: 1.6rem;
+  font-weight: 800;
+  color: #FFFFFF;
+  margin: 0 0 8px 0;
+  letter-spacing: 1px;
+  text-shadow: 0 2px 4px rgba(0,0,0,0.2);
+}
 
-    ion-button {
-      margin-bottom: 16px;
-      height: 56px;
-      font-weight: 700;
-      border-radius: 16px;
-      font-size: 16px;
-      text-transform: none;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-      transition: all 0.3s ease;
+.level-subtitle {
+  font-size: 1.1rem;
+  color: rgba(255, 255, 255, 0.9);
+  margin: 0 0 24px 0;
+  font-weight: 600;
+}
 
-      &:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
-      }
+// ========================================
+// PUNTUACIÓN PRINCIPAL
+// ========================================
+.score-main {
+  background: rgba(255, 255, 255, 0.95);
+  border-radius: 16px;
+  padding: 20px;
+  margin-top: 20px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
 
-      &.review-btn {
-        --background: linear-gradient(135deg, #f59e0b, #d97706);
-        --color: white;
-        --border-color: transparent;
-      }
-
-      &.new-test-btn {
-        --background: linear-gradient(135deg, #3b82f6, #2563eb);
-        --color: white;
-      }
-
-      &.back-btn {
-        --background: transparent;
-        --color: #6b7280;
-        --border-color: #d1d5db;
-        box-shadow: none;
-
-        &:hover {
-          --color: #374151;
-          --border-color: #9ca3af;
-        }
-      }
-
-      ion-icon {
-        margin-right: 8px;
-      }
-    }
+  .percentage-display {
+    font-size: 3.5rem;
+    font-weight: 900;
+    color: #4CAF50;
+    margin: 0;
+    line-height: 1;
+    text-shadow: 0 2px 4px rgba(76, 175, 80, 0.3);
   }
 
-  // ========================================
-  // SECCIÓN DEL MAPACHE
-  // ========================================
-  .mapache-section {
+  .score-label {
+    font-size: 1rem;
+    color: #666;
+    margin: 8px 0 0 0;
+    font-weight: 500;
+  }
+}
+
+// ========================================
+// SECCIÓN DE RESUMEN
+// ========================================
+.summary-section {
+  background: rgba(255, 255, 255, 0.95);
+  border-radius: 16px;
+  padding: 20px;
+  margin-bottom: 24px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+
+  .summary-title {
+    display: flex;
+    align-items: center;
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: #333;
+    margin: 0 0 20px 0;
+
+    ion-icon {
+      font-size: 1.4rem;
+      color: #4CAF50;
+      margin-right: 8px;
+    }
+  }
+}
+
+// ========================================
+// ESTADÍSTICAS DE RESUMEN
+// ========================================
+.summary-stats {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  margin-bottom: 24px;
+
+  .stat-correct,
+  .stat-incorrect {
     text-align: center;
-    margin-bottom: 40px;
+    padding: 16px;
+    border-radius: 12px;
 
-    .mapache-container {
-      .mapache-celebration {
-        width: 100px;
-        height: 100px;
-        margin: 0 auto 16px auto;
-        border-radius: 50%;
-        background: linear-gradient(135deg, #ffffff, #f1f5f9);
-        padding: 16px;
-        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
-        border: 3px solid rgba(255, 255, 255, 0.8);
-        object-fit: contain;
-        transition: transform 0.3s ease;
+    .stat-number {
+      font-size: 2rem;
+      font-weight: 800;
+      margin-bottom: 8px;
+    }
 
-        &:hover {
-          transform: scale(1.05);
-        }
-      }
-
-      .celebration-message {
-        font-size: 18px;
-        color: #3b82f6;
-        font-weight: 700;
-        max-width: 300px;
-        margin: 0 auto;
-        line-height: 1.4;
-        text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
-      }
+    .stat-label {
+      font-size: 0.9rem;
+      font-weight: 600;
+      letter-spacing: 0.5px;
     }
   }
 
+  .stat-correct {
+    background: linear-gradient(135deg, #C8E6C9 0%, #A5D6A7 100%);
 
-// ========================================
-// RESPONSIVE DESIGN
-// ========================================
-@media (max-width: 480px) {
-  .resumen-content {
-    .custom-header-section {
-      height: 180px;
-      margin-bottom: 30px;
-
-      .orange-background {
-        .derecho-civil-container-full {
-          height: 180px;
-
-          .derecho-civil-image-responsive {
-            max-width: 250px;
-            max-height: 140px;
-          }
-        }
-      }
+    .stat-number {
+      color: #2E7D32;
     }
 
-    .content-area {
-      padding: 0 16px 100px 16px;
-    }
-
-    .result-card {
-      padding: 24px 16px;
-
-      .result-title {
-        font-size: 24px;
-      }
-
-      .percentage-display .percentage-number {
-        font-size: 48px;
-      }
-    }
-
-    .stats-section {
-      padding: 20px;
-
-      .stats-grid {
-        gap: 12px;
-
-        .stat-item {
-          padding: 12px;
-
-          .stat-number {
-            font-size: 28px;
-          }
-
-          .stat-label {
-            font-size: 12px;
-          }
-        }
-      }
-    }
-
-    .questions-status {
-      padding: 20px;
-
-      .questions-circles {
-        gap: 12px;
-
-        .question-circle {
-          width: 40px;
-          height: 40px;
-          font-size: 16px;
-        }
-      }
-    }
-
-    .action-buttons {
-      ion-button {
-        height: 48px;
-        font-size: 15px;
-      }
-    }
-
-    .mapache-section {
-      .mapache-container {
-        .mapache-celebration {
-          width: 80px;
-          height: 80px;
-        }
-
-        .celebration-message {
-          font-size: 16px;
-        }
-      }
+    .stat-label {
+      color: #1B5E20;
     }
   }
-}
 
-@media (min-width: 768px) {
-  .resumen-content {
-    .custom-header-section {
-      height: 220px;
-      margin-bottom: 60px;
+  .stat-incorrect {
+    background: linear-gradient(135deg, #FFCDD2 0%, #EF9A9A 100%);
 
-      .orange-background {
-        .derecho-civil-container-full {
-          height: 220px;
-
-          .derecho-civil-image-responsive {
-            max-width: 350px;
-            max-height: 180px;
-          }
-        }
-      }
-    }
-    
-    .content-area {
-      margin-top: 40px;
-      padding: 0 32px 100px 32px;
-      max-width: 800px;
-      margin-left: auto;
-      margin-right: auto;
-    }
-    
-    .result-card {
-      padding: 40px 32px;
+    .stat-number {
+      color: #C62828;
     }
 
-    .stats-section,
-    .questions-status {
-      padding: 32px;
-    }
-
-    .stats-grid {
-      max-width: 600px;
-      margin: 0 auto 24px auto;
+    .stat-label {
+      color: #B71C1C;
     }
   }
 }
 
 // ========================================
-// ANIMACIONES
+// CÍRCULOS DE PREGUNTAS
 // ========================================
-@keyframes fadeInUp {
-  from {
-    opacity: 0;
-    transform: translateY(30px);
+.questions-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 12px;
+  margin-top: 20px;
+
+  .question-circle {
+    aspect-ratio: 1;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1rem;
+    font-weight: 700;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    transition: transform 0.2s ease;
+
+    &:active {
+      transform: scale(0.95);
+    }
+
+    &.correct {
+      background: linear-gradient(135deg, #4CAF50 0%, #2E7D32 100%);
+      color: white;
+    }
+
+    &.incorrect {
+      background: linear-gradient(135deg, #F44336 0%, #C62828 100%);
+      color: white;
+    }
   }
-  to {
-    opacity: 1;
-    transform: translateY(0);
+}
+
+// ========================================
+// INFORMACIÓN ADICIONAL
+// ========================================
+.info-section {
+  background: rgba(255, 255, 255, 0.95);
+  border-radius: 16px;
+  padding: 16px;
+  margin-bottom: 24px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+
+  .info-item {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    color: #666;
+    font-size: 1rem;
+
+    ion-icon {
+      font-size: 1.3rem;
+      color: #4CAF50;
+    }
   }
 }
 
-.result-card,
-.stats-section,
-.questions-status,
-.action-buttons,
-.mapache-section {
-  animation: fadeInUp 0.6s ease-out;
-}
-
-.stats-section {
-  animation-delay: 0.1s;
-}
-
-.questions-status {
-  animation-delay: 0.2s;
-}
-
+// ========================================
+// BOTONES DE ACCIÓN
+// ========================================
 .action-buttons {
-  animation-delay: 0.3s;
-}
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-top: 24px;
 
-.mapache-section {
-  animation-delay: 0.4s;
+  .btn-new-test {
+    --background: linear-gradient(135deg, #4CAF50 0%, #2E7D32 100%);
+    --background-hover: linear-gradient(135deg, #66BB6A 0%, #388E3C 100%);
+    --color: white;
+    font-weight: 600;
+    text-transform: none;
+    letter-spacing: 0.5px;
+    height: 50px;
+    box-shadow: 0 4px 12px rgba(76, 175, 80, 0.3);
+  }
+
+  .btn-back {
+    --border-color: #4CAF50;
+    --color: #4CAF50;
+    font-weight: 600;
+    text-transform: none;
+    letter-spacing: 0.5px;
+    height: 50px;
+  }
+
+  // ========================================
+// ESTILOS PARA ALERTS PERSONALIZADOS
+// ========================================
+::ng-deep {
+  .oral-alert-incorrect .alert-wrapper,
+  .oral-alert-correct .alert-wrapper {
+    background: white !important;
+    
+    .alert-head {
+      background: transparent;
+      
+      h2 {
+        color: #333 !important;
+        font-weight: 700;
+      }
+    }
+    
+    .alert-message {
+      color: #555 !important;
+      background: white !important;
+      padding: 16px;
+      max-height: 400px;
+      overflow-y: auto;
+      
+      strong {
+        color: #333 !important;
+      }
+    }
+    
+    .alert-button-group {
+      background: white;
+      
+      button {
+        color: #4CAF50 !important;
+        font-weight: 600;
+      }
+    }
+  }
+  
+  .oral-alert-incorrect .alert-head h2 {
+    color: #F44336 !important;
+  }
+  
+  .oral-alert-correct .alert-head h2 {
+    color: #4CAF50 !important;
+  }
+}
 }

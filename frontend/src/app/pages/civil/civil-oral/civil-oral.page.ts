@@ -48,10 +48,18 @@ export class CivilOralPage implements OnInit {
     await loading.present();
     
     try {
-      console.log('Creando sesión de estudio oral...');
-      
+      // Obtener el usuario actual logueado
+      const currentUser = this.apiService.getCurrentUser();
+
+      if (!currentUser || !currentUser.id) {
+        await loading.dismiss();
+        alert('Debes iniciar sesión para hacer un test');
+        this.router.navigate(['/login']);
+        return;
+      }
+
       const sessionData = {
-        studentId: "00000000-0000-0000-0000-000000000001",
+        studentId: currentUser.id,  // Usar el ID real del usuario
         difficulty: "intermedio",
         legalAreas: ["Derecho Civil"],
         numberOfQuestions: 5

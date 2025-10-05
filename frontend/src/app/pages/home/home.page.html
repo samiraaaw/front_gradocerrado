@@ -21,28 +21,35 @@
 
     <!-- CONTENIDO que va debajo del header fijo -->
     <div class="scrollable-content">
-      <!-- Progreso Diario -->
+      
+      <!-- Progreso General -->
       <div class="progress-section">
         <div class="progress-card">
           <div class="progress-header">
             <div class="progress-icon">
-              <ion-icon name="trending-up" class="progress-icon-svg"></ion-icon>
+              <ion-icon name="flame" class="progress-icon-svg"></ion-icon>
             </div>
             <div class="progress-info">
-              <h3 class="progress-title">Progreso Diario</h3>
-              <p class="progress-subtitle">3/5 Lecciones</p>
+              <h3 class="progress-title">Tu Progreso</h3>
+              <p class="progress-subtitle">{{ getProgressSubtitle() }}</p>
             </div>
           </div>
 
-          <div class="progress-bar-container">
+          <div class="progress-bar-container" *ngIf="totalSessions > 0">
             <div class="progress-bar">
-              <div class="progress-fill" style="width: 60%;"></div>
+              <div class="progress-fill" [style.width.%]="getProgressPercentage()"></div>
             </div>
           </div>
 
           <p class="progress-text">
-            2 lecciones más para completar<br>tu meta diaria
+            {{ getProgressMessage() }}
           </p>
+
+          <!-- Mostrar racha si existe -->
+          <div class="streak-badge" *ngIf="userStreak > 0">
+            <img src="assets/image/menu/hoja.png" alt="Racha" class="streak-icon-small">
+            <span>{{ userStreak }} {{ userStreak === 1 ? 'día' : 'días' }} de racha</span>
+          </div>
 
           <div class="card-mascot">
             <img src="assets/image/Mreloj.png" alt="Mapache" class="card-mascot-image">
@@ -67,62 +74,16 @@
 
           <!-- Banner App -->
           <div class="banner-section">
-            <div class="banner-placeholder">
-              <p>banner app</p>
-            </div>
+            <img src="assets/image/bannerhome.png" alt="Promocion">
+
           </div>
         </div>
       </div>
 
-      <!-- Tus Resultados -->
-      <div class="results-section">
-        <div class="results-card">
-          <div class="results-header">
-            <h3 class="results-title">Tus Resultados</h3>
-            <ion-icon name="bar-chart" class="results-icon"></ion-icon>
-          </div>
-
-          <div class="results-legend">
-            <div class="legend-item">
-              <div class="legend-dot civil-dot"></div>
-              <span>Civil</span>
-            </div>
-            <div class="legend-item">
-              <div class="legend-dot procesal-dot"></div>
-              <span>Procesal</span>
-            </div>
-          </div>
-
-          <div class="chart-container">
-            <div class="chart-bars">
-              <div class="chart-bar civil-bar">
-                <div class="bar-fill" style="height: 30%;"></div>
-                <div class="bar-label">
-                  <span class="bar-score">3/10</span>
-                  <span class="bar-text">Preguntas</span>
-                </div>
-              </div>
-              <div class="chart-bar procesal-bar">
-                <div class="bar-fill" style="height: 80%;"></div>
-                <div class="bar-label">
-                  <span class="bar-score">8/10</span>
-                  <span class="bar-text">Preguntas</span>
-                </div>
-              </div>
-            </div>
-
-            <div class="chart-labels">
-              <span>0%</span><span>25%</span><span>50%</span><span>75%</span><span>100%</span>
-            </div>
-          </div>
-        </div>
-      </div>
     </div>
 
   </div>
 
-
   <!-- Bottom Navigation Component -->
-<app-bottom-nav></app-bottom-nav>
-
+  <app-bottom-nav></app-bottom-nav>
 </ion-content>

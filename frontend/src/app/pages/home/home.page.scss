@@ -156,24 +156,49 @@
   }
 
   .progress-text {
-    color: #7a7a7a;
-    margin: 6px 0 0;
-    font-size: 14px;
-    line-height: 1.4;
-    white-space: normal;
-    text-align: left;
+  color: #7a7a7a;
+  margin: 6px 0 0;
+  font-size: 14px;
+  line-height: 1.4;
+  white-space: normal;
+  text-align: left;
+}
+
+  // Badge de racha
+  .streak-badge {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 8px 16px;
+    background: linear-gradient(135deg, #10b981, #059669);
+    border-radius: 20px;
+    margin-top: 12px;
+    
+    .streak-icon-small {
+      width: 20px;
+      height: 20px;
+    }
+    
+    span {
+      color: white;
+      font-size: 13px;
+      font-weight: 600;
+    }
   }
 
+
+  /* Mapache dentro de la tarjeta */
   /* Mapache dentro de la tarjeta */
   .card-mascot {
     position: absolute;
     right: 12px; 
-    bottom: 8px;
+    bottom: -15px;
     display: flex; 
     align-items: flex-end;
     pointer-events: none;
   }
-  
+
   .card-mascot-image { 
     width: 110px; 
     height: auto; 
@@ -221,7 +246,6 @@
     object-fit: contain; 
   }
 
-  .banner-section { }
   
   .banner-placeholder {
     border-radius: 16px; 

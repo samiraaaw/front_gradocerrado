@@ -1,139 +1,101 @@
 <ion-content class="racha-content">
-  
-  <!-- Header con botón de regreso -->
- <!-- Header con imagen personalizada -->
-  <div class="racha-header-custom">
-    <div class="racha-background-container">
-      <img src="assets/image/racha.png" alt="Racha" class="racha-header-image">
+  <!-- Header personalizado IGUAL que Civil -->
+  <div class="custom-header-section">
+    <div class="green-background">
+      <!-- Imagen de extremo a extremo -->
+      <div class="racha-container-full">
+        <img src="assets/image/racha.png" alt="Derecho Civil" class="racha-image-responsive">
+      </div>
     </div>
-    
-    <ion-button fill="clear" (click)="goBack()" class="back-button">
-      <ion-icon name="chevron-back"></ion-icon>
-    </ion-button>
   </div>
-  
+
+  <!-- Botón de volver -->
+  <ion-button fill="clear" class="back-button" (click)="goBack()">
+    <ion-icon name="chevron-back"></ion-icon>
+  </ion-button>
+
+  <!-- Loading -->
+  <div *ngIf="isLoading" class="loading-container">
+    <ion-spinner name="circular"></ion-spinner>
+  </div>
 
   <!-- Contenido principal -->
-  <div class="racha-main">
+  <div *ngIf="!isLoading" class="content-area">
 
-    <!-- Sección principal: Mapache con racha -->
-    <div class="hero-section">
-      <div class="streak-flame">
-        <div class="flame-animation">
-          <img src="assets/image/menu/hoja.png" alt="Racha" class="flame-icon">
-        </div>
+    <!-- Tarjeta principal de racha -->
+    <div class="streak-main-card">
+      <div class="streak-mascot">
+        <img src="assets/image/menu/hoja.png" alt="Racha">
       </div>
       
-      <div class="mapache-celebration">
-        <img src="assets/image/mcara.png" alt="Mapache" class="mapache-image">
-      </div>
+      <div class="streak-number">{{ currentStreak }}</div>
+      <div class="streak-label">días de racha</div>
       
-      <div class="streak-counter">
-        <h2>{{ currentStreak }}</h2>
-        <p>días de racha</p>
-      </div>
-      
-      <div class="motivational-message">
-        <p>{{ getMotivationalMessage() }}</p>
+      <div class="streak-message">
+        <span *ngIf="currentStreak === 0">¡Comienza tu racha hoy!</span>
+        <span *ngIf="currentStreak > 0 && currentStreak < 5">¡Vas muy bien! 💪</span>
+        <span *ngIf="currentStreak >= 5 && currentStreak < 10">¡Increíble constancia!</span>
+        <span *ngIf="currentStreak >= 10">¡Eres imparable! 🔥</span>
       </div>
     </div>
 
-    <!-- Estadísticas rápidas -->
-    <div class="stats-quick">
-      <div class="stat-item">
-        <ion-icon name="trophy"></ion-icon>
-        <div class="stat-info">
-          <span class="stat-value">{{ longestStreak }}</span>
-          <span class="stat-label">Mejor racha</span>
-        </div>
+    <!-- Estadísticas -->
+    <div class="stats-row">
+      <div class="stat-card">
+        <ion-icon name="trophy" class="stat-icon"></ion-icon>
+        <div class="stat-number">{{ bestStreak }}</div>
+        <div class="stat-label">Mejor racha</div>
       </div>
       
-      <div class="stat-item">
-        <ion-icon name="calendar"></ion-icon>
-        <div class="stat-info">
-          <span class="stat-value">{{ totalDays }}</span>
-          <span class="stat-label">Días totales</span>
-        </div>
+      <div class="stat-card">
+        <ion-icon name="calendar" class="stat-icon"></ion-icon>
+        <div class="stat-number">{{ totalDays }}</div>
+        <div class="stat-label">Días totales</div>
       </div>
     </div>
 
-    <!-- Progreso hacia siguiente meta -->
-    <div class="milestone-section">
-      <h3>Próxima meta: {{ nextMilestone }} días</h3>
-      <div class="milestone-progress">
-        <div class="progress-track">
-          <div class="progress-fill" [style.width.%]="getProgressToNextMilestone()"></div>
-        </div>
-        <div class="progress-labels">
-          <span>{{ currentStreak }} días</span>
-          <span>{{ nextMilestone }} días</span>
-        </div>
+    <!-- Próxima meta -->
+    <div class="next-goal-card">
+      <h3>Próxima meta: {{ nextGoal }} días</h3>
+      <div class="goal-progress-bar">
+        <div class="goal-progress-fill" [style.width.%]="getProgressToNextGoal()"></div>
       </div>
-    </div>
-
-    <!-- Calendario de racha -->
-    <div class="calendar-section">
-      <h3>Tu historial</h3>
-      <div class="calendar-grid">
-        <div 
-          *ngFor="let day of streakCalendar" 
-          class="calendar-day"
-          [class.completed]="day.completed"
-          [class.today]="day.isToday">
-          <span class="day-name">{{ day.dayName }}</span>
-          <div class="day-circle">
-            <ion-icon *ngIf="day.completed" name="checkmark"></ion-icon>
-            <span *ngIf="!day.completed && !day.isToday" class="day-number">{{ day.day }}</span>
-            <img *ngIf="day.isToday" src="assets/image/menu/hoja.png" alt="Hoy" class="today-icon">
-          </div>
-        </div>
-      </div>
+      <p class="goal-text">{{ getDaysToNextGoal() }} días más para completar tu meta</p>
     </div>
 
     <!-- Logros -->
     <div class="achievements-section">
-      <h3>Logros</h3>
+      <h2 class="section-title">
+        Logros ({{ getUnlockedCount() }}/{{ getTotalCount() }})
+      </h2>
+      
       <div class="achievements-grid">
         <div 
           *ngFor="let achievement of achievements" 
           class="achievement-card"
-          [class.unlocked]="achievement.unlocked">
-          <div class="achievement-icon">{{ achievement.name.split(' ')[0] }}</div>
-          <div class="achievement-info">
-            <h4>{{ achievement.name.split(' ').slice(1).join(' ') }}</h4>
-            <p>{{ achievement.description }}</p>
+          [class.unlocked]="achievement.unlocked"
+          [class.locked]="!achievement.unlocked">
+          
+          <div class="achievement-icon" [style.background-color]="achievement.color">
+            <ion-icon [name]="achievement.icon"></ion-icon>
           </div>
-          <div class="achievement-status">
-            <ion-icon 
-              *ngIf="achievement.unlocked" 
-              name="checkmark-circle" 
-              class="unlocked-icon">
-            </ion-icon>
-            <ion-icon 
-              *ngIf="!achievement.unlocked" 
-              name="lock-closed" 
-              class="locked-icon">
-            </ion-icon>
+          
+          <div class="achievement-info">
+            <h4 class="achievement-title">{{ achievement.title }}</h4>
+            <p class="achievement-desc">{{ achievement.description }}</p>
+            <span class="achievement-days" *ngIf="!achievement.unlocked">
+              {{ achievement.daysRequired >= 1 ? achievement.daysRequired + ' días' : 'Próximamente' }}
+            </span>
+            <span class="achievement-unlocked" *ngIf="achievement.unlocked">
+              ✓ Desbloqueado
+            </span>
           </div>
         </div>
       </div>
     </div>
 
-    <!-- Botón de acción -->
-    <div class="action-section">
-      <button class="study-now-btn" (click)="goToStudy()">
-        <ion-icon name="book"></ion-icon>
-        <span>Estudiar ahora</span>
-      </button>
-      <p class="action-hint">¡Mantén tu racha viva estudiando hoy!</p>
-    </div>
-
-    <!-- Espaciado para navegación inferior -->
-    <div class="bottom-spacer"></div>
-
   </div>
 
-  <!-- Navegación inferior -->
+  <!-- Bottom Navigation -->
   <app-bottom-nav></app-bottom-nav>
-
 </ion-content>

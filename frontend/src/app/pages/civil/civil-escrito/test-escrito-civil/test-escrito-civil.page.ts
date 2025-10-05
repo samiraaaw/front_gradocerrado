@@ -1,6 +1,6 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
-import { AlertController } from '@ionic/angular';
+import { AlertController, LoadingController } from '@ionic/angular';
 import { ApiService } from '../../../../services/api.service';
 
 interface Question {
@@ -14,10 +14,12 @@ interface Question {
   correctAnswer: string;
   explanation: string;
   userAnswer?: string;
-  [key: string]: any; // Permite cualquier propiedad adicional
+  options?: any[];
+  [key: string]: any;
 }
 
 interface BackendSession {
+  testId?: number; // ✅ AGREGAR
   session: any;
   questions: any[];
   currentQuestionIndex: number;
@@ -32,7 +34,6 @@ interface BackendSession {
 })
 export class TestEscritoCivilPage implements OnInit, OnDestroy {
 
-  // Configuración básica
   testConfig = {
     numberOfQuestions: 10,
     difficulty: 'Intermedio',
@@ -42,7 +43,6 @@ export class TestEscritoCivilPage implements OnInit, OnDestroy {
     timeLimit: 25
   };
 
-  // Estado del test
   currentQuestionIndex = 0;
   questions: Question[] = [];
   selectedAnswer: string = '';
@@ -52,19 +52,22 @@ export class TestEscritoCivilPage implements OnInit, OnDestroy {
   isLoading = true;
   loadingError = false;
 
-  // Datos de progreso
   totalQuestions = 10;
   currentQuestionNumber = 1;
 
-  // Datos de la sesión
   currentSession: BackendSession | null = null;
   sessionId: string = '';
+  testId: number = 0; // ✅ AGREGAR
+
+  // ✅ NUEVO: Control de tiempo por pregunta
+  questionStartTime: Date = new Date();
 
   constructor(
     private router: Router,
     private route: ActivatedRoute,
     private apiService: ApiService,
-    private alertController: AlertController
+    private alertController: AlertController,
+    private loadingController: LoadingController // ✅ AGREGAR
   ) { 
     console.log('TestEscritoCivilPage constructor inicializado');
   }
@@ -80,36 +83,35 @@ export class TestEscritoCivilPage implements OnInit, OnDestroy {
     }
   }
 
-  // CARGAR SESIÓN - Versión simplificada y segura
   async loadSessionFromBackend() {
     try {
       console.log('Iniciando carga de sesión...');
       this.isLoading = true;
       
-      // Esperar un poco para que el localStorage esté disponible
       setTimeout(() => {
         this.currentSession = this.apiService.getCurrentSession();
         console.log('Sesión obtenida del ApiService:', this.currentSession);
         
         if (!this.currentSession) {
-          console.error('No hay sesión activa, redirigiendo...');
+          console.error('No hay sesión activa');
           this.loadingError = true;
           this.isLoading = false;
-          // No redirigir inmediatamente, mostrar error
           return;
         }
 
         try {
-          // Configurar datos básicos de forma segura
-          this.sessionId = this.currentSession?.session?.id || 'sin-id';
+          // ✅ CAPTURAR testId del backend
+          this.testId = this.currentSession?.testId || 0;
+          this.sessionId = this.currentSession?.session?.sessionId || this.currentSession?.session?.id || 'sin-id';
           this.totalQuestions = this.currentSession?.totalQuestions || 10;
           this.currentQuestionIndex = this.currentSession?.currentQuestionIndex || 0;
           this.currentQuestionNumber = this.currentQuestionIndex + 1;
           
-          // Convertir preguntas de forma segura
           const backendQuestions = this.currentSession?.questions || [];
           this.questions = this.convertBackendQuestions(backendQuestions);
-          console.log('Preguntas convertidas exitosamente:', this.questions.length);
+          
+          console.log(`✅ Test ID: ${this.testId}`);
+          console.log(`✅ Preguntas cargadas: ${this.questions.length}`);
           
           if (this.questions.length === 0) {
             console.error('No se cargaron preguntas');
@@ -117,6 +119,9 @@ export class TestEscritoCivilPage implements OnInit, OnDestroy {
             this.isLoading = false;
             return;
           }
+          
+          // ✅ Iniciar contador de tiempo
+          this.questionStartTime = new Date();
           
           this.startTimer();
           this.isLoading = false;
@@ -127,7 +132,7 @@ export class TestEscritoCivilPage implements OnInit, OnDestroy {
           this.loadingError = true;
           this.isLoading = false;
         }
-      }, 100); // Pequeño delay para asegurar que localStorage esté disponible
+      }, 100);
       
     } catch (error) {
       console.error('Error en loadSessionFromBackend:', error);
@@ -136,7 +141,6 @@ export class TestEscritoCivilPage implements OnInit, OnDestroy {
     }
   }
 
-  // CONVERTIR PREGUNTAS - Versión simplificada y segura
   convertBackendQuestions(backendQuestions: any[]): Question[] {
     console.log('Convirtiendo preguntas del backend, cantidad:', backendQuestions?.length || 0);
     
@@ -149,18 +153,18 @@ export class TestEscritoCivilPage implements OnInit, OnDestroy {
       console.log(`Procesando pregunta ${index + 1}:`, q);
       
       const convertedQuestion: Question = {
-        id: q.id || `temp-${index}`,
+        id: String(q.id) || `temp-${index}`,
         text: q.questionText || q.text || q.enunciado || 'Texto no disponible',
         questionText: q.questionText || q.text || q.enunciado || 'Texto no disponible',
         type: q.type || 1,
-        category: q.category || q.legalArea || 'Sin categoría',
-        legalArea: q.legalArea || q.category || 'General',
+        category: q.category || q.tema || q.legalArea || 'Sin categoría',
+        legalArea: q.legalArea || q.tema || q.category || 'General',
         difficulty: q.difficulty || 3,
         correctAnswer: q.correctAnswer || 'A',
-        explanation: q.explanation || 'Explicación no disponible'
+        explanation: q.explanation || 'Explicación no disponible',
+        options: q.options || []
       };
 
-      // Agregar todas las propiedades originales de forma segura
       try {
         Object.keys(q || {}).forEach(key => {
           if (!(key in convertedQuestion)) {
@@ -175,7 +179,6 @@ export class TestEscritoCivilPage implements OnInit, OnDestroy {
     });
   }
 
-  // OBTENER PREGUNTA ACTUAL
   getCurrentQuestion(): Question | null {
     if (this.currentQuestionIndex >= 0 && this.currentQuestionIndex < this.questions.length) {
       return this.questions[this.currentQuestionIndex];
@@ -183,67 +186,43 @@ export class TestEscritoCivilPage implements OnInit, OnDestroy {
     return null;
   }
 
-  // OBTENER OPCIONES - Versión muy simplificada
-  getCurrentQuestionOptions(): { id: string; text: string; }[] {
+  getCurrentQuestionOptions(): { id: string; text: string; letter?: string }[] {
     const question = this.getCurrentQuestion();
-    
-    if (!question) {
-      console.log('No hay pregunta actual');
-      return [];
-    }
+    if (!question) return [];
 
-    console.log('=== DEBUGGING OPCIONES ===');
-    console.log('Pregunta completa:', question);
-    console.log('Propiedades disponibles:', Object.keys(question));
+    const q: any = question;
 
-    const questionData = question as any;
-
-    // Formato 1: Array de opciones
-    if (questionData.options && Array.isArray(questionData.options)) {
-      console.log('Usando formato options array:', questionData.options);
-      return questionData.options.map((option: any, index: number) => ({
-        id: String.fromCharCode(65 + index),
-        text: typeof option === 'string' ? option : (option.text || option.content || `Opción ${index + 1}`)
+    if (Array.isArray(q.options)) {
+      return q.options.map((opt: any, idx: number) => ({
+        id: String(opt?.id ?? String.fromCharCode(65 + idx)),
+        text: typeof opt === 'string' ? opt : (opt?.text ?? opt?.content ?? `Opción ${idx + 1}`),
+        letter: String.fromCharCode(65 + idx),
       }));
     }
 
-    // Formato 2: Propiedades individuales
-    const individualOptions = [];
-    if (questionData.optionA) individualOptions.push({ id: 'A', text: questionData.optionA });
-    if (questionData.optionB) individualOptions.push({ id: 'B', text: questionData.optionB });
-    if (questionData.optionC) individualOptions.push({ id: 'C', text: questionData.optionC });
-    if (questionData.optionD) individualOptions.push({ id: 'D', text: questionData.optionD });
-    
-    if (individualOptions.length > 0) {
-      console.log('Usando formato opciones individuales:', individualOptions);
-      return individualOptions;
-    }
+    const individualOptions: { id: string; text: string; letter: string }[] = [];
+    if (q.optionA) individualOptions.push({ id: 'A', text: q.optionA, letter: 'A' });
+    if (q.optionB) individualOptions.push({ id: 'B', text: q.optionB, letter: 'B' });
+    if (q.optionC) individualOptions.push({ id: 'C', text: q.optionC, letter: 'C' });
+    if (q.optionD) individualOptions.push({ id: 'D', text: q.optionD, letter: 'D' });
+    if (individualOptions.length > 0) return individualOptions;
 
-    // Formato 3: Buscar en otras propiedades posibles
     const possibleArrayProps = ['choices', 'answers', 'alternativas'];
     for (const prop of possibleArrayProps) {
-      if (questionData[prop] && Array.isArray(questionData[prop]) && questionData[prop].length > 0) {
-        console.log(`Usando ${prop} array:`, questionData[prop]);
-        return questionData[prop].map((option: any, index: number) => ({
-          id: String.fromCharCode(65 + index),
-          text: typeof option === 'string' ? option : (option.text || option.content || `Opción ${index + 1}`)
+      if (Array.isArray(q[prop]) && q[prop].length > 0) {
+        return q[prop].map((opt: any, idx: number) => ({
+          id: String(opt?.id ?? String.fromCharCode(65 + idx)),
+          text: typeof opt === 'string' ? opt : (opt?.text ?? opt?.content ?? `Opción ${idx + 1}`),
+          letter: String.fromCharCode(65 + idx),
         }));
       }
     }
 
-    // Formato 4: Opciones de debug
-    console.warn('No se encontraron opciones, usando opciones de debug');
-    console.log('Estructura completa de la pregunta:', question);
-    
     return [
-      { id: 'A', text: 'Debug: No se encontraron opciones reales' },
-      { id: 'B', text: 'Revisa la consola para ver la estructura' },
-      { id: 'C', text: 'Contacta al desarrollador con esta info' },
-      { id: 'D', text: `Total propiedades: ${Object.keys(question).length}` }
+      { id: 'A', text: 'Debug: No se encontraron opciones reales', letter: 'A' },
+      { id: 'B', text: 'Revisa la consola', letter: 'B' }
     ];
   }
-
-  // MÉTODOS BÁSICOS DE FUNCIONALIDAD
 
   startTimer() {
     if (this.testConfig.timeLimit > 0) {
@@ -257,19 +236,111 @@ export class TestEscritoCivilPage implements OnInit, OnDestroy {
     }
   }
 
-  selectAnswer(optionId: string) {
+  // ========================================
+  // ✅ MÉTODO ACTUALIZADO: SELECCIONAR RESPUESTA
+  // ========================================
+  
+  async selectAnswer(optionId: string) {
     if (!this.canSelectOption()) {
+      console.log('⚠️ Ya se respondió esta pregunta');
       return;
     }
+
+    console.log(`👆 Usuario seleccionó: ${optionId}`);
 
     this.selectedAnswer = optionId;
     
     const currentQuestion = this.getCurrentQuestion();
-    if (currentQuestion) {
-      currentQuestion.userAnswer = optionId;
+    if (!currentQuestion) {
+      console.error('❌ No hay pregunta actual');
+      return;
     }
 
-    console.log('Respuesta seleccionada:', optionId);
+    currentQuestion.userAnswer = optionId;
+
+    // ✅ VERIFICAR SI ES CORRECTA
+    const isCorrect = this.isCorrectAnswer(optionId);
+    console.log(`${isCorrect ? '✅' : '❌'} Respuesta ${isCorrect ? 'CORRECTA' : 'INCORRECTA'}`);
+
+    // ✅ CALCULAR TIEMPO GASTADO
+    const timeSpent = Math.floor((new Date().getTime() - this.questionStartTime.getTime()) / 1000);
+    console.log(`⏱️ Tiempo: ${timeSpent} segundos`);
+
+    // ✅ ENVIAR AL BACKEND
+    await this.submitAnswerToBackend(currentQuestion, optionId, isCorrect, timeSpent);
+  }
+
+  // ========================================
+  // ✅ NUEVO: ENVIAR RESPUESTA AL BACKEND
+  // ========================================
+  
+  async submitAnswerToBackend(question: Question, userAnswer: string, isCorrect: boolean, timeSpent: number) {
+    if (this.testId === 0) {
+      console.error('❌ No hay testId válido');
+      return;
+    }
+
+    console.log('📤 Enviando respuesta al backend...');
+
+    const loading = await this.loadingController.create({
+      message: 'Guardando...',
+      spinner: 'crescent',
+      duration: 5000
+    });
+
+    await loading.present();
+
+    try {
+
+      const timeSpanString = this.formatTimeSpan(timeSpent);
+
+      const submitData = {
+        testId: this.testId,
+        preguntaId: parseInt(question.id),
+        userAnswer: userAnswer,
+        correctAnswer: question.correctAnswer,
+        explanation: question.explanation || '',
+        timeSpent: timeSpanString, 
+        numeroOrden: this.currentQuestionNumber,
+        isCorrect: isCorrect
+      };
+
+      console.log('📦 Datos a enviar:', submitData);
+
+      const response = await this.apiService.submitAnswer(submitData).toPromise();
+
+      console.log('📥 Respuesta del backend:', response);
+
+      if (response && response.success) {
+        console.log(`✅ Respuesta guardada. ID: ${response.respuestaId}`);
+      } else {
+        console.warn('⚠️ Backend retornó success=false');
+      }
+
+    } catch (error: any) {
+      console.error('❌ Error enviando respuesta:', error);
+      
+      // No bloquear el flujo del test
+      const alert = await this.alertController.create({
+        header: 'Advertencia',
+        message: 'Hubo un problema al guardar la respuesta en el servidor.',
+        buttons: ['OK']
+      });
+      await alert.present();
+
+    } finally {
+      await loading.dismiss();
+    }
+    // ✅ AGREGAR ESTE MÉTODO HELPER
+  }
+
+  private formatTimeSpan(seconds: number): string {
+    const hours = Math.floor(seconds / 3600);
+    const minutes = Math.floor((seconds % 3600) / 60);
+    const secs = seconds % 60;
+    
+    // Formato ISO 8601 duration: PT1H2M3S
+    return `PT${hours}H${minutes}M${secs}S`;
   }
 
   nextQuestion() {
@@ -278,71 +349,63 @@ export class TestEscritoCivilPage implements OnInit, OnDestroy {
       this.currentQuestionNumber++;
       this.selectedAnswer = '';
       
+      // ✅ REINICIAR TIEMPO DE LA PREGUNTA
+      this.questionStartTime = new Date();
+      
       this.apiService.updateCurrentQuestionIndex(this.currentQuestionIndex);
-      console.log('Avanzando a pregunta:', this.currentQuestionNumber);
+      console.log('➡️ Avanzando a pregunta:', this.currentQuestionNumber);
     } else {
       this.completeTest();
     }
   }
 
-// MÉTODO COMPLETO DE FINALIZAR TEST SIN POPUP
-async completeTest() {
-  if (this.timer) {
-    clearInterval(this.timer);
+  async completeTest() {
+    if (this.timer) {
+      clearInterval(this.timer);
+    }
+    
+    this.isTestCompleted = true;
+    console.log('🏁 Test completado');
+    
+    const results = this.calculateResults();
+    console.log('📊 Resultados calculados:', results);
+    
+    this.saveResultsAndNavigateToSummary(results);
   }
-  
-  this.isTestCompleted = true;
-  console.log('Test completado, calculando resultados...');
-  
-  // Calcular resultados
-  const results = this.calculateResults();
-  console.log('Resultados calculados:', results);
-  
-  // Guardar resultados y navegar directamente al resumen
-  this.saveResultsAndNavigateToSummary(results);
-}
 
-// GUARDAR RESULTADOS Y NAVEGAR AL RESUMEN
-saveResultsAndNavigateToSummary(results: any) {
-  // Guardar resultados COMPLETOS para el resumen
-  const sessionResults = {
-    date: new Date().toISOString(),
-    percentage: results.percentage,
-    correctAnswers: results.correctAnswers,
-    totalQuestions: results.totalQuestions,
-    totalAnswered: results.totalAnswered,
-    incorrectAnswers: results.incorrectAnswers,
-    timeUsed: results.timeUsed,
-    timeUsedFormatted: results.timeUsedFormatted,
-    level: results.level,
-    grade: results.grade,
-    sessionId: results.sessionId,
-    // ✅ AGREGAR: Detalles de cada pregunta para los círculos
-    incorrectQuestions: results.incorrectQuestions || [],
-    allQuestions: this.questions.map((q, index) => ({
-      questionNumber: index + 1,
-      isCorrect: q.userAnswer === q.correctAnswer,
-      userAnswer: q.userAnswer,
-      correctAnswer: q.correctAnswer,
-      questionText: q.questionText || q.text
-    }))
-  };
-  
-  console.log('Guardando resultados completos:', sessionResults);
-  
-  // Guardar en localStorage para que el resumen pueda acceder
-  localStorage.setItem('current_test_results', JSON.stringify(sessionResults));
-  
-  // Actualizar estadísticas generales
-  this.updateGeneralStats(results);
-  
-  // Limpiar sesión actual
-  this.apiService.clearCurrentSession();
-  
-  // Navegar al resumen del test
-  this.router.navigate(['/civil/civil-escrito/resumen-test-civil']);
-}
-  // CALCULAR RESULTADOS DEL TEST
+  saveResultsAndNavigateToSummary(results: any) {
+    const sessionResults = {
+      date: new Date().toISOString(),
+      percentage: results.percentage,
+      correctAnswers: results.correctAnswers,
+      totalQuestions: results.totalQuestions,
+      totalAnswered: results.totalAnswered,
+      incorrectAnswers: results.incorrectAnswers,
+      timeUsed: results.timeUsed,
+      timeUsedFormatted: results.timeUsedFormatted,
+      level: results.level,
+      grade: results.grade,
+      sessionId: results.sessionId,
+      testId: this.testId, // ✅ AGREGAR testId
+      incorrectQuestions: results.incorrectQuestions || [],
+      allQuestions: this.questions.map((q, index) => ({
+        questionNumber: index + 1,
+        isCorrect: q.userAnswer === q.correctAnswer,
+        userAnswer: q.userAnswer,
+        correctAnswer: q.correctAnswer,
+        questionText: q.questionText || q.text
+      }))
+    };
+    
+    console.log('💾 Guardando resultados completos:', sessionResults);
+    
+    localStorage.setItem('current_test_results', JSON.stringify(sessionResults));
+    this.updateGeneralStats(results);
+    this.apiService.clearCurrentSession();
+    
+    this.router.navigate(['/civil/civil-escrito/resumen-test-civil']);
+  }
+
   calculateResults() {
     let correctAnswers = 0;
     let totalAnswered = 0;
@@ -383,142 +446,6 @@ saveResultsAndNavigateToSummary(results: any) {
     };
   }
 
-  // MOSTRAR POPUP CON RESULTADOS
-  async showResultsPopup(results: any) {
-    const alert = await this.alertController.create({
-      header: '🎉 Test Completado',
-      cssClass: 'results-popup',
-      message: `
-        <div class="results-container">
-          <div class="score-section">
-            <div class="main-score">${results.percentage}%</div>
-            <div class="score-label">${results.grade}</div>
-          </div>
-          
-          <div class="stats-grid">
-            <div class="stat-item">
-              <div class="stat-number correct">${results.correctAnswers}</div>
-              <div class="stat-label">Correctas</div>
-            </div>
-            <div class="stat-item">
-              <div class="stat-number incorrect">${results.incorrectAnswers}</div>
-              <div class="stat-label">Incorrectas</div>
-            </div>
-            <div class="stat-item">
-              <div class="stat-number">${results.totalAnswered}</div>
-              <div class="stat-label">Respondidas</div>
-            </div>
-          </div>
-          
-          <div class="level-section">
-            <div class="level-badge">${results.level}</div>
-            <div class="time-used">Tiempo: ${results.timeUsedFormatted}</div>
-          </div>
-          
-          <div class="progress-bar">
-            <div class="progress-fill" style="width: ${results.percentage}%"></div>
-          </div>
-        </div>
-      `,
-      buttons: [
-        {
-          text: 'Ver Detalles',
-          role: 'secondary',
-          cssClass: 'details-button',
-          handler: () => {
-            this.showDetailedResults(results);
-          }
-        },
-        {
-          text: 'Continuar',
-          cssClass: 'continue-button',
-          handler: () => {
-            this.saveResultsAndNavigate(results);
-          }
-        }
-      ],
-      backdropDismiss: false
-    });
-
-    await alert.present();
-  }
-
-  // MOSTRAR RESULTADOS DETALLADOS
-  async showDetailedResults(results: any) {
-    let detailsMessage = '<div class="detailed-results">';
-    
-    if (results.incorrectQuestions.length > 0) {
-      detailsMessage += '<h4>Preguntas Incorrectas:</h4>';
-      results.incorrectQuestions.forEach((q: any) => {
-        detailsMessage += `
-          <div class="incorrect-question">
-            <strong>Pregunta ${q.number}:</strong><br>
-            ${q.question}<br>
-            <span class="user-answer">Tu respuesta: ${q.userAnswer}</span><br>
-            <span class="correct-answer">Respuesta correcta: ${q.correctAnswer}</span>
-          </div>
-        `;
-      });
-    } else {
-      detailsMessage += '<h4>¡Perfecto! Todas las respuestas fueron correctas.</h4>';
-    }
-    
-    detailsMessage += '</div>';
-    
-    const detailAlert = await this.alertController.create({
-      header: 'Resultados Detallados',
-      message: detailsMessage,
-      cssClass: 'detailed-results-popup',
-      buttons: [
-        {
-          text: 'Cerrar',
-          handler: () => {
-            this.saveResultsAndNavigate(results);
-          }
-        }
-      ]
-    });
-
-    await detailAlert.present();
-  }
-
-  // GUARDAR RESULTADOS Y NAVEGAR
-  saveResultsAndNavigate(results: any) {
-    // Guardar resultados en localStorage para mostrar en la página principal
-    const sessionResults = {
-      date: new Date().toISOString(),
-      percentage: results.percentage,
-      correctAnswers: results.correctAnswers,
-      totalQuestions: results.totalQuestions,
-      timeUsed: results.timeUsed,
-      level: results.level,
-      grade: results.grade,
-      sessionId: results.sessionId
-    };
-    
-    // Obtener resultados anteriores
-    const previousResults = JSON.parse(localStorage.getItem('civil_escrito_results') || '[]');
-    previousResults.unshift(sessionResults); // Agregar al principio
-    
-    // Mantener solo los últimos 10 resultados
-    if (previousResults.length > 10) {
-      previousResults.splice(10);
-    }
-    
-    // Guardar resultados actualizados
-    localStorage.setItem('civil_escrito_results', JSON.stringify(previousResults));
-    
-    // Actualizar estadísticas generales
-    this.updateGeneralStats(results);
-    
-    // Limpiar sesión actual
-    this.apiService.clearCurrentSession();
-    
-    // Navegar de vuelta a civil-escrito
-    this.router.navigate(['/civil/civil-escrito']);
-  }
-
-  // ACTUALIZAR ESTADÍSTICAS GENERALES
   updateGeneralStats(results: any) {
     const currentStats = JSON.parse(localStorage.getItem('civil_escrito_stats') || '{}');
     
@@ -532,16 +459,14 @@ saveResultsAndNavigateToSummary(results: any) {
       lastUpdated: new Date().toISOString()
     };
     
-    // Calcular promedio
     updatedStats.averagePercentage = updatedStats.totalQuestions > 0 
       ? Math.round((updatedStats.totalCorrect / updatedStats.totalQuestions) * 100)
       : 0;
     
     localStorage.setItem('civil_escrito_stats', JSON.stringify(updatedStats));
-    console.log('Estadísticas actualizadas:', updatedStats);
   }
 
-  // MÉTODOS DE ESTADO
+  // ESTADO
 
   hasSelectedAnswer(): boolean {
     return this.selectedAnswer !== '';
@@ -561,8 +486,6 @@ saveResultsAndNavigateToSummary(results: any) {
     return !this.hasAnsweredCurrentQuestion();
   }
 
-  // MÉTODOS PARA LA VISTA
-
   getProgress(): number {
     return this.totalQuestions > 0 ? (this.currentQuestionIndex / this.totalQuestions) * 100 : 0;
   }
@@ -581,11 +504,21 @@ saveResultsAndNavigateToSummary(results: any) {
     return question?.text || question?.questionText || 'Pregunta no disponible';
   }
 
-  // MÉTODOS DE ESTADOS DE OPCIONES
+  // VALIDACIÓN
 
   isCorrectAnswer(optionId: string): boolean {
     const currentQuestion = this.getCurrentQuestion();
-    return currentQuestion ? currentQuestion.correctAnswer === optionId : false;
+    if (!currentQuestion) return false;
+    
+    // Verificar en options del backend si existe
+    if (currentQuestion.options && Array.isArray(currentQuestion.options)) {
+      const option = currentQuestion.options.find((opt: any) => String(opt.id) === String(optionId));
+      if (option && typeof option.isCorrect === 'boolean') {
+        return option.isCorrect;
+      }
+    }
+    
+    return String(currentQuestion.correctAnswer).trim() === String(optionId).trim();
   }
 
   isIncorrectAnswer(optionId: string): boolean {
@@ -638,7 +571,7 @@ saveResultsAndNavigateToSummary(results: any) {
     return '';
   }
 
-  // MÉTODOS DE CONTROL
+  // CONTROL
 
   exitTest() {
     console.log('Saliendo del test...');
@@ -660,7 +593,7 @@ saveResultsAndNavigateToSummary(results: any) {
     this.loadSessionFromBackend();
   }
 
-  // MÉTODOS AUXILIARES
+  // AUXILIARES
 
   getGradeFromPercentage(percentage: number): string {
     if (percentage >= 90) return 'Excelente';
@@ -685,13 +618,12 @@ saveResultsAndNavigateToSummary(results: any) {
     return `${mins}:${secs.toString().padStart(2, '0')}`;
   }
 
-  // MÉTODO DE DEBUG
   debugCurrentQuestion() {
     const question = this.getCurrentQuestion();
-    console.log('=== DEBUG PREGUNTA ACTUAL ===');
-    console.log('Pregunta completa:', question);
-    console.log('Opciones mapeadas:', this.getCurrentQuestionOptions());
-    console.log('Estado de carga:', { isLoading: this.isLoading, loadingError: this.loadingError });
-    console.log('===============================');
+    console.log('=== DEBUG ===');
+    console.log('Pregunta:', question);
+    console.log('Opciones:', this.getCurrentQuestionOptions());
+    console.log('TestId:', this.testId);
+    console.log('=============');
   }
 }
