@@ -1,8 +1,10 @@
 <ion-content class="civil-content">
-  <!-- Header personalizado EXACTO como civil-escrito.page.html -->
+  <!-- Header personalizado -->
   <div class="custom-header-section">
+    <!-- Flecha atrás -->
+    <ion-back-button class="gc-back-btn" text="" defaultHref="/civil"></ion-back-button>
+
     <div class="orange-background">
-      <!-- Imagen de extremo a extremo -->
       <div class="derecho-civil-container-full">
         <img src="assets/image/civil/logo_civil.png" alt="Derecho Civil" class="derecho-civil-image-responsive">
       </div>
@@ -12,75 +14,44 @@
   <!-- Resto del contenido -->
   <div class="content-area">
     
-    <!-- Card de progreso mejorada -->
-    <div class="level-progress-card">
-      <div class="level-content">
-        <div class="level-badge">
-          <ion-icon name="trophy" class="trophy-icon"></ion-icon>
-          <span class="level-text">Intermedio</span>
-        </div>
-        <div class="level-message">¡Sigue así! Vas por buen camino</div>
+    <!-- Botón principal de inicio NARANJA para ORAL -->
+    <div class="quick-practice-card" (click)="startVoicePractice()">
+      <div class="practice-icon">
+        <ion-icon name="mic-circle"></ion-icon>
+      </div>
+      <div class="practice-info">
+        <h4>Empecemos tu test oral</h4>
+        <p>Practica con tu voz</p>
+      </div>
+      <div class="practice-arrow">
+        <ion-icon name="chevron-forward"></ion-icon>
+      </div>
+    </div>
+
+    <!-- Carrusel de banners -->
+    <div class="banner-section">
+      <div class="carousel-container">
+        <img 
+          *ngFor="let image of carouselImages; let i = index"
+          [src]="image" 
+          [alt]="'Banner ' + (i + 1)"
+          class="carousel-image"
+          [class.active]="currentImageIndex === i">
         
-        <div class="oral-mode-content">
-          <h4>Tu progreso en Modo Oral</h4>
-          <div class="oral-progress">
-            <div class="oral-progress-bar">
-              <div class="oral-progress-fill" [style.width.%]="45"></div>
-            </div>
-            <div class="oral-stats">
-              <span class="oral-percentage">45% completado</span>
-              <span class="oral-sessions">9 de 20 sesiones</span>
-            </div>
+        <div class="carousel-indicators">
+          <div 
+            *ngFor="let image of carouselImages; let i = index"
+            class="indicator"
+            [class.active]="currentImageIndex === i"
+            (click)="goToSlide(i)">
           </div>
         </div>
-      </div>
-    </div>
-
-    <!-- Sección Cómo vamos a practicar - MODO VOZ -->
-    <div class="practice-section">
-      <div class="practice-header">
-        <ion-icon name="mic"></ion-icon>
-        <h3>Práctica Rápida</h3>
-      </div>
-      
-      <!-- Botón principal de inicio para modo voz -->
-      <div class="quick-practice-card voice-mode" (click)="startVoicePractice()">
-        <div class="practice-icon">
-          <ion-icon name="mic-circle"></ion-icon>
-        </div>
-        <div class="practice-info">
-          <h4>Inicio Rápido</h4>
-          <p>5 preguntas • 10 minutos</p>
-        </div>
-        <div class="practice-arrow">
-          <ion-icon name="chevron-forward"></ion-icon>
-        </div>
-      </div>
-    </div>
-
-    <!-- Monito cantando - VERSIÓN ORAL -->
-    <div class="mapache-section">
-      <div class="mapache-container">
-        <div class="mapache-character singing" (click)="mapacheSing()">
-          <div class="monito-cantante">
-            <img src="assets/image/mcantante.png" alt="Monito Cantante" class="monito-image">
-          </div>
-          <div class="mapache-music-notes" [class.show]="showMusicNotes">
-            <span class="note">♪</span>
-            <span class="note">♫</span>
-            <span class="note">♪</span>
-          </div>
-          <div class="speech-bubble oral-bubble" [class.show]="showSpeech">
-            {{ currentMessage }}
-          </div>
-        </div>
-        <div class="mapache-message">¡Listo para el modo voz!</div>
       </div>
     </div>
 
   </div>
 
-  <!-- Bottom Navigation Component EXACTO como otras páginas -->
+  <!-- Bottom Navigation Component -->
   <app-bottom-nav></app-bottom-nav>
 
 </ion-content>

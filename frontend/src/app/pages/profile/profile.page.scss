@@ -481,4 +481,663 @@
       }
     }
   }
+  // Añadir estos estilos a frontend/src/app/pages/profile/profile.page.scss
+// AL FINAL de tu archivo existente
+
+// ============================================
+// FRECUENCIA DE ESTUDIO
+// ============================================
+
+.frequency-header {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  margin-bottom: 20px;
+
+  .frequency-icon {
+    font-size: 32px;
+    color: var(--ion-color-primary);
+  }
+
+  .frequency-info {
+    flex: 1;
+
+    h3 {
+      margin: 0;
+      font-size: 18px;
+      font-weight: 600;
+      color: var(--ion-color-dark);
+    }
+
+    .frequency-subtitle {
+      margin: 5px 0 0;
+      font-size: 13px;
+      color: var(--ion-color-medium);
+    }
+  }
+}
+
+// ============================================
+// SELECTOR DE DÍAS
+// ============================================
+
+.frequency-selector {
+  margin: 25px 0;
+}
+
+.days-counter {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 20px;
+  padding: 20px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border-radius: 16px;
+  box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+
+  .counter-btn {
+    background: rgba(255, 255, 255, 0.2);
+    border: none;
+    border-radius: 50%;
+    width: 48px;
+    height: 48px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+
+    ion-icon {
+      font-size: 32px;
+      color: white;
+    }
+
+    &:hover:not(:disabled) {
+      background: rgba(255, 255, 255, 0.3);
+      transform: scale(1.1);
+    }
+
+    &:active:not(:disabled) {
+      transform: scale(0.95);
+    }
+
+    &:disabled {
+      opacity: 0.3;
+      cursor: not-allowed;
+    }
+  }
+
+  .counter-display {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-width: 120px;
+
+    .counter-number {
+      font-size: 48px;
+      font-weight: 700;
+      color: white;
+      line-height: 1;
+      text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    }
+
+    .counter-label {
+      font-size: 14px;
+      color: rgba(255, 255, 255, 0.9);
+      margin-top: 5px;
+      font-weight: 500;
+    }
+  }
+}
+
+// ============================================
+// OPCIONES PREDEFINIDAS
+// ============================================
+
+.frequency-presets {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px;
+  margin: 20px 0;
+
+  .preset-btn {
+    padding: 12px 16px;
+    border: 2px solid #e0e0e0;
+    border-radius: 12px;
+    background: white;
+    color: var(--ion-color-medium);
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s ease;
+
+    &:hover {
+      border-color: var(--ion-color-primary);
+      color: var(--ion-color-primary);
+      transform: translateY(-2px);
+    }
+
+    &.active {
+      border-color: var(--ion-color-primary);
+      background: var(--ion-color-primary);
+      color: white;
+      font-weight: 600;
+    }
+  }
+}
+
+// ============================================
+// PROGRESO SEMANAL
+// ============================================
+
+.weekly-progress {
+  margin: 25px 0;
+  padding: 20px;
+  background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+  border-radius: 12px;
+
+  .progress-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+
+    .progress-label {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--ion-color-dark);
+    }
+
+    .progress-value {
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--ion-color-primary);
+    }
+  }
+
+  .progress-bar-container {
+    height: 12px;
+    background: rgba(255, 255, 255, 0.6);
+    border-radius: 10px;
+    overflow: hidden;
+    position: relative;
+    margin-bottom: 12px;
+
+    .progress-bar-fill {
+      height: 100%;
+      background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+      border-radius: 10px;
+      transition: width 0.5s ease;
+      position: relative;
+
+      &::after {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: linear-gradient(
+          90deg,
+          transparent 0%,
+          rgba(255, 255, 255, 0.3) 50%,
+          transparent 100%
+        );
+        animation: shimmer 2s infinite;
+      }
+    }
+  }
+
+  .progress-message {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin: 0;
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--ion-color-medium);
+
+    ion-icon {
+      font-size: 18px;
+    }
+
+    &.success {
+      color: var(--ion-color-success);
+      font-weight: 600;
+
+      ion-icon {
+        color: var(--ion-color-success);
+      }
+    }
+  }
+}
+
+@keyframes shimmer {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(100%); }
+}
+
+// ============================================
+// DÍAS PREFERIDOS
+// ============================================
+
+.preferred-days {
+  margin: 25px 0;
+
+  h4 {
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--ion-color-dark);
+    margin: 0 0 8px;
+  }
+
+  .preferred-days-subtitle {
+    font-size: 13px;
+    color: var(--ion-color-medium);
+    margin: 0 0 15px;
+  }
+}
+
+.days-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 8px;
+
+  .day-btn {
+    aspect-ratio: 1;
+    border: 2px solid #e0e0e0;
+    border-radius: 12px;
+    background: white;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 2px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    padding: 8px 4px;
+
+    .day-letter {
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--ion-color-medium);
+    }
+
+    .day-name {
+      font-size: 9px;
+      color: var(--ion-color-medium);
+      font-weight: 500;
+    }
+
+    &:hover:not(:disabled) {
+      border-color: var(--ion-color-primary);
+      transform: translateY(-2px);
+    }
+
+    &.selected {
+      border-color: var(--ion-color-primary);
+      background: var(--ion-color-primary);
+
+      .day-letter,
+      .day-name {
+        color: white;
+      }
+    }
+
+    &:disabled {
+      opacity: 0.3;
+      cursor: not-allowed;
+    }
+  }
+}
+
+// ============================================
+// RECORDATORIOS
+// ============================================
+
+.reminder-config {
+  margin: 25px 0;
+  padding: 20px;
+  background: #f8f9fa;
+  border-radius: 12px;
+  border: 1px solid #e9ecef;
+
+  .reminder-toggle {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 15px;
+
+    .reminder-info {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+
+      ion-icon {
+        font-size: 24px;
+        color: var(--ion-color-primary);
+      }
+
+      span {
+        font-size: 15px;
+        font-weight: 500;
+        color: var(--ion-color-dark);
+      }
+    }
+  }
+
+  .reminder-time {
+  margin-top: 16px;
+  
+  label {
+    display: block;
+    margin-bottom: 12px;
+    font-weight: 500;
+    color: var(--ion-color-dark);
+    font-size: 14px;
+  }
+  
+  .time-selector-container {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  
+  .time-selector {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    background: #f5f5f5;
+    border-radius: 12px;
+    padding: 12px 16px;
+    gap: 8px;
+    border: 2px solid transparent;
+    transition: all 0.3s ease;
+    
+    &:focus-within {
+      background: #fff;
+      border-color: var(--ion-color-primary);
+      box-shadow: 0 0 0 4px rgba(var(--ion-color-primary-rgb), 0.1);
+    }
+  }
+  
+  .time-select {
+    flex: 1;
+    border: none;
+    background: transparent;
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--ion-color-dark);
+    text-align: center;
+    outline: none;
+    cursor: pointer;
+    padding: 4px;
+    
+    &.hora {
+      max-width: 50px;
+    }
+    
+    &.minuto {
+      max-width: 50px;
+    }
+    
+    // Ocultar la flecha por defecto en algunos navegadores
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    
+    // Agregar flecha custom
+    background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+    background-repeat: no-repeat;
+    background-position: right 4px center;
+    background-size: 16px;
+    padding-right: 24px;
+    
+    &:focus {
+      color: var(--ion-color-primary);
+    }
+    
+    option {
+      background: white;
+      color: var(--ion-color-dark);
+      padding: 8px;
+    }
+  }
+  }
+  
+  .separator {
+    font-size: 24px;
+    font-weight: 700;
+    color: var(--ion-color-medium);
+    user-select: none;
+  }
+  
+  .time-icon {
+    font-size: 24px;
+    color: var(--ion-color-medium);
+    flex-shrink: 0;
+  }
+}
+
+// ============================================
+// BOTÓN GUARDAR
+// ============================================
+
+.save-frequency-btn {
+  width: 100%;
+  padding: 16px;
+  margin-top: 20px;
+  border: none;
+  border-radius: 12px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  font-size: 16px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+
+  ion-icon {
+    font-size: 20px;
+  }
+
+  &:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(102, 126, 234, 0.5);
+  }
+
+  &:active:not(:disabled) {
+    transform: translateY(0);
+  }
+
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+}
+
+// ============================================
+// TOAST PERSONALIZADO
+// ============================================
+
+.custom-toast {
+  --border-radius: 12px;
+  --box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  font-weight: 500;
+}
+
+// ============================================
+// RESPONSIVE
+// ============================================
+
+@media (max-width: 400px) {
+  .days-counter {
+    .counter-display {
+      min-width: 100px;
+
+      .counter-number {
+        font-size: 40px;
+      }
+    }
+
+    .counter-btn {
+      width: 40px;
+      height: 40px;
+
+      ion-icon {
+        font-size: 28px;
+      }
+    }
+  }
+
+  .days-grid {
+    gap: 6px;
+
+    .day-btn {
+      .day-letter {
+        font-size: 16px;
+      }
+
+      .day-name {
+        font-size: 8px;
+      }
+    }
+  }
+}
+
+// ============================================
+// ESTILOS MODO ADAPTATIVO (VERSIÓN SIMPLE)
+// Agregar a profile.page.scss
+// ============================================
+
+.settings-card {
+  margin: 16px;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+
+  .card-header-with-icon {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+
+    ion-icon {
+      font-size: 28px;
+    }
+  }
+
+  ion-card-subtitle {
+    margin-top: 4px;
+    font-size: 13px;
+  }
+}
+
+.setting-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 0;
+  border-bottom: 1px solid var(--ion-color-light);
+
+  &:last-child {
+    border-bottom: none;
+  }
+
+  .setting-info {
+    flex: 1;
+
+    .setting-label {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-weight: 600;
+      font-size: 15px;
+      margin-bottom: 4px;
+
+      ion-icon {
+        font-size: 20px;
+      }
+    }
+
+    .setting-description {
+      font-size: 13px;
+      color: var(--ion-color-medium);
+      margin-left: 28px;
+      line-height: 1.4;
+    }
+  }
+
+  ion-toggle {
+    margin-left: 12px;
+  }
+}
+
+// Información cuando está activo
+.adaptive-info {
+  margin-top: 20px;
+  padding: 16px;
+  background: linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 100%);
+  border-radius: 8px;
+  border-left: 4px solid var(--ion-color-success);
+
+  ion-note {
+    display: flex;
+    gap: 12px;
+    font-size: 13px;
+    line-height: 1.5;
+
+    ion-icon {
+      font-size: 24px;
+      flex-shrink: 0;
+      margin-top: 2px;
+    }
+
+    strong {
+      display: block;
+      margin-bottom: 8px;
+      color: var(--ion-color-success-shade);
+      font-size: 14px;
+    }
+
+    p {
+      margin: 0;
+      color: var(--ion-color-medium-shade);
+    }
+  }
+}
+
+// Información cuando está desactivado
+.adaptive-info-disabled {
+  margin-top: 20px;
+  padding: 16px;
+  background: var(--ion-color-light);
+  border-radius: 8px;
+  border-left: 4px solid var(--ion-color-medium);
+
+  ion-note {
+    display: flex;
+    gap: 12px;
+    font-size: 13px;
+    line-height: 1.5;
+
+    ion-icon {
+      font-size: 20px;
+      flex-shrink: 0;
+      margin-top: 2px;
+    }
+  }
+}
+
+.save-button {
+  margin-top: 20px;
+  --border-radius: 8px;
+  font-weight: 600;
+  text-transform: none;
+  letter-spacing: 0.3px;
+}
+
 }

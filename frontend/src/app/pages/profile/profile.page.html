@@ -83,6 +83,203 @@
       </div>
     </div>
 
+<!-- ============================================ -->
+<!-- SECCIÓN MODO ADAPTATIVO (VERSIÓN SIMPLE) -->
+<!-- ============================================ -->
+
+<ion-card class="settings-card">
+  <ion-card-header>
+    <div class="card-header-with-icon">
+      <ion-icon name="analytics-outline" color="primary"></ion-icon>
+      <ion-card-title>Modo Adaptativo</ion-card-title>
+    </div>
+    <ion-card-subtitle>
+      Sistema inteligente de aprendizaje personalizado
+    </ion-card-subtitle>
+  </ion-card-header>
+
+  <ion-card-content>
+    <!-- Toggle Modo Adaptativo -->
+    <div class="setting-item">
+      <div class="setting-info">
+        <div class="setting-label">
+          <ion-icon name="trending-up-outline" color="success"></ion-icon>
+          <span>Activar Modo Adaptativo</span>
+        </div>
+        <div class="setting-description">
+          El sistema analizará tu desempeño y priorizará preguntas de temas donde necesitas refuerzo
+        </div>
+      </div>
+      <ion-toggle 
+        [(ngModel)]="adaptiveConfig.enabled" 
+        (ionChange)="onAdaptiveModeChange()"
+        color="success">
+      </ion-toggle>
+    </div>
+
+    <!-- Información cuando está activo -->
+    <div *ngIf="adaptiveConfig.enabled" class="adaptive-info">
+      <ion-note color="success">
+        <ion-icon name="checkmark-circle-outline"></ion-icon>
+        <div>
+          <strong>Modo Adaptativo Activo</strong>
+          <p>
+            Tus próximas sesiones de estudio incluirán más preguntas de los temas 
+            donde has tenido dificultades, ayudándote a mejorar de forma más eficiente.
+          </p>
+        </div>
+      </ion-note>
+    </div>
+
+    <!-- Información cuando está desactivado -->
+    <div *ngIf="!adaptiveConfig.enabled" class="adaptive-info-disabled">
+      <ion-note color="medium">
+        <ion-icon name="information-circle-outline"></ion-icon>
+        <div>
+          Activa el modo adaptativo para recibir preguntas personalizadas basadas en tu rendimiento.
+        </div>
+      </ion-note>
+    </div>
+  </ion-card-content>
+</ion-card>
+
+
+<!-- ============================================ -->
+<!-- FRECUENCIA DE ESTUDIO -->
+<!-- ============================================ -->
+<div class="section">
+  <h2 class="section-title">Frecuencia de Estudio</h2>
+  
+  <div class="info-card">
+    
+    <!-- Objetivo Semanal -->
+    <div class="frequency-header">
+      <ion-icon name="calendar-outline" class="frequency-icon"></ion-icon>
+      <div class="frequency-info">
+        <h3>Mi Objetivo Semanal</h3>
+        <p class="frequency-subtitle">¿Cuántos días a la semana quieres estudiar?</p>
+      </div>
+    </div>
+
+    <!-- Selector de días -->
+    <div class="frequency-selector">
+      <div class="days-counter">
+        <button class="counter-btn" (click)="decreaseFrecuencia()" [disabled]="frecuenciaConfig.frecuenciaSemanal <= 1">
+          <ion-icon name="remove-circle"></ion-icon>
+        </button>
+        
+        <div class="counter-display">
+          <span class="counter-number">{{ frecuenciaConfig.frecuenciaSemanal }}</span>
+          <span class="counter-label">{{ frecuenciaConfig.frecuenciaSemanal === 1 ? 'día' : 'días' }} / semana</span>
+        </div>
+        
+        <button class="counter-btn" (click)="increaseFrecuencia()" [disabled]="frecuenciaConfig.frecuenciaSemanal >= 7">
+          <ion-icon name="add-circle"></ion-icon>
+        </button>
+      </div>
+    </div>
+
+    <!-- Opciones predefinidas -->
+    <div class="frequency-presets">
+      <button 
+        class="preset-btn" 
+        [class.active]="frecuenciaConfig.frecuenciaSemanal === 2"
+        (click)="setFrecuencia(2)">
+        2 días (Básico)
+      </button>
+      <button 
+        class="preset-btn" 
+        [class.active]="frecuenciaConfig.frecuenciaSemanal === 3"
+        (click)="setFrecuencia(3)">
+        3 días (Regular)
+      </button>
+      <button 
+        class="preset-btn" 
+        [class.active]="frecuenciaConfig.frecuenciaSemanal === 5"
+        (click)="setFrecuencia(5)">
+        5 días (Intensivo)
+      </button>
+      <button 
+        class="preset-btn" 
+        [class.active]="frecuenciaConfig.frecuenciaSemanal === 7"
+        (click)="setFrecuencia(7)">
+        Diario
+      </button>
+    </div>
+
+    <!-- Progreso semanal -->
+    <div class="weekly-progress" *ngIf="cumplimiento">
+      <div class="progress-header">
+        <span class="progress-label">Esta semana</span>
+        <span class="progress-value">{{ cumplimiento.diasEstudiadosSemana }} / {{ cumplimiento.objetivoSemanal }} días</span>
+      </div>
+      <div class="progress-bar-container">
+        <div class="progress-bar-fill" [style.width.%]="cumplimiento.porcentajeCumplimiento"></div>
+      </div>
+      <p class="progress-message" [class.success]="cumplimiento.porcentajeCumplimiento >= 100">
+        <ion-icon [name]="cumplimiento.porcentajeCumplimiento >= 100 ? 'checkmark-circle' : 'time-outline'"></ion-icon>
+        {{ getProgressMessage() }}
+      </p>
+    </div>
+
+    <!-- Días preferidos (opcional) -->
+    <div class="preferred-days">
+      <h4>Días preferidos (opcional)</h4>
+      <p class="preferred-days-subtitle">Selecciona los días que prefieres estudiar</p>
+      
+      <div class="days-grid">
+        <button 
+          *ngFor="let dia of diasSemana; let i = index"
+          class="day-btn"
+          [class.selected]="isDiaSelected(i)"
+          (click)="toggleDia(i)"
+          [disabled]="!isDiaSelected(i) && frecuenciaConfig.diasPreferidos.length >= frecuenciaConfig.frecuenciaSemanal">
+          <span class="day-letter">{{ dia.substr(0, 1) }}</span>
+          <span class="day-name">{{ dia }}</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Recordatorios -->
+    <div class="reminder-config">
+      <div class="reminder-toggle">
+        <div class="reminder-info">
+          <ion-icon name="notifications-outline"></ion-icon>
+          <span>Recordatorios de estudio</span>
+        </div>
+        <ion-toggle 
+          [(ngModel)]="frecuenciaConfig.recordatorioActivo"
+          (ionChange)="onRecordatorioChange()">
+        </ion-toggle>
+      </div>
+
+    <div class="reminder-time" *ngIf="frecuenciaConfig.recordatorioActivo">
+      <label>Hora preferida</label>
+      <div class="time-selector-container">
+        <div class="time-selector">
+          <select [(ngModel)]="horaSeleccionada" (change)="onHoraMinutoChange()" class="time-select hora">
+            <option *ngFor="let h of horas" [value]="h">{{ h }}</option>
+          </select>
+          <span class="separator">:</span>
+          <select [(ngModel)]="minutoSeleccionado" (change)="onHoraMinutoChange()" class="time-select minuto">
+            <option *ngFor="let m of minutos" [value]="m">{{ m }}</option>
+          </select>
+        </div>
+        <ion-icon name="time-outline" class="time-icon"></ion-icon>
+      </div>
+    </div>
+    </div>
+
+    <!-- Botón guardar -->
+    <button class="save-frequency-btn" (click)="saveFrequency()" [disabled]="isSaving">
+      <ion-icon name="save-outline"></ion-icon>
+      {{ isSaving ? 'Guardando...' : 'Guardar Configuración' }}
+    </button>
+
+  </div>
+</div>
+
+
     <div class="section">
       <h2 class="section-title">Progreso y Logros</h2>
       

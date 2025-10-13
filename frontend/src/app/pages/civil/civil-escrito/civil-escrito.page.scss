@@ -1,5 +1,36 @@
 // ========================================
-// CONFIGURACIÓN BÁSICA - IGUAL QUE OTRAS PÁGINAS
+// HEADER ESTILO DASHBOARD
+// ========================================
+.dashboard-header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 60px;
+  background: #FF6F00;
+  display: flex;
+  align-items: center;
+  padding: 0 16px;
+  z-index: 1000;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+
+  .back-icon {
+    font-size: 24px;
+    color: white;
+    cursor: pointer;
+    margin-right: 12px;
+  }
+
+  .header-title {
+    color: white;
+    font-size: 18px;
+    font-weight: 600;
+    margin: 0;
+  }
+}
+
+// ========================================
+// CONFIGURACIÓN BÁSICA
 // ========================================
 .civil-content {
   --background: transparent;
@@ -17,403 +48,352 @@ ion-content.civil-content {
 }
 
 // ========================================
-// HEADER FIJO - EXACTO COMO OTRAS PÁGINAS
-// ========================================
-.custom-header-section {
-  position: fixed;  
-  top: 0;
-  left: 0;
-  right: 0;
-  z-index: 1000;   
-  background: transparent;
-  
-  .orange-background {
-    background: transparent;
-    padding: 0;
-    border-radius: 0;
-    position: relative;
-    overflow: hidden;
-    width: 100vw;
-
-    .derecho-civil-container-full {
-      display: block;
-      width: 100%;
-      height: auto;
-      position: relative;
-      z-index: 3;
-
-      .derecho-civil-image-responsive {
-        display: block;
-        width: 100vw;
-        height: auto;
-        min-height: 120px;
-        max-height: 200px;
-        object-fit: cover;
-        object-position: center;
-        filter: drop-shadow(0 6px 16px rgba(0,0,0,0.18));
-      }
-    }
-  }
-}
-
-// ========================================
 // CONTENIDO PRINCIPAL
 // ========================================
 .content-area {
-  margin-top: 140px;
+  margin-top: 60px;
   padding: 20px 16px 100px 16px;
   position: relative;
   z-index: 2;
-  background: transparent; 
-  border-radius: 30px 30px 0 0;
+  background: transparent;
   min-height: calc(100vh - 100px);
 }
 
 // ========================================
-// CARD DE PROGRESO - MEJORADA Y BONITA
+// CARDS DE SELECCIÓN
 // ========================================
-.level-progress-card {
-  background: linear-gradient(135deg, #FFF3E0, #FFE0B2);
-  border-radius: 20px;
-  padding: 24px;
-  margin-bottom: 25px;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-  border: 1px solid rgba(255, 183, 77, 0.3);
+.selection-card {
+  background: white;
+  border-radius: 12px;
+  padding: 16px;
+  margin-bottom: 16px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
 
-  .level-content {
-    .level-badge {
-      display: flex;
-      align-items: center;
-      background: linear-gradient(135deg, #FF8F00, #F57C00);
-      color: white;
-      padding: 10px 16px;
-      border-radius: 25px;
-      margin-bottom: 15px;
-      width: fit-content;
-      box-shadow: 0 3px 10px rgba(255, 143, 0, 0.3);
-
-      .trophy-icon {
-        font-size: 1.2rem;
-        margin-right: 8px;
-      }
-
-      .level-text {
-        font-size: 0.95rem;
-        font-weight: 600;
-      }
-    }
-
-    .level-message {
-      font-size: 0.9rem;
-      color: #8D6E63;
-      margin-bottom: 20px;
-      font-style: italic;
-    }
-
-    .written-mode-content {
-      h4 {
-        margin: 0 0 16px 0;
-        font-size: 1.1rem;
-        color: #5D4037;
-        font-weight: 600;
-      }
-      
-      .written-progress {
-        .written-progress-bar {
-          width: 100%;
-          height: 10px;
-          background: rgba(255, 255, 255, 0.7);
-          border-radius: 5px;
-          overflow: hidden;
-          margin-bottom: 12px;
-          box-shadow: inset 0 2px 4px rgba(0,0,0,0.1);
-          
-          .written-progress-fill {
-            height: 100%;
-            background: linear-gradient(90deg, #4CAF50, #2E7D32);
-            border-radius: 5px;
-            transition: width 0.3s ease;
-            box-shadow: 0 2px 4px rgba(76, 175, 80, 0.3);
-          }
-        }
-        
-        .written-stats {
-          display: flex;
-          justify-content: space-between;
-          
-          .written-percentage {
-            font-size: 0.9rem;
-            font-weight: 600;
-            color: #2E7D32;
-          }
-          
-          .written-sessions {
-            font-size: 0.9rem;
-            color: #8D6E63;
-          }
-        }
-      }
-    }
+  .selection-label {
+    display: block;
+    font-size: 14px;
+    font-weight: 600;
+    color: #666;
+    margin-bottom: 10px;
   }
 }
 
 // ========================================
-// SECCIÓN PRÁCTICA
+// SELECT SUTIL
 // ========================================
-.practice-section {
-  margin-bottom: 30px;
-  
-  .practice-header {
-    display: flex;
-    align-items: center;
-    margin-bottom: 15px;
-    
-    ion-icon {
-      font-size: 1.4rem;
-      color: #FF6F00;
-      margin-right: 10px;
-    }
-    
-    h3 {
-      margin: 0;
-      font-size: 1.1rem;
-      font-weight: 600;
-      color: #333;
-    }
-  }
-}
-
-// ========================================
-// BOTÓN PRINCIPAL - MEJORADO
-// ========================================
-.quick-practice-card {
-  background: linear-gradient(135deg, #FF5722, #D84315);
-  border-radius: 16px;
-  padding: 20px;
-  display: flex;
-  align-items: center;
-  box-shadow: 0 4px 15px rgba(255, 87, 34, 0.3);
+.custom-select {
+  width: 100%;
+  padding: 12px 16px;
+  font-size: 15px;
+  font-weight: 500;
+  color: #333;
+  background: #f9f9f9;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
   cursor: pointer;
   transition: all 0.3s ease;
-  color: white;
-  
-  &:active {
-    transform: translateY(2px);
-    box-shadow: 0 2px 8px rgba(255, 87, 34, 0.4);
-  }
 
-  .practice-icon {
-    margin-right: 16px;
-
-    ion-icon {
-      font-size: 2.2rem;
-      color: white;
-    }
-  }
-
-  .practice-info {
-    flex: 1;
-
-    h4 {
-      margin: 0 0 4px 0;
-      font-size: 1.2rem;
-      font-weight: 600;
-      color: white;
-    }
-
-    p {
-      margin: 0;
-      font-size: 0.9rem;
-      opacity: 0.9;
-    }
-  }
-
-  .practice-arrow {
-    ion-icon {
-      font-size: 1.4rem;
-      color: white;
-    }
+  &:focus {
+    outline: none;
+    border-color: #FF6F00;
+    background: white;
   }
 }
 
 // ========================================
-// SECCIÓN MAPACHE - CENTRADA Y ARMONIOSA
+// OPCIONES DE ALCANCE
 // ========================================
-.mapache-section {
-  margin-top: 40px;
-  text-align: center;
+.scope-options {
+  display: flex;
+  gap: 10px;
 
-  .mapache-container {
+  .scope-option {
+    flex: 1;
+    background: #f9f9f9;
+    border: 2px solid #e0e0e0;
+    border-radius: 8px;
+    padding: 12px;
     display: flex;
     flex-direction: column;
     align-items: center;
+    gap: 6px;
+    cursor: pointer;
+    transition: all 0.3s ease;
 
-    .mapache-character {
-      position: relative;
-      margin-bottom: 15px;
+    ion-icon {
+      font-size: 24px;
+      color: #666;
+    }
+
+    span {
+      font-size: 13px;
+      font-weight: 500;
+      color: #666;
+      text-align: center;
+    }
+
+    &:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    }
+
+    &.active {
+      background: #FFF3E0;
+      border-color: #FF6F00;
+
+      ion-icon {
+        color: #FF6F00;
+      }
+
+      span {
+        color: #FF6F00;
+      }
+    }
+  }
+}
+
+// ========================================
+// ACORDEÓN DE TEMAS
+// ========================================
+.accordion-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+
+  .accordion-item {
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    overflow: hidden;
+    transition: all 0.3s ease;
+
+    &.disabled {
+      opacity: 0.5;
+      pointer-events: none;
+    }
+
+    .accordion-header {
+      background: #f9f9f9;
+      padding: 14px 16px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
       cursor: pointer;
+      transition: all 0.3s ease;
 
-      .mapache-face {
-        width: 80px;
-        height: 80px;
-        background: linear-gradient(135deg, #8D6E63, #5D4037);
-        border-radius: 50%;
+      &:hover {
+        background: #f0f0f0;
+      }
+
+      &.active {
+        background: #FFF3E0;
+      }
+
+      .tema-info {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+
+        .tema-nombre {
+          font-size: 15px;
+          font-weight: 600;
+          color: #333;
+        }
+
+        .tema-count {
+          font-size: 12px;
+          color: #999;
+        }
+      }
+
+      .tema-actions {
         display: flex;
         align-items: center;
-        justify-content: center;
-        font-size: 2.5rem;
-        box-shadow: 0 6px 20px rgba(0,0,0,0.15);
-        animation: gentleBounce 4s infinite ease-in-out;
-        border: 4px solid white;
-        transition: transform 0.3s ease;
+        gap: 8px;
 
-        &:hover {
-          transform: scale(1.05);
+        .check-icon {
+          font-size: 20px;
+          color: #4CAF50;
+        }
+
+        .chevron-icon {
+          font-size: 20px;
+          color: #666;
         }
       }
+    }
 
-      .speech-bubble {
-        position: absolute;
-        bottom: 90px;
-        left: 50%;
-        transform: translateX(-50%);
-        background: white;
-        padding: 12px 18px;
-        border-radius: 20px;
-        box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-        font-size: 0.85rem;
-        color: #333;
-        white-space: nowrap;
-        opacity: 0;
-        transform: translateX(-50%) translateY(10px);
+    .accordion-content {
+      background: white;
+      border-top: 1px solid #e0e0e0;
+      padding: 8px;
+
+      .subtema-item {
+        padding: 12px 16px;
+        margin: 4px 0;
+        background: #fafafa;
+        border-radius: 6px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        cursor: pointer;
         transition: all 0.3s ease;
-        font-weight: 500;
 
-        &.show {
-          opacity: 1;
-          transform: translateX(-50%) translateY(0);
+        &:hover:not(.disabled) {
+          background: #f0f0f0;
+          transform: translateX(4px);
         }
 
-        &::after {
-          content: '';
-          position: absolute;
-          bottom: -8px;
-          left: 50%;
-          transform: translateX(-50%);
-          width: 0;
-          height: 0;
-          border-left: 8px solid transparent;
-          border-right: 8px solid transparent;
-          border-top: 8px solid white;
+        &.active {
+          background: #FFF3E0;
+          border: 1px solid #FF6F00;
+        }
+
+        &.disabled {
+          opacity: 0.4;
+          cursor: not-allowed;
+        }
+
+        .subtema-info {
+          flex: 1;
+          display: flex;
+          flex-direction: column;
+          gap: 3px;
+
+          .subtema-nombre {
+            font-size: 14px;
+            font-weight: 500;
+            color: #333;
+          }
+
+          .subtema-count {
+            font-size: 11px;
+            color: #999;
+          }
+        }
+
+        .check-icon {
+          font-size: 18px;
+          color: #4CAF50;
         }
       }
     }
-
-    .mapache-message {
-      font-size: 0.9rem;
-      color: #8D6E63;
-      font-style: italic;
-      font-weight: 500;
-    }
-  }
-}
-
-@keyframes gentleBounce {
-  0%, 20%, 50%, 80%, 100% {
-    transform: translateY(0);
-  }
-  40% {
-    transform: translateY(-8px);
-  }
-  60% {
-    transform: translateY(-4px);
   }
 }
 
 // ========================================
-// CUSTOM LOADING STYLES
+// RESUMEN
 // ========================================
-:global(.custom-loading) {
-  --backdrop-opacity: 0.6;
-  --background: rgba(255, 255, 255, 0.95);
-  --color: #FF6F00;
-  border-radius: 15px;
+.summary-card {
+  background: #E3F2FD;
+  border-left: 4px solid #2196F3;
+  border-radius: 8px;
+  padding: 12px 16px;
+  margin-bottom: 16px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
 
-  .loading-wrapper {
-    border-radius: 15px;
-    box-shadow: 0 8px 30px rgba(0,0,0,0.2);
-    
-    .loading-content {
-      font-size: 1rem;
-      font-weight: 500;
-      color: #FF6F00;
-    }
-    
-    .loading-spinner {
-      --color: #FF6F00;
+  ion-icon {
+    font-size: 24px;
+    color: #2196F3;
+    flex-shrink: 0;
+  }
+
+  span {
+    font-size: 14px;
+    font-weight: 500;
+    color: #1976D2;
+  }
+}
+
+// ========================================
+// BOTÓN DE INICIO
+// ========================================
+.start-button-container {
+  margin: 20px 0;
+
+  .start-test-btn {
+    --background: #FF6F00;
+    --background-activated: #E65100;
+    --border-radius: 10px;
+    height: 50px;
+    font-size: 16px;
+    font-weight: 600;
+    text-transform: none;
+
+    &:disabled {
+      opacity: 0.5;
     }
   }
 }
 
 // ========================================
-// RESPONSIVE DESIGN
+// CARRUSEL DE BANNERS
 // ========================================
-@media (min-width: 768px) {
-  .custom-header-section .orange-background {
-    .derecho-civil-container-full {
-      .derecho-civil-image-responsive {
-        min-height: 150px;
-        max-height: 250px;
+.banner-section {
+  margin-top: 20px;
+  border-radius: 16px;
+  position: relative;
+  width: 100%;
+  background: white;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  overflow: hidden;
+
+  .carousel-container {
+    position: relative;
+    width: 100%;
+    height: 200px;
+  }
+
+  .carousel-image {
+    width: 100%;
+    height: 100%;
+    display: block;
+    object-fit: cover;
+    position: absolute;
+    top: 0;
+    left: 0;
+    opacity: 0;
+    transition: opacity 0.8s ease-in-out;
+
+    &.active {
+      opacity: 1;
+      z-index: 1;
+    }
+  }
+
+  .carousel-indicators {
+    position: absolute;
+    bottom: 12px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 6px;
+    z-index: 2;
+
+    .indicator {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.6);
+      transition: all 0.3s ease;
+      cursor: pointer;
+
+      &.active {
+        background: white;
+        width: 20px;
+        border-radius: 3px;
       }
     }
   }
-  
-  .content-area {
-    margin-top: 180px;
-    padding: 24px 32px 100px 32px;
-  }
-  
-  .level-progress-card {
-    padding: 32px;
-  }
-
-  .quick-practice-card {
-    padding: 24px;
-  }
-
-  .mapache-section .mapache-container .mapache-character .mapache-face {
-    width: 90px;
-    height: 90px;
-    font-size: 2.8rem;
-  }
 }
 
+// ========================================
+// RESPONSIVE
+// ========================================
 @media (max-width: 480px) {
-  .custom-header-section .orange-background {
-    .derecho-civil-container-full {
-      .derecho-civil-image-responsive {
-        min-height: 100px;
-        max-height: 160px;
-      }
-    }
-  }
-  
-  .content-area {
-    margin-top: 120px;
-    padding: 16px 12px 80px 12px;
-  }
-  
-  .level-progress-card {
-    padding: 20px;
-  }
-
-  .quick-practice-card {
-    padding: 16px;
-  }
-
-  .mapache-section .mapache-container .mapache-character .mapache-face {
-    width: 70px;
-    height: 70px;
-    font-size: 2.2rem;
+  .scope-options {
+    flex-direction: column;
   }
 }

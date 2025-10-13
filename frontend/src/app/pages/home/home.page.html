@@ -1,21 +1,13 @@
 <ion-content [fullscreen]="true" class="home-content">
   <div class="home-container">
 
-    <!-- Header FIJO con saludo y fondo gris -->
-    <div class="header-section">
-      <!-- Imagen de fondo gris igual que registro/login -->
-      <div class="background-image">
-        <img src="assets/image/superior_gris.png" alt="Background" class="superior-gris">
+    <!-- Header estilo dashboard -->
+    <div class="dashboard-header">
+      <div class="avatar-container">
+        <img src="assets/image/msombra.png" alt="Avatar" class="user-avatar">
       </div>
-
-      <div class="user-greeting">
-        <div class="avatar-container">
-          <img src="assets/image/msombra.png" alt="Avatar" class="user-avatar">
-        </div>
-        <div class="greeting-text">
-          <h1 class="greeting-title">Hola {{userName}}!</h1>
-          <p class="greeting-subtitle">Listo para estudiar</p>
-        </div>
+      <div class="header-text">
+        <h1 class="header-title">Hola {{userName}}!</h1>
       </div>
     </div>
 
@@ -41,49 +33,39 @@
             </div>
           </div>
 
-          <p class="progress-text">
-            {{ getProgressMessage() }}
-          </p>
-
           <!-- Mostrar racha si existe -->
           <div class="streak-badge" *ngIf="userStreak > 0">
             <img src="assets/image/menu/hoja.png" alt="Racha" class="streak-icon-small">
-            <span>{{ userStreak }} {{ userStreak === 1 ? 'día' : 'días' }} de racha</span>
-          </div>
-
-          <div class="card-mascot">
-            <img src="assets/image/Mreloj.png" alt="Mapache" class="card-mascot-image">
+            <span>{{ userStreak }} {{ userStreak === 1 ? 'día' : 'días' }}</span>
           </div>
         </div>
       </div>
 
       <!-- Continúa Avanzando -->
       <div class="continue-section">
-        <div class="continue-card">
-          <h3 class="continue-title">Continúa Avanzando</h3>
-
-          <div class="subjects-grid">
-            <div class="subject-card civil-card" (click)="goToCivil()">
-              <img src="assets/image/BCIV.png" alt="Derecho Civil" class="subject-button-img">
-            </div>
-
-            <div class="subject-card procesal-card" (click)="goToProcesal()">
-              <img src="assets/image/BPRO.png" alt="Derecho Procesal" class="subject-button-img">
-            </div>
+        <h2 class="section-title">Elige qué quieres aprender hoy</h2>
+        <div class="area-cards">
+          <div class="area-card civil" (click)="goToCivil()">
+            <div class="area-icon">📜</div>
+            <h3>Derecho Civil</h3>
           </div>
-
-          <!-- Banner App -->
-          <div class="banner-section">
-            <img src="assets/image/bannerhome.png" alt="Promocion">
-
+          
+          <div class="area-card procesal">
+            <div class="area-icon">🏛️</div>
+            <h3>Derecho Procesal</h3>
+            <p class="coming-soon">Próximamente</p>
           </div>
         </div>
       </div>
 
+      <!-- Banner inferior -->
+      <div class="banner-section">
+        <img src="assets/image/bannerhome.png" alt="Banner" class="banner-image">
+      </div>
     </div>
 
   </div>
 
-  <!-- Bottom Navigation Component -->
+  <!-- Bottom Navigation -->
   <app-bottom-nav></app-bottom-nav>
 </ion-content>

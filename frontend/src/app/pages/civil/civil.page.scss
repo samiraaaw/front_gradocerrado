@@ -1,4 +1,35 @@
 // ========================================
+// HEADER ESTILO DASHBOARD
+// ========================================
+.dashboard-header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 60px;
+  background: #FF6F00;
+  display: flex;
+  align-items: center;
+  padding: 0 16px;
+  z-index: 1000;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+
+  .back-icon {
+    font-size: 24px;
+    color: white;
+    cursor: pointer;
+    margin-right: 12px;
+  }
+
+  .header-title {
+    color: white;
+    font-size: 18px;
+    font-weight: 600;
+    margin: 0;
+  }
+}
+
+// ========================================
 // CONFIGURACIÓN BÁSICA
 // ========================================
 .civil-content {
@@ -11,383 +42,209 @@
   min-height: 100vh;
 }
 
-/* Asegurar que ion-content sea scrollable */
 ion-content.civil-content {
   --overflow: auto;
   height: 100%;
 }
 
 // ========================================
-// HEADER FIJO CON IMAGEN RESPONSIVA
-// ========================================
-.custom-header-section {
-  position: fixed;  
-  top: 0;
-  left: 0;
-  right: 0;
-  z-index: 1000;   
-  background: transparent;
-  
-  .orange-background {
-    background: transparent;
-    padding: 0;
-    border-radius: 0;
-    position: relative;
-    overflow: hidden;
-    width: 100vw;
-
-    .derecho-civil-container-full {
-      display: block;
-      width: 100%;
-      height: auto;
-      position: relative;
-      z-index: 3;
-
-      .derecho-civil-image-responsive {
-        display: block;
-        width: 100vw;
-        height: auto;
-        min-height: 120px;
-        max-height: 200px;
-        object-fit: cover;
-        object-position: center;
-        filter: drop-shadow(0 6px 16px rgba(0,0,0,0.18));
-      }
-    }
-  }
-}
-
-// ========================================
 // CONTENIDO PRINCIPAL
 // ========================================
 .content-area {
-  margin-top: 140px;
+  margin-top: 60px;
   padding: 20px 16px 100px 16px;
   position: relative;
   z-index: 2;
-  background: transparent; 
-  border-radius: 30px 30px 0 0;
+  background: transparent;
   min-height: calc(100vh - 100px);
 }
 
 // ========================================
-// CARD DE TEST DE NIVELACIÓN
+// PROGRESO CIVIL - ESTILO DASHBOARD
 // ========================================
-.test-nivelacion-card {
-  background: white;
-  border-radius: 20px;
-  padding: 0;
-  margin-bottom: 20px;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-  overflow: hidden;
-
-  .test-content {
-    display: flex;
-    align-items: center;
-    padding: 20px;
-    cursor: pointer;
-    transition: all 0.3s ease;
-
-    &:hover {
-      background: rgba(74, 144, 226, 0.05);
-    }
-
-    .test-icon {
-      width: 50px;
-      height: 50px;
-      background: linear-gradient(135deg, #4a90e2, #357abd);
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      margin-right: 15px;
-      flex-shrink: 0;
-
-      ion-icon {
-        color: white;
-        font-size: 24px;
-      }
-    }
-
-    .test-info {
-      flex: 1;
-
-      h3 {
-        margin: 0 0 5px 0;
-        font-size: 18px;
-        font-weight: 600;
-        color: #333;
-      }
-
-      p {
-        margin: 0;
-        font-size: 14px;
-        color: #666;
-      }
-    }
-
-    .test-arrow {
-      color: #4a90e2;
-      font-size: 20px;
-    }
-  }
-}
-
-// ========================================
-// CARD DE PROGRESO
-// ========================================
-.progreso-card {
+.progreso-card-dashboard {
   background: white;
   border-radius: 20px;
   padding: 20px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  margin-bottom: 24px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  border-bottom: 4px solid #f97316;
+
+  &:active {
+    transform: scale(0.98);
+  }
+
+  .progreso-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+
+    .progreso-left {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex: 1;
+
+      .progreso-emoji {
+        font-size: 48px;
+        width: 64px;
+        height: 64px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 50%;
+        background: rgba(0, 0, 0, 0.03);
+      }
+
+      .progreso-info {
+        h3 {
+          margin: 0;
+          font-size: 18px;
+          font-weight: 700;
+          color: #111111;
+        }
+      }
+    }
+
+    .progreso-right {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+
+      .progreso-percentage {
+        font-size: 28px;
+        font-weight: 900;
+        color: #f97316;
+      }
+
+      .arrow-icon {
+        font-size: 24px;
+        color: #111111;
+      }
+    }
+  }
+
+  .progreso-progress {
+    .progreso-bar {
+      height: 8px;
+      background: #e5e7eb;
+      border-radius: 10px;
+      overflow: hidden;
+
+      .progreso-fill {
+        height: 100%;
+        border-radius: 10px;
+        transition: width 0.6s ease;
+
+        &.civil {
+          background: linear-gradient(90deg, #fb923c, #f97316);
+        }
+      }
+    }
+  }
+}
+
+// ========================================
+// TÍTULO DE SECCIÓN
+// ========================================
+.section-title-container {
   margin-bottom: 20px;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
 
-  .progreso-content {
-    flex: 1;
+  .section-title {
+    margin: 0;
+    font-size: 22px;
+    font-weight: 700;
+    color: #1f2937;
+    text-align: center;
+  }
+}
 
-    .progreso-icon {
-      width: 40px;
-      height: 40px;
-      background: linear-gradient(135deg, #FFB74D, #FF9800);
-      border-radius: 50%;
+// ========================================
+// GRID 2x2 - 4 BOTONES NARANJAS
+// ========================================
+.study-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  margin-bottom: 32px;
+
+  .study-card {
+    background: white;
+    border-radius: 20px;
+    padding: 32px 20px;
+    text-align: center;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+    cursor: pointer;
+    transition: all 0.2s ease;
+    border: 2px solid transparent;
+
+    &:active {
+      transform: scale(0.96);
+      border-color: #FF6F00;
+    }
+
+    .study-icon {
+      width: 64px;
+      height: 64px;
+      margin: 0 auto 16px;
+      background: linear-gradient(135deg, #FF6F00, #FF8F00);
+      border-radius: 16px;
       display: flex;
       align-items: center;
       justify-content: center;
-      margin-bottom: 10px;
+      box-shadow: 0 4px 12px rgba(255, 111, 0, 0.3);
 
       ion-icon {
+        font-size: 32px;
         color: white;
-        font-size: 20px;
       }
     }
 
-    .progreso-info {
-      h4 {
-        margin: 0 0 5px 0;
-        font-size: 16px;
-        font-weight: 600;
-        color: #333;
-      }
+    h3 {
+      margin: 0;
+      font-size: 16px;
+      font-weight: 600;
+      color: #1f2937;
+    }
+  }
+}
 
-      p {
-        margin: 0 0 8px 0;
-        font-size: 12px;
-        color: #666;
-      }
+// ========================================
+// RESPONSIVE
+// ========================================
+@media (min-width: 768px) {
+  .content-area {
+    padding: 24px 32px 100px;
+  }
 
-      .progress-bar {
-        width: 100%;
-        height: 8px;
-        background: #E0E0E0;
-        border-radius: 4px;
-        overflow: hidden;
-        margin-bottom: 5px;
+  .study-grid {
+    max-width: 600px;
+    margin: 0 auto 32px;
+    gap: 20px;
+  }
+}
 
-        .progress-fill {
-          height: 100%;
-          background: linear-gradient(90deg, #FFB74D, #FF9800);
-          transition: width 0.3s ease;
+@media (max-width: 360px) {
+  .study-grid {
+    gap: 12px;
+
+    .study-card {
+      padding: 24px 16px;
+
+      .study-icon {
+        width: 56px;
+        height: 56px;
+
+        ion-icon {
+          font-size: 28px;
         }
       }
 
-      .progress-text {
-        font-size: 11px;
-        color: #888;
-      }
-    }
-  }
-
-  .mapache-container {
-    .mapache-image {
-      width: 60px;
-      height: 60px;
-      object-fit: contain;
-    }
-  }
-}
-
-// ========================================
-// BOTONES DE MATERIAL (SIN FONDO)
-// ========================================
-.material-buttons {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 16px;
-  margin: 20px 0;
-
-  .material-image-button {
-    width: 100%;
-    height: auto;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    border-radius: 12px;
-    background: transparent !important; // Quitar fondo blanco
-    box-shadow: none; // Quitar sombra que sugiere fondo
-
-    &:hover {
-      transform: translateY(-2px);
-      filter: brightness(1.1); // Efecto hover sin sombra
-    }
-  }
-}
-
-// ========================================
-// BOTONES DE DERECHO (ESTILO COMO HOME)
-// ========================================
-.derecho-buttons {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 16px;
-  margin: 20px 0;
-
-  .derecho-card {
-    background: white;
-    border-radius: 16px;
-    padding: 20px;
-    text-align: center;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0);
-    transition: all 0.3s ease;
-    cursor: pointer;
-    min-height: 120px;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-
-    &:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.12);
-    }
-
-    .derecho-icon {
-      width: 48px;
-      height: 48px;
-      margin-bottom: 12px;
-      font-size: 48px;
-    }
-
-    .derecho-title {
-      font-size: 14px;
-      font-weight: 600;
-      color: #333;
-      margin: 0;
-      line-height: 1.2;
-    }
-
-    // Estilo específico para Derecho Civil (naranja)
-    &.civil {
-      background: linear-gradient(135deg, #FF6F00, #E65100);
-      color: white;
-      
-      .derecho-title {
-        color: white;
-      }
-    }
-
-    // Estilo específico para Derecho Procesal (azul)
-    &.procesal {
-      background: linear-gradient(135deg, #2196F3, #1976D2);
-      color: white;
-      
-      .derecho-title {
-        color: white;
-      }
-    }
-  }
-}
-
-// ========================================
-// SECCIÓN DE ESTADÍSTICAS
-// ========================================
-.stats-section {
-  margin-top: 30px;
-
-  h4 {
-    color: #333;
-    font-size: 18px;
-    font-weight: 600;
-    margin-bottom: 15px;
-    padding-left: 5px;
-  }
-
-  .stats-content {
-    background: white;
-    border-radius: 20px;
-    padding: 20px;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-    text-align: center;
-
-    .mapache-bottom {
-      .mapache-stats {
-        width: 80px;
-        height: 80px;
-        object-fit: contain;
-        opacity: 0.8;
-      }
-    }
-  }
-}
-
-// ========================================
-// RESPONSIVE DESIGN
-// ========================================
-@media (min-width: 768px) {
-  .custom-header-section .orange-background {
-    .derecho-civil-container-full {
-      .derecho-civil-image-responsive {
-        min-height: 150px;
-        max-height: 250px;
-      }
-    }
-  }
-  
-  .content-area {
-    margin-top: 180px;
-    padding: 24px 32px 100px 32px;
-  }
-  
-  .material-buttons {
-    gap: 20px;
-  }
-  
-  .derecho-buttons {
-    gap: 20px;
-  }
-}
-
-@media (max-width: 480px) {
-  .custom-header-section .orange-background {
-    .derecho-civil-container-full {
-      .derecho-civil-image-responsive {
-        min-height: 100px;
-        max-height: 160px;
-      }
-    }
-  }
-  
-  .content-area {
-    margin-top: 120px;
-    padding: 16px 12px 80px 12px;
-  }
-  
-  .derecho-buttons {
-    gap: 12px;
-    
-    .derecho-card {
-      padding: 16px;
-      min-height: 100px;
-      
-      .derecho-icon {
-        font-size: 40px;
-        margin-bottom: 8px;
-      }
-      
-      .derecho-title {
-        font-size: 13px;
+      h3 {
+        font-size: 14px;
       }
     }
   }

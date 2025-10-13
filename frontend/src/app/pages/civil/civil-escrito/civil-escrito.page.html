@@ -1,79 +1,142 @@
 <ion-content class="civil-content">
-  <!-- Header personalizado EXACTO como civil.page.html -->
-  <div class="custom-header-section">
-    <div class="orange-background">
-      <!-- Imagen de extremo a extremo -->
-      <div class="derecho-civil-container-full">
-        <img src="assets/image/civil/logo_civil.png" alt="Derecho Civil" class="derecho-civil-image-responsive">
-      </div>
-    </div>
+  <!-- Header estilo dashboard -->
+  <div class="dashboard-header">
+    <ion-icon name="chevron-back" class="back-icon" routerLink="/civil"></ion-icon>
+    <h1 class="header-title">Derecho Civil Escrito</h1>
   </div>
 
-  <!-- Resto del contenido -->
+  <!-- Contenido principal -->
   <div class="content-area">
     
-    <!-- Card de progreso mejorada -->
-    <div class="level-progress-card">
-      <div class="level-content">
-        <div class="level-badge">
-          <ion-icon name="trophy" class="trophy-icon"></ion-icon>
-          <span class="level-text">Intermedio</span>
+    <!-- Selector de cantidad de preguntas -->
+    <div class="selection-card">
+      <label class="selection-label">Cantidad de preguntas</label>
+      <select class="custom-select" [(ngModel)]="selectedQuantity">
+        <option [value]="3">3 preguntas</option>
+        <option [value]="5">5 preguntas</option>
+        <option [value]="10">10 preguntas</option>
+        <option [value]="11">11 preguntas</option>
+        <option [value]="15">15 preguntas</option>
+      </select>
+    </div>
+
+    <!-- Selector de alcance -->
+    <div class="selection-card">
+      <label class="selection-label">Alcance del test</label>
+      <div class="scope-options">
+        <div 
+          class="scope-option"
+          [class.active]="scopeType === 'all'"
+          (click)="selectScope('all')">
+          <ion-icon name="globe-outline"></ion-icon>
+          <span>Todo Derecho Civil</span>
         </div>
-        <div class="level-message">¡Sigue así! Vas por buen camino</div>
-        
-        <div class="written-mode-content">
-          <h4>Tu progreso en Modo Escrito</h4>
-          <div class="written-progress">
-            <div class="written-progress-bar">
-              <div class="written-progress-fill" [style.width.%]="65"></div>
-            </div>
-            <div class="written-stats">
-              <span class="written-percentage">65% completado</span>
-              <span class="written-sessions">13 de 20 sesiones</span>
-            </div>
-          </div>
+        <div 
+          class="scope-option"
+          [class.active]="scopeType === 'tema' || scopeType === 'subtema'"
+          (click)="selectScope('tema')">
+          <ion-icon name="list-outline"></ion-icon>
+          <span>Seleccionar tema/subtema</span>
         </div>
       </div>
     </div>
 
-    <!-- Sección Cómo vamos a practicar -->
-    <div class="practice-section">
-      <div class="practice-header">
-        <ion-icon name="flash"></ion-icon>
-        <h3>Cómo vamos a practicar</h3>
-      </div>
+    <!-- Selector de temas con acordeón (solo si eligió tema/subtema) -->
+    <div class="selection-card" *ngIf="scopeType === 'tema' || scopeType === 'subtema'">
+      <label class="selection-label">Temas de Derecho Civil</label>
       
-      <!-- Botón principal de inicio -->
-      <div class="quick-practice-card" (click)="startQuickPractice()">
-        <div class="practice-icon">
-          <ion-icon name="stopwatch"></ion-icon>
-        </div>
-        <div class="practice-info">
-          <h4>Empecemos tu test</h4>
-          <p>Procedamos con la interrogación</p>
-        </div>
-        <div class="practice-arrow">
-          <ion-icon name="chevron-forward"></ion-icon>
+      <div class="accordion-list">
+        <div 
+          *ngFor="let tema of temas" 
+          class="accordion-item"
+          [class.disabled]="tema.cantidadPreguntas === 0">
+          
+          <!-- Header del tema -->
+          <div 
+            class="accordion-header"
+            [class.active]="expandedTema === tema.id || selectedTemaId === tema.id"
+            (click)="toggleTema(tema)">
+            <div class="tema-info">
+              <span class="tema-nombre">{{ tema.nombre }}</span>
+              <span class="tema-count">{{ tema.cantidadPreguntas }} preguntas</span>
+            </div>
+            <div class="tema-actions">
+              <ion-icon 
+                *ngIf="selectedTemaId === tema.id && !selectedSubtemaId"
+                name="checkmark-circle" 
+                class="check-icon">
+              </ion-icon>
+              <ion-icon 
+                [name]="expandedTema === tema.id ? 'chevron-up' : 'chevron-down'"
+                class="chevron-icon">
+              </ion-icon>
+            </div>
+          </div>
+
+          <!-- Subtemas (acordeón) -->
+          <div class="accordion-content" *ngIf="expandedTema === tema.id && tema.subtemas && tema.subtemas.length > 0">
+            <div 
+              *ngFor="let subtema of tema.subtemas"
+              class="subtema-item"
+              [class.disabled]="subtema.cantidadPreguntas < selectedQuantity"
+              [class.active]="selectedSubtemaId === subtema.id"
+              (click)="selectSubtema(tema, subtema)">
+              <div class="subtema-info">
+                <span class="subtema-nombre">{{ subtema.nombre }}</span>
+                <span class="subtema-count">{{ subtema.cantidadPreguntas }} preguntas</span>
+              </div>
+              <ion-icon 
+                *ngIf="selectedSubtemaId === subtema.id"
+                name="checkmark-circle" 
+                class="check-icon">
+              </ion-icon>
+            </div>
+          </div>
         </div>
       </div>
     </div>
 
-    <!-- Mapache centrado y armonioso -->
-    <div class="mapache-section">
-      <div class="mapache-container">
-        <div class="mapache-character" (click)="mapacheSpeak()">
-          <div class="mapache-face">🦝</div>
-          <div class="speech-bubble" [class.show]="showSpeech">
-            {{ currentMessage }}
+    <!-- Resumen de selección -->
+    <div class="summary-card" *ngIf="getSummaryText()">
+      <ion-icon name="information-circle-outline"></ion-icon>
+      <span>{{ getSummaryText() }}</span>
+    </div>
+
+    <!-- Botón de inicio -->
+    <div class="start-button-container">
+      <ion-button 
+        expand="block" 
+        class="start-test-btn"
+        [disabled]="!canStartTest()"
+        (click)="startQuickPractice()">
+        Empezar Test
+      </ion-button>
+    </div>
+
+    <!-- Carrusel de banners -->
+    <div class="banner-section">
+      <div class="carousel-container">
+        <img 
+          *ngFor="let image of carouselImages; let i = index"
+          [src]="image" 
+          [alt]="'Banner ' + (i + 1)"
+          class="carousel-image"
+          [class.active]="currentImageIndex === i">
+        
+        <div class="carousel-indicators">
+          <div 
+            *ngFor="let image of carouselImages; let i = index"
+            class="indicator"
+            [class.active]="currentImageIndex === i"
+            (click)="goToSlide(i)">
           </div>
         </div>
-        <div class="mapache-message">Tu compañero de estudio</div>
       </div>
     </div>
 
   </div>
 
-  <!-- Bottom Navigation Component EXACTO como otras páginas -->
+  <!-- Bottom Navigation Component -->
   <app-bottom-nav></app-bottom-nav>
 
 </ion-content>

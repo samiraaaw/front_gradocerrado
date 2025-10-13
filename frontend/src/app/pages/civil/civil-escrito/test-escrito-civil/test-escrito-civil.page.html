@@ -43,32 +43,31 @@
 
     <!-- Opciones de respuesta con feedback visual -->
     <div class="options-container">
-      <div 
-        *ngFor="let option of getCurrentQuestionOptions()"
-        class="option-card"
-        [class.selected]="isOptionSelected(option.id) && !hasAnsweredCurrentQuestion()"
-        [class.correct]="getOptionState(option.id) === 'correct'"
-        [class.incorrect]="getOptionState(option.id) === 'incorrect'"
-        [class.disabled]="!canSelectOption()"
-        (click)="selectAnswer(option.id)">
-        
-        <div class="option-letter">{{ option.letter || option.id }}</div>
-
-        <div class="option-text">{{ option.text }}</div>
-        
-        <!-- Ícono de feedback (checkmark o cruz) -->
-        <div class="option-feedback" *ngIf="shouldShowOptionIcon(option.id)">
-          <ion-icon 
-            [name]="getOptionIcon(option.id)"
-            [style.color]="getOptionIconColor(option.id)">
-          </ion-icon>
-        </div>
+    <div 
+      *ngFor="let option of getCurrentQuestionOptions(); let i = index"
+      class="option-button"
+      [class.selected]="isOptionSelected(option) && !hasAnsweredCurrentQuestion()"
+      [class.correct]="getOptionState(option) === 'correct'"
+      [class.incorrect]="getOptionState(option) === 'incorrect'"
+      [class.disabled]="!canSelectOption()"
+      (click)="selectAnswer(option)">
+      
+      <div class="option-letter">{{ getOptionLetter(i) }}</div>
+      
+      <div class="option-text">{{ option }}</div>
+      
+      <div class="option-feedback" *ngIf="shouldShowOptionIcon(option)">
+        <ion-icon 
+          [name]="getOptionIcon(option)"
+          [style.color]="getOptionIconColor(option)">
+        </ion-icon>
       </div>
     </div>
+  </div>
+
 
     <!-- Explicación de la respuesta (mostrar después de responder) -->
-    <div class="explanation-container" *ngIf="hasAnsweredCurrentQuestion() && getCurrentQuestion()?.explanation">
-      <div class="explanation-header">
+    <div class="explanation-container" *ngIf="hasAnsweredCurrentQuestion()">      <div class="explanation-header">
         <ion-icon name="bulb" color="warning"></ion-icon>
         <span>Explicación</span>
       </div>

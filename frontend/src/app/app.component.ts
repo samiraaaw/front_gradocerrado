@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-root',
@@ -7,5 +8,19 @@ import { Component } from '@angular/core';
   standalone: false,
 })
 export class AppComponent {
-  constructor() {}
+  constructor(private router: Router) {
+    this.checkSession();
+  }
+
+  checkSession() {
+    const currentUser = localStorage.getItem('currentUser');
+    
+    if (currentUser) {
+      // Si hay sesión, ir directo a home
+      this.router.navigate(['/home']);
+    } else {
+      // Si no hay sesión, ir a welcome
+      this.router.navigate(['/welcome']);
+    }
+  }
 }

@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
 import { Router } from '@angular/router';
 import { IonicModule } from '@ionic/angular';
 import { CommonModule } from '@angular/common';
@@ -14,6 +14,8 @@ import { ApiService } from '../../services/api.service';
 })
 export class DashboardPage implements OnInit {
 
+  @ViewChild('areaStatsSection', { read: ElementRef }) areaStatsSection!: ElementRef;
+
   userName: string = 'Estudiante';
   userLevel: string = 'Intermedio';
   userStreak: number = 0;
@@ -28,9 +30,15 @@ export class DashboardPage implements OnInit {
   chartData: any[] = [];
   areaStats: any[] = [];
   recentSessions: any[] = [];
+  // 🆕 DEBILIDADES
+  topTemasDebiles: any[] = [];
+  resumenDebilidades: any = null;
   
   isLoading: boolean = true;
   selectedTimeFrame: string = 'week';
+  expandedArea: string | null = null;
+  expandedTema: string | null = null;
+  isGeneralExpanded: boolean = false;
 
   constructor(
     private router: Router,
@@ -41,12 +49,10 @@ export class DashboardPage implements OnInit {
     this.loadDashboardData();
   }
 
-  // MÉTODO PRINCIPAL - USA EL ID DEL USUARIO LOGUEADO
   async loadDashboardData() {
     this.isLoading = true;
     
     try {
-      // Obtener usuario actual de localStorage
       const currentUser = this.apiService.getCurrentUser();
       
       if (!currentUser || !currentUser.id) {
@@ -56,11 +62,11 @@ export class DashboardPage implements OnInit {
       }
 
       const studentId = currentUser.id;
-      this.userName = currentUser.name || 'Estudiante';
+      const fullName = currentUser.name || 'Estudiante';
+      this.userName = fullName.split(' ')[0];
+      
+      console.log('Cargando dashboard para estudiante:', studentId);
 
-      console.log('Cargando dashboard para estudiante:', studentId, this.userName);
-
-      // CARGAR ESTADÍSTICAS GENERALES
       try {
         const statsResponse = await this.apiService.getDashboardStats(studentId).toPromise();
         if (statsResponse && statsResponse.success) {
@@ -77,134 +83,253 @@ export class DashboardPage implements OnInit {
         console.error('Error cargando estadísticas:', error);
       }
 
-      // CARGAR ESTADÍSTICAS POR ÁREA
       try {
-        const areaResponse = await this.apiService.getAreaStats(studentId).toPromise();
+        const areaResponse = await this.apiService.getHierarchicalStats(studentId).toPromise();        
         if (areaResponse && areaResponse.success) {
-          this.areaStats = areaResponse.data.map((area: any) => ({
-            name: area.area,
-            questions: area.questions,
-            correct: area.correct,
-            successRate: Math.round(area.successRate)
-          }));
+          console.log('Datos jerárquicos:', areaResponse.data);
           
-          console.log('Áreas cargadas:', this.areaStats);
+          this.areaStats = [];
+          
+          areaResponse.data.forEach((item: any) => {
+            if (item.type === 'general') {
+              this.areaStats.push({
+                area: item.area,
+                sessions: item.sessions,
+                totalQuestions: item.totalQuestions,
+                correctAnswers: item.correctAnswers,
+                successRate: Math.round(item.successRate || 0),
+                isGeneral: true,
+                colorBarra: 'verde',
+                temas: []
+              });
+            } else if (item.type === 'area') {
+              const temasConNuevoCalculo = item.temas.map((tema: any) => {
+                const subtemasConPorcentaje = tema.subtemas.map((subtema: any) => ({
+                  subtemaId: subtema.subtemaId,
+                  subtemaNombre: subtema.subtemaNombre,
+                  totalPreguntas: subtema.totalPreguntas,
+                  preguntasCorrectas: subtema.preguntasCorrectas,
+                  porcentajeAcierto: this.calculateSubtemaSuccessRate(subtema.preguntasCorrectas)
+                }));
+
+                const porcentajeTema = this.calculateTemaSuccessRate(subtemasConPorcentaje);
+
+                return {
+                  temaId: tema.temaId,
+                  temaNombre: tema.temaNombre,
+                  totalPreguntas: tema.totalPreguntas,
+                  preguntasCorrectas: tema.preguntasCorrectas,
+                  porcentajeAcierto: porcentajeTema,
+                  subtemas: subtemasConPorcentaje
+                };
+              });
+
+              const totalCorrectas = temasConNuevoCalculo.reduce((sum: number, tema: any) => 
+                sum + tema.preguntasCorrectas, 0);
+              const totalPreguntas = temasConNuevoCalculo.reduce((sum: number, tema: any) => 
+                sum + tema.totalPreguntas, 0);
+              const porcentajeArea = temasConNuevoCalculo.length > 0 
+                ? Math.round(temasConNuevoCalculo.reduce((sum: number, tema: any) => 
+                    sum + tema.porcentajeAcierto, 0) / temasConNuevoCalculo.length)
+                : 0;
+              
+              this.areaStats.push({
+                area: item.area,
+                sessions: 0,
+                totalQuestions: totalPreguntas,
+                correctAnswers: totalCorrectas,
+                successRate: porcentajeArea,
+                isGeneral: false,
+                colorBarra: 'naranja',
+                temas: temasConNuevoCalculo
+              });
+            }
+          });
+
+          this.areaStats.push({
+            area: 'Derecho Procesal',
+            sessions: 0,
+            totalQuestions: 0,
+            correctAnswers: 0,
+            successRate: 0,
+            isGeneral: false,
+            colorBarra: 'azul',
+            temas: []
+          });
+          
+          console.log('Estadísticas procesadas:', this.areaStats);
         }
       } catch (error) {
-        console.error('Error cargando áreas:', error);
+        console.error('Error cargando estadísticas por área:', error);
       }
 
-      // CARGAR SESIONES RECIENTES
       try {
         const sessionsResponse = await this.apiService.getRecentSessions(studentId, 5).toPromise();
         if (sessionsResponse && sessionsResponse.success) {
-          this.recentSessions = sessionsResponse.data.map((session: any) => ({
-            id: session.id,
-            date: new Date(session.date).toLocaleDateString('es-ES'),
-            questions: session.questions,
-            correct: session.correct,
-            successRate: Math.round(session.successRate)
-          }));
-          
-          console.log('Sesiones cargadas:', this.recentSessions);
+          this.recentSessions = sessionsResponse.data;
+          console.log('Sesiones recientes:', this.recentSessions);
         }
       } catch (error) {
-        console.error('Error cargando sesiones:', error);
+        console.error('Error cargando sesiones recientes:', error);
       }
 
-      // Generar datos del gráfico (por ahora simulados, pero respetan si el usuario es nuevo)
-      this.generateChartData();
+      // 🆕 CARGAR DEBILIDADES
+      try {
+        const debilesResponse = await this.apiService.getTopTemasDebiles(studentId).toPromise();
+        if (debilesResponse && debilesResponse.success) {
+          this.topTemasDebiles = debilesResponse.data || [];
+          console.log('Top temas débiles:', this.topTemasDebiles);
+        }
+      } catch (error) {
+        console.error('Error cargando temas débiles:', error);
+      }
+
+      try {
+        const resumenResponse = await this.apiService.getResumenDebilidades(studentId).toPromise();
+        if (resumenResponse && resumenResponse.success) {
+          this.resumenDebilidades = resumenResponse.data;
+          console.log('Resumen debilidades:', this.resumenDebilidades);
+        }
+      } catch (error) {
+        console.error('Error cargando resumen debilidades:', error);
+      }
+
+      await this.generateChartData();
+
+      this.currentGoal = this.calculateProgressiveGoal(this.totalQuestions);
+      this.currentSessionGoal = this.calculateSessionGoal(this.totalSessions);
 
     } catch (error) {
-      console.error('Error general:', error);
+      console.error('Error general en loadDashboardData:', error);
     } finally {
       this.isLoading = false;
     }
   }
 
-  // GENERAR BADGES DE SESIONES DINÁMICAMENTE
-  getSessionBadges(): number[] {
-    const maxBadges = 5;
-    return Array(maxBadges).fill(0).map((_, i) => i);
+  calculateAreaSuccessRate(temas: any[]): number {
+    if (!temas || temas.length === 0) return 0;
+    
+    const totalPorcentaje = temas.reduce((sum: number, tema: any) => {
+      return sum + tema.porcentajeAcierto;
+    }, 0);
+    
+    return Math.round(totalPorcentaje / temas.length);
   }
 
-  // NUEVO: Obtener mensaje motivacional basado en sesiones
-  getMotivationalMessage(): string {
-    if (this.totalSessions === 0) {
-      return '¡Es un buen momento para empezar!';
-    } else if (this.totalSessions < 10) {
-      return '¡Sigue así!';
-    } else if (this.totalSessions < 50) {
-      return '¡Excelente progreso!';
+  calculateTemaSuccessRate(subtemas: any[]): number {
+    if (!subtemas || subtemas.length === 0) return 0;
+    
+    const totalPorcentaje = subtemas.reduce((sum: number, subtema: any) => {
+      return sum + subtema.porcentajeAcierto;
+    }, 0);
+    
+    return Math.round(totalPorcentaje / subtemas.length);
+  }
+
+  calculateSubtemaSuccessRate(correctas: number): number {
+    const MAX_CORRECTAS = 100;
+    const porcentaje = Math.min((correctas / MAX_CORRECTAS) * 100, 100);
+    return Math.round(porcentaje);
+  }
+
+  toggleGeneralExpansion() {
+    this.isGeneralExpanded = !this.isGeneralExpanded;
+  }
+
+  toggleAreaExpansion(areaName: string) {
+    if (this.expandedArea === areaName) {
+      this.expandedArea = null;
     } else {
-      return '¡Eres imparable!';
+      this.expandedArea = areaName;
     }
   }
 
-  generateChartData() {
-    const daysOfWeek = ['Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb', 'Dom'];
-    
-    // Si el usuario es nuevo (sin sesiones), mostrar todo en cero
-    if (this.totalSessions === 0) {
-      this.chartData = daysOfWeek.map(day => ({
-        date: day,
-        civil: 0,
-        procesal: 0,
-        total: 0
-      }));
-      return;
+  isAreaExpanded(areaName: string): boolean {
+    return this.expandedArea === areaName;
+  }
+
+  toggleTemaExpansion(temaNombre: string) {
+    if (this.expandedTema === temaNombre) {
+      this.expandedTema = null;
+    } else {
+      this.expandedTema = temaNombre;
     }
-    
-    // Si tiene sesiones, generar datos simulados
-    // TODO: Reemplazar con datos reales del backend cuando esté disponible el endpoint
-    this.chartData = daysOfWeek.map(day => {
-      const dailyQuestions = Math.floor(Math.random() * 15) + 5;
-      const civilQuestions = Math.floor(dailyQuestions * 0.6);
-      const procesalQuestions = dailyQuestions - civilQuestions;
-      
-      return {
-        date: day,
-        civil: civilQuestions,
-        procesal: procesalQuestions,
-        total: dailyQuestions
-      };
-    });
+  }
+
+  isTemaExpanded(temaNombre: string): boolean {
+    return this.expandedTema === temaNombre;
+  }
+
+  getTemasForArea(areaName: string): any[] {
+    const area = this.areaStats.find(a => a.area === areaName && !a.isGeneral);
+    return area && area.temas ? area.temas : [];
+  }
+
+  getSubtemasForTema(tema: any): any[] {
+    return tema && tema.subtemas ? tema.subtemas : [];
+  }
+
+  getGeneralArea(): any {
+    return this.areaStats.find(a => a.isGeneral);
+  }
+
+  getNonGeneralAreas(): any[] {
+    return this.areaStats.filter(a => !a.isGeneral);
+  }
+
+  scrollToArea(areaName: string) {
+    const element = document.getElementById('area-' + areaName);
+    if (element) {
+      element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      setTimeout(() => {
+        this.toggleAreaExpansion(areaName);
+      }, 500);
+    }
+  }
+
+  async generateChartData() {
+    try {
+      const currentUser = this.apiService.getCurrentUser();
+      if (!currentUser || !currentUser.id) return;
+
+      const progressResponse = await this.apiService.getWeeklyProgress(currentUser.id).toPromise();
+      if (progressResponse && progressResponse.success) {
+        this.chartData = progressResponse.data;
+      }
+    } catch (error) {
+      console.error('Error generando datos del gráfico:', error);
+      this.chartData = [];
+    }
   }
 
   changeTimeFrame(timeFrame: string) {
     this.selectedTimeFrame = timeFrame;
-    this.loadDashboardData();
-  }
-
-  goToSession(sessionId: number) {
-    console.log('Navegar a sesión:', sessionId);
-  }
-
-  goToAreaDetails(area: string) {
-    console.log('Ver detalles de:', area);
-  }
-
-  startNewSession() {
-    this.router.navigate(['/home']);
   }
 
   goBack() {
     this.router.navigate(['/home']);
   }
 
-  getProgressColor(percentage: number): string {
-    if (percentage >= 80) return 'success';
-    if (percentage >= 60) return 'warning';
-    return 'danger';
+  goToSession(sessionId: number) {
+    console.log('Navegando a sesión:', sessionId);
+  }
+
+  startNewSession() {
+    this.router.navigate(['/civil']);
+  }
+
+  navigateToHome() {
+    this.router.navigate(['/home']);
   }
 
   getMaxValue(): number {
-    if (!this.chartData || this.chartData.length === 0) return 20;
-    const maxTotal = Math.max(...this.chartData.map(d => d.total));
-    return maxTotal === 0 ? 20 : maxTotal + 2;
+    if (this.chartData.length === 0) return 10;
+    const maxCivil = Math.max(...this.chartData.map(d => d.civil || 0));
+    const maxProcesal = Math.max(...this.chartData.map(d => d.procesal || 0));
+    const maxTotal = Math.max(maxCivil, maxProcesal);
+    return maxTotal === 0 ? 10 : maxTotal + 2;
   }
 
-  // MÉTODOS PARA LOS GRÁFICOS
   getBarHeight(value: number, type: 'civil' | 'procesal'): number {
     const maxValue = this.getMaxValue();
     if (maxValue === 0) return 0;
@@ -213,18 +338,24 @@ export class DashboardPage implements OnInit {
 
   getDonutOffset(): number {
     const circumference = 219.8;
+    if (this.totalQuestions === 0) {
+      return circumference;
+    }
     const progress = Math.min(this.totalQuestions / this.currentGoal, 1);
     return circumference * (1 - progress);
   }
 
   getGaugeOffset(): number {
-    const maxDash = 110;
+    const maxDash = 157;
     const progress = Math.min(this.overallSuccessRate / 100, 1);
     return maxDash * (1 - progress);
   }
 
   getGaugeOffsetLarge(): number {
     const maxDash = 125.6;
+    if (this.overallSuccessRate === 0) {
+      return maxDash;
+    }
     const progress = Math.min(this.overallSuccessRate / 100, 1);
     return maxDash * (1 - progress);
   }
@@ -249,20 +380,5 @@ export class DashboardPage implements OnInit {
     if (questions < 500) return 500;
     
     return Math.ceil(questions / 50) * 50;
-  }
-
-  private formatDate(dateString: string): string {
-    try {
-      const date = new Date(dateString);
-      const day = date.getDate();
-      const months = ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 
-                     'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'];
-      const month = months[date.getMonth()];
-      const year = date.getFullYear();
-      
-      return `${day} ${month} ${year}`;
-    } catch (error) {
-      return dateString;
-    }
   }
 }

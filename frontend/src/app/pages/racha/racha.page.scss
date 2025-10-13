@@ -13,68 +13,42 @@ ion-content.racha-content {
   height: 100%;
 }
 
-// Header EXACTO como Civil
-.custom-header-section {
+// ========================================
+// HEADER ESTILO DASHBOARD
+// ========================================
+.dashboard-header {
   position: fixed;
   top: 0;
   left: 0;
   right: 0;
+  height: 60px;
+  background: #10b981;
+  display: flex;
+  align-items: center;
+  padding: 0 16px;
   z-index: 1000;
-  background: transparent;
-  
-  .green-background {
-    background: transparent;
-    padding: 0;
-    border-radius: 0;
-    position: relative;
-    overflow: hidden;
-    width: 100vw;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 
-    .racha-container-full {
-      display: block;
-      width: 100%;
-      height: auto;
-      position: relative;
-      z-index: 3;
+  .back-icon {
+    font-size: 24px;
+    color: white;
+    cursor: pointer;
+    margin-right: 12px;
+  }
 
-      .racha-image-responsive {
-        display: block;
-        width: 100vw;
-        height: auto;
-        min-height: 120px;
-        max-height: 200px;
-        object-fit: cover;
-        object-position: center;
-        filter: drop-shadow(0 6px 16px rgba(0,0,0,0.18));
-      }
-    }
+  .header-title {
+    color: white;
+    font-size: 18px;
+    font-weight: 600;
+    margin: 0;
   }
 }
 
-// Botón EXACTO como Civil
-.back-button {
-  position: absolute;
-  top: calc(env(safe-area-inset-top, 0px) + 12px);
-  left: 12px;
-  width: 42px;
-  height: 42px;
-  border-radius: 50%;
-  background: #ffffff;
-  box-shadow: 0 4px 14px rgba(0,0,0,0.15);
-  z-index: 1100;
-  --min-width: 42px;
-  --padding-start: 0;
-  --padding-end: 0;
-
-  ion-icon {
-    font-size: 22px;
-    color: #222;
-  }
-}
-
-// Contenido
+// ========================================
+// CONTENIDO
+// ========================================
 .content-area {
-  margin-top: 140px;
+  margin-top: 60px;
   padding: 20px 16px 100px;
   background: transparent;
   border-radius: 30px 30px 0 0;
@@ -87,6 +61,7 @@ ion-content.racha-content {
   justify-content: center;
   align-items: center;
   padding: 100px 20px;
+  margin-top: 60px;
 }
 
 // Tarjeta principal de racha
@@ -293,9 +268,117 @@ ion-content.racha-content {
   }
 }
 
-// Responsive
+// CALENDARIO MENSUAL
+.calendar-card {
+  background: white;
+  border-radius: 20px;
+  padding: 24px 20px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.06);
+  margin-bottom: 24px;
+
+  .calendar-title {
+    margin: 0 0 20px 0;
+    font-size: 18px;
+    font-weight: 700;
+    color: #1f2937;
+    text-align: center;
+  }
+
+  .calendar-weekdays {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 4px;
+    margin-bottom: 8px;
+
+    .weekday {
+      text-align: center;
+      font-size: 12px;
+      font-weight: 600;
+      color: #6b7280;
+      padding: 8px 0;
+    }
+  }
+
+  .calendar-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 4px;
+
+    .calendar-day {
+      aspect-ratio: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: 500;
+      color: #374151;
+      background: #f9fafb;
+      transition: all 0.2s ease;
+
+      &.empty {
+        background: transparent;
+        color: #d1d5db;
+      }
+
+      &.studied {
+        background: linear-gradient(135deg, #10b981, #059669);
+        color: white;
+        font-weight: 600;
+      }
+
+      &.today {
+        border: 2px solid #10b981;
+        font-weight: 700;
+      }
+    }
+  }
+
+  .calendar-legend {
+    display: flex;
+    gap: 16px;
+    margin-top: 16px;
+    justify-content: center;
+
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+
+      .legend-box {
+        width: 16px;
+        height: 16px;
+        border-radius: 4px;
+
+        &.studied {
+          background: linear-gradient(135deg, #10b981, #059669);
+        }
+
+        &.today {
+          border: 2px solid #10b981;
+          background: white;
+        }
+      }
+
+      span {
+        font-size: 12px;
+        color: #6b7280;
+      }
+    }
+  }
+}
+
+// RESPONSIVE
+@media (min-width: 768px) {
+  .content-area {
+    margin-top: 60px;
+    padding: 24px 32px 100px;
+  }
+}
+
 @media (max-width: 480px) {
   .content-area {
-    margin-top: 120px;
+    margin-top: 60px;
+    padding: 16px 12px 80px;
   }
 }

@@ -1,25 +1,14 @@
 <ion-content class="racha-content">
-  <!-- Header personalizado IGUAL que Civil -->
-  <div class="custom-header-section">
-    <div class="green-background">
-      <!-- Imagen de extremo a extremo -->
-      <div class="racha-container-full">
-        <img src="assets/image/racha.png" alt="Derecho Civil" class="racha-image-responsive">
-      </div>
-    </div>
+  <!-- Header estilo dashboard -->
+  <div class="dashboard-header">
+    <ion-icon name="chevron-back" class="back-icon" (click)="goBack()"></ion-icon>
+    <h1 class="header-title">La Racha</h1>
   </div>
 
-  <!-- Botón de volver -->
-  <ion-button fill="clear" class="back-button" (click)="goBack()">
-    <ion-icon name="chevron-back"></ion-icon>
-  </ion-button>
-
-  <!-- Loading -->
   <div *ngIf="isLoading" class="loading-container">
     <ion-spinner name="circular"></ion-spinner>
   </div>
 
-  <!-- Contenido principal -->
   <div *ngIf="!isLoading" class="content-area">
 
     <!-- Tarjeta principal de racha -->
@@ -33,69 +22,51 @@
       
       <div class="streak-message">
         <span *ngIf="currentStreak === 0">¡Comienza tu racha hoy!</span>
-        <span *ngIf="currentStreak > 0 && currentStreak < 5">¡Vas muy bien! 💪</span>
+        <span *ngIf="currentStreak > 0 && currentStreak < 5">¡Vas muy bien!</span>
         <span *ngIf="currentStreak >= 5 && currentStreak < 10">¡Increíble constancia!</span>
-        <span *ngIf="currentStreak >= 10">¡Eres imparable! 🔥</span>
+        <span *ngIf="currentStreak >= 10">¡Eres imparable!</span>
       </div>
     </div>
 
-    <!-- Estadísticas -->
-    <div class="stats-row">
-      <div class="stat-card">
-        <ion-icon name="trophy" class="stat-icon"></ion-icon>
-        <div class="stat-number">{{ bestStreak }}</div>
-        <div class="stat-label">Mejor racha</div>
-      </div>
+    <!-- CALENDARIO MENSUAL -->
+    <div class="calendar-card">
+      <h3 class="calendar-title">{{ currentMonthName }}</h3>
       
-      <div class="stat-card">
-        <ion-icon name="calendar" class="stat-icon"></ion-icon>
-        <div class="stat-number">{{ totalDays }}</div>
-        <div class="stat-label">Días totales</div>
+      <div class="calendar-weekdays">
+        <div class="weekday">D</div>
+        <div class="weekday">L</div>
+        <div class="weekday">M</div>
+        <div class="weekday">M</div>
+        <div class="weekday">J</div>
+        <div class="weekday">V</div>
+        <div class="weekday">S</div>
       </div>
-    </div>
 
-    <!-- Próxima meta -->
-    <div class="next-goal-card">
-      <h3>Próxima meta: {{ nextGoal }} días</h3>
-      <div class="goal-progress-bar">
-        <div class="goal-progress-fill" [style.width.%]="getProgressToNextGoal()"></div>
-      </div>
-      <p class="goal-text">{{ getDaysToNextGoal() }} días más para completar tu meta</p>
-    </div>
-
-    <!-- Logros -->
-    <div class="achievements-section">
-      <h2 class="section-title">
-        Logros ({{ getUnlockedCount() }}/{{ getTotalCount() }})
-      </h2>
-      
-      <div class="achievements-grid">
+      <div class="calendar-grid">
         <div 
-          *ngFor="let achievement of achievements" 
-          class="achievement-card"
-          [class.unlocked]="achievement.unlocked"
-          [class.locked]="!achievement.unlocked">
-          
-          <div class="achievement-icon" [style.background-color]="achievement.color">
-            <ion-icon [name]="achievement.icon"></ion-icon>
-          </div>
-          
-          <div class="achievement-info">
-            <h4 class="achievement-title">{{ achievement.title }}</h4>
-            <p class="achievement-desc">{{ achievement.description }}</p>
-            <span class="achievement-days" *ngIf="!achievement.unlocked">
-              {{ achievement.daysRequired >= 1 ? achievement.daysRequired + ' días' : 'Próximamente' }}
-            </span>
-            <span class="achievement-unlocked" *ngIf="achievement.unlocked">
-              ✓ Desbloqueado
-            </span>
-          </div>
+          *ngFor="let calDay of calendarDays"
+          class="calendar-day"
+          [class.studied]="calDay.hasStudied"
+          [class.today]="calDay.isToday"
+          [class.empty]="!calDay.isCurrentMonth">
+          <span *ngIf="calDay.isCurrentMonth">{{ calDay.day }}</span>
+        </div>
+      </div>
+      
+      <div class="calendar-legend">
+        <div class="legend-item">
+          <div class="legend-box studied"></div>
+          <span>Día estudiado</span>
+        </div>
+        <div class="legend-item">
+          <div class="legend-box today"></div>
+          <span>Hoy</span>
         </div>
       </div>
     </div>
 
+    <!-- Resto del contenido... -->
   </div>
 
-  <!-- Bottom Navigation -->
   <app-bottom-nav></app-bottom-nav>
 </ion-content>

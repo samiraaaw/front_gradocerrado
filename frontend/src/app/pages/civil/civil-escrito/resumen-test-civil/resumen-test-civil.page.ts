@@ -1,5 +1,8 @@
 import { Component, OnInit } from '@angular/core';
-import { Router, ActivatedRoute } from '@angular/router';
+import { Router } from '@angular/router';
+import { IonicModule } from '@ionic/angular';
+import { CommonModule } from '@angular/common';
+import { BottomNavComponent } from '../../../../shared/components/bottom-nav/bottom-nav.component';
 
 interface QuestionResult {
   questionNumber: number;
@@ -13,87 +16,58 @@ interface QuestionResult {
   selector: 'app-resumen-test-civil',
   templateUrl: './resumen-test-civil.page.html',
   styleUrls: ['./resumen-test-civil.page.scss'],
-  standalone: false
+  standalone: true,
+  imports: [IonicModule, CommonModule, BottomNavComponent]  // ✅ AGREGADO IonicModule
 })
 export class ResumenTestCivilPage implements OnInit {
 
-  // Datos de los resultados
   testResults: any = null;
   questionsStatus: QuestionResult[] = [];
   
-  // Datos calculados para mostrar
   correctAnswers = 0;
   incorrectAnswers = 0;
   totalQuestions = 0;
   percentage = 0;
-  level = 'BÁSICO';
-  celebrationMessage = '¡Sigue practicando!';
+  
+  levelTitle: string = 'NIVEL PRINCIPIANTE';
+  levelSubtitle: string = '¡Sigue practicando!';
+  
+  timeUsed: string = '0:00 min';
 
-  constructor(
-    private router: Router,
-    private route: ActivatedRoute
-  ) { }
+  constructor(private router: Router) { }
 
   ngOnInit() {
     this.loadTestResults();
     this.generateQuestionsStatus();
+    this.setLevelInfo();
   }
 
-  // Cargar resultados del test desde localStorage
   loadTestResults() {
     try {
-      const results = localStorage.getItem('current_test_results');
-      if (results) {
-        this.testResults = JSON.parse(results);
+      const savedResults = localStorage.getItem('current_test_results');
+      console.log('📊 Cargando resultados del test:', savedResults);
+      
+      if (savedResults) {
+        this.testResults = JSON.parse(savedResults);
         
-        // ✅ Usar datos reales del test
         this.correctAnswers = this.testResults.correctAnswers || 0;
+        this.incorrectAnswers = this.testResults.incorrectAnswers || 0;
         this.totalQuestions = this.testResults.totalQuestions || 0;
-        this.incorrectAnswers = this.testResults.incorrectAnswers || (this.totalQuestions - this.correctAnswers);
         this.percentage = this.testResults.percentage || 0;
-        this.level = this.testResults.level || 'BÁSICO';
-        
-        // Mensaje según el porcentaje
-        if (this.percentage >= 80) {
-          this.celebrationMessage = '¡Excelente progreso!';
-        } else if (this.percentage >= 60) {
-          this.celebrationMessage = '¡Buen trabajo!';
-        } else {
-          this.celebrationMessage = '¡Sigue practicando!';
-        }
-        
-        console.log('Resultados cargados:', this.testResults);
-        console.log('Datos para mostrar:', {
-          correctas: this.correctAnswers,
-          incorrectas: this.incorrectAnswers,
-          total: this.totalQuestions,
-          porcentaje: this.percentage
-        });
+        this.timeUsed = this.testResults.timeUsedFormatted || '0:00 min';
       } else {
-        // Si no hay resultados, usar datos de ejemplo
-        console.log('No hay resultados guardados, usando datos de ejemplo');
-        this.correctAnswers = 0;
-        this.incorrectAnswers = 5;
-        this.totalQuestions = 5;
+        console.warn('⚠️ No se encontraron resultados guardados');
         this.percentage = 0;
-        this.level = 'BÁSICO';
-        this.celebrationMessage = '¡Sigue practicando!';
       }
     } catch (error) {
-      console.error('Error cargando resultados:', error);
-      // Usar datos de ejemplo en caso de error
-      this.correctAnswers = 0;
-      this.incorrectAnswers = 5;
-      this.totalQuestions = 5;
+      console.error('❌ Error cargando resultados:', error);
       this.percentage = 0;
     }
   }
 
-  // Generar el estado de cada pregunta para los círculos
   generateQuestionsStatus() {
     this.questionsStatus = [];
     
-    // ✅ Si tenemos resultados detallados del test, usarlos
     if (this.testResults && this.testResults.allQuestions) {
       this.questionsStatus = this.testResults.allQuestions.map((q: any) => ({
         questionNumber: q.questionNumber,
@@ -102,44 +76,43 @@ export class ResumenTestCivilPage implements OnInit {
         correctAnswer: q.correctAnswer
       }));
     } else {
-      // ✅ Generar estado basado en correctas/incorrectas reales
       for (let i = 1; i <= this.totalQuestions; i++) {
         this.questionsStatus.push({
           questionNumber: i,
-          isCorrect: i <= this.correctAnswers // Primeras X son correctas
+          isCorrect: i <= this.correctAnswers
         });
       }
     }
     
-    console.log('Estado de preguntas generado:', this.questionsStatus);
+    console.log('✅ Estado de preguntas generado:', this.questionsStatus);
   }
 
-  // Ver respuestas incorrectas
+  setLevelInfo() {
+    if (this.percentage >= 80) {
+      this.levelTitle = 'NIVEL AVANZADO';
+      this.levelSubtitle = '¡Excelente dominio!';
+    } else if (this.percentage >= 60) {
+      this.levelTitle = 'NIVEL INTERMEDIO';
+      this.levelSubtitle = '¡Excelente progreso!';
+    } else {
+      this.levelTitle = 'NIVEL PRINCIPIANTE';
+      this.levelSubtitle = '¡Sigue practicando!';
+    }
+  }
+
   reviewIncorrect() {
     console.log('Revisando respuestas incorrectas...');
-    // TODO: Implementar vista detallada de respuestas incorrectas
-    // Podría ser una nueva página o un modal
   }
 
-  // Hacer nuevo test
   takeNewTest() {
     console.log('Iniciando nuevo test...');
-    
-    // Limpiar resultados anteriores
     localStorage.removeItem('current_test_results');
-    
-    // Navegar de vuelta a civil-escrito para empezar un nuevo test
     this.router.navigate(['/civil/civil-escrito']);
   }
 
-  // Volver al inicio
   goBack() {
     console.log('Volviendo al inicio...');
-    
-    // Limpiar resultados
     localStorage.removeItem('current_test_results');
-    
-    // Navegar al inicio de civil
     this.router.navigate(['/civil/civil-escrito']);
   }
 }
